@@ -1,0 +1,48 @@
+<div class="label-option-sidebar" style="padding: 12px 20px;display: flex;background: #f4f4f4;border-bottom: 1px solid #dcdcdc;justify-content: space-between;flex-direction: column;">
+    <div>
+        Formular: {{self.udls.name}}
+    </div>
+</div>
+<div style="display: flex; padding: 15px;">
+    <span ng-click="self.addUDL()" class="button-with-label-layer"
+        style="margin-left: 0px;">Add</span>
+    <span ng-click="self.saveUDL()" class="button-with-label-layer"
+        style="margin-left: 15px;">Save</span>
+    <span ng-click="self.saveAsUDL()" class="button-with-label-layer"
+        style="margin-left: 15px;">Save As</span>
+    <span ng-click="self.loadUDL()" class="button-with-label-layer"
+        style="margin-left: 15px;">Load</span>
+</div>
+<!-- <div style="margin: 15px;" class='bottom-add' ng-click="self.addUDL()">Add</div>
+<div style="margin: 15px;" class='bottom-add' ng-click="self.saveUDL()">Save</div>
+<div style="margin: 15px;" class='bottom-add' ng-click="self.saveAsUDL()">Save As</div>
+<div style="margin: 15px;" class='bottom-add' ng-click="self.loadUDL()">Load</div> -->
+<div class="label-option-sidebar" style="overflow: auto;">
+    <div style="overflow: overlay;">
+        <div class="list-formular" ng-repeat="udl in self.udls">
+            <div class="selection-sidebar"
+                style="padding: 9px 10px 5px 10px; flex: 4; margin-right: 15px; border: none;">
+                <editable style="flex:1;display:flex;flex-direction:row;overflow:hidden;"
+                    item-label="'Y = '" item-value="self.getFnUDL" params="$index"
+                    set-value="self.setFnUDL" enabled="true" label-style="{}"
+                    content-style="{flex:1,float:'none','text-align':'left'}">
+                </editable>
+            </div>
+            <div class="selection-sidebar"
+                style="padding: 9px 10px 5px 10px; cursor: pointer; flex: 1; border: none;">
+                <span
+                    ng-class="{'red-color ti ti-layout-cta-left': !udl.displayEquation, 'blue-color ti ti-layout-cta-left': udl.displayEquation }"
+                    ng-click="udl.displayEquation = !udl.displayEquation"
+                    style="cursor: pointer; margin-right: 15px; margin-top: -5px;">
+                </span>
+                <span
+                    ng-class="{'red-color fa fa-eye-slash': udl._notUsed, 'blue-color fa fa-eye': !udl._notUsed }"
+                    ng-click="udl._notUsed = !udl._notUsed"
+                    style="cursor: pointer; margin-right: 15px; margin-top: -5px;">
+                </span>
+                <line-style style="min-width: 30px;" bind-line-style="udl.lineStyle"></line-style>
+            </div>
+            <div class="fa fa-times delete-button" ng-click="self.removeUDL($index)"></div>
+        </div>
+    </div>
+</div>

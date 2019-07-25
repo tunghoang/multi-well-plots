@@ -1,0 +1,54 @@
+<wi-droppable style="display: flex;width: 100%;background: #ffffff;z-index: 1;box-shadow: 0 4px 9px #00000014;flex-basis: 40px;border-radius: 2px;" on-drop="self.onDrop"
+    container-style="{display:'flex',flex: 1, position: 'relative'}">
+    <div class="tab">
+        <div class="tab-name" ng-repeat="(idx, xVal) in self.selectionXValues" ng-class="{active: tabIndex === idx}"
+            ng-click="self.activateTab(idx)">
+            <div ng-if="self.selectionTypes[idx] === 'curve'" class="curve-16x16" style="margin-right: 10px;"></div>
+            <div ng-if="self.selectionTypes[idx] === 'family'" class="family-16x16" style="margin-right: 10px;"></div>
+            <div ng-if="self.selectionTypes[idx] === 'family-group'" class="family-group-16x16"
+                style="margin-right: 10px;"></div>
+            {{self.selectionXValues[idx].value}} - {{self.selectionYValues[idx].value}}
+        </div>
+        <div class="tab-drop">
+            Drop curves here
+            <div style="margin-left: 15px; opacity: 0.4;" class="ti-plus"></div>
+        </div>
+    </div>
+    <div ng-class="{'show-warning': self.warning}" class="warning">
+        DROP CURVES, TRY AGAIN!
+    </div>
+</wi-droppable>
+<div ng-show="tabIndex === idx" class="main" ng-repeat="(idx, xVal) in self.selectionXValues">
+    <multi-well-crossplot well-spec="self.wellSpecs[idx]" zoneset-name="self.zonesetNames[idx]" 
+        loga-x="self.logaX"
+        loga-y="self.logaY"
+        scale-left="self.scaleLeft"
+        scale-right="self.scaleRight"
+        scale-bottom="self.scaleBottom"
+        scale-top="self.scaleTop"
+        selection-type="self.selectionTypes[idx]" 
+        selection-value-list="self.getSelectionValueList(idx)"
+        param-groups="self.paramGroups"
+        param-group-points-fn="self.paramGroupPointsFn"
+        get-param-group-x="self.getParamGroupX"
+        get-param-group-y="self.getParamGroupY"
+        set-param-group-x="self.setParamGroupX"
+        set-param-group-y="self.setParamGroupY"
+        get-param-group-point-label="self.getParamGroupPointLabel"
+        silent="true"
+        pickett-sets="self.pickettSets"
+        show-adjuster="self.showAdjuster"
+        get-pickett-set-rw="self.getPickettSetRw"
+        set-pickett-set-rw="self.setPickettSetRw"
+        get-pickett-set-a="self.getPickettSetA"
+        set-pickett-set-a="self.setPickettSetA"
+        get-pickett-set-m="self.getPickettSetM"
+        set-pickett-set-m="self.setPickettSetM"
+        get-pickett-set-n="self.getPickettSetN"
+        set-pickett-set-n="self.setPickettSetN"
+        set-pickett-set-name="self.setPickettSetName"
+        get-pickett-set-name="self.getPickettSetName"
+        get-pickett-set-color="self.getPickettSetColor"
+        overlay-line="self.overlayLine">
+    </multi-well-crossplot>
+</div>
