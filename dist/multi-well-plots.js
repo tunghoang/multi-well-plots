@@ -141,6 +141,17 @@ eval("exports = module.exports = __webpack_require__(/*! ../../node_modules/css-
 
 /***/ }),
 
+/***/ "../node_modules/css-loader/dist/cjs.js!../node_modules/less-loader/dist/cjs.js!./print-settings/style.less":
+/*!******************************************************************************************************************!*\
+  !*** ../node_modules/css-loader/dist/cjs.js!../node_modules/less-loader/dist/cjs.js!./print-settings/style.less ***!
+  \******************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ \"../node_modules/css-loader/dist/runtime/api.js\")(false);\n// Module\nexports.push([module.i, \"print-settings .label-option-sidebar {\\n  font-weight: bold;\\n  font-size: 12px;\\n  color: #646464;\\n  background: #fff;\\n  padding: 15px;\\n}\\nprint-settings .button-with-label {\\n  cursor: pointer;\\n  background: #f4f4f4;\\n  font-size: 10px;\\n  padding: 5px 10px;\\n  border: 1px solid #f4f4f4;\\n  border-radius: 20px;\\n  transition: all 0.2s ease-in;\\n}\\nprint-settings .button-with-label:hover {\\n  border: 1px solid #0077be;\\n}\\nprint-settings .button-with-label.active {\\n  background: #f4f4f4;\\n  color: #0077be;\\n  border: 1px solid #0077be;\\n  transition: all 0.2s ease-in;\\n}\\nprint-settings .selection-sidebar {\\n  border: 1px solid #c7c7c7;\\n  border-radius: 2px;\\n  padding: 2px 10px;\\n  align-items: center;\\n  display: flex;\\n  transition: all 0.2s ease-in;\\n}\\nprint-settings .selection-sidebar:hover {\\n  border: 1px solid #0077be;\\n}\\nprint-settings .selection-sidebar > input:focus {\\n  outline: none;\\n}\\n\", \"\"]);\n\n\n\n//# sourceURL=webpack:///./print-settings/style.less?../node_modules/css-loader/dist/cjs.js!../node_modules/less-loader/dist/cjs.js");
+
+/***/ }),
+
 /***/ "../node_modules/css-loader/dist/runtime/api.js":
 /*!******************************************************!*\
   !*** ../node_modules/css-loader/dist/runtime/api.js ***!
@@ -567,7 +578,18 @@ eval("module.exports = \"<div class=\\\"main\\\">\\n    <div style=\\\"display:f
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("var moduleName = 'printSettings';\nvar componentName = 'printSettings';\nmodule.exports.name = componentName;\n\nvar app = angular.module(moduleName, []);\napp.component(componentName, {\n    template: __webpack_require__(/*! ./template.html */ \"./print-settings/template.html\"),\n    controller: printSettingsCtrl,\n    controllerAs: 'self',\n    bindings: {\n        plotCtrl: \"<\",\n    },\n    transclude: true\n});\n\nfunction printSettingsCtrl($scope, $timeout, $element) {\n    let self = this;\n    \n    this.$onInit = function () {\n        console.log('printSettings Ctrl');\n    }\n}\n\n\n//# sourceURL=webpack:///./print-settings/index.js?");
+eval("var moduleName = 'printSettings';\n__webpack_require__(/*! ./style.less */ \"./print-settings/style.less\");\nvar componentName = 'printSettings';\nmodule.exports.name = componentName;\n\nvar app = angular.module(moduleName, []);\napp.component(componentName, {\n    template: __webpack_require__(/*! ./template.html */ \"./print-settings/template.html\"),\n    controller: printSettingsCtrl,\n    controllerAs: 'self',\n    bindings: {\n        plotCtrl: \"<\",\n    },\n    transclude: true\n});\n\nfunction printSettingsCtrl($scope, $timeout, $element) {\n    let self = this;\n    \n    this.$onInit = function () {\n        console.log('printSettings Ctrl');\n    }\n}\n\n\n//# sourceURL=webpack:///./print-settings/index.js?");
+
+/***/ }),
+
+/***/ "./print-settings/style.less":
+/*!***********************************!*\
+  !*** ./print-settings/style.less ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("\nvar content = __webpack_require__(/*! !../../node_modules/css-loader/dist/cjs.js!../../node_modules/less-loader/dist/cjs.js!./style.less */ \"../node_modules/css-loader/dist/cjs.js!../node_modules/less-loader/dist/cjs.js!./print-settings/style.less\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../node_modules/style-loader/lib/addStyles.js */ \"../node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./print-settings/style.less?");
 
 /***/ }),
 
