@@ -1,4 +1,5 @@
 var moduleName = 'printSettings';
+require('./style.less');
 var componentName = 'printSettings';
 module.exports.name = componentName;
 
