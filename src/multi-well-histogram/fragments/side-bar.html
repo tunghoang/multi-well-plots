@@ -28,6 +28,10 @@
         <div ng-show="isSet(5)" style="overflow: auto; flex: 1; display: flex; flex-direction: column;">
             ${require('./layers.html')}
         </div>
+        <!-- -----PRINT SETTINGS----- -->
+        <div ng-show="isSet(8)" style="overflow: hidden;flex: 1; display: flex; flex-direction: column;">
+            ${require('./print-settings.html')}
+        </div>
         <div style="display: flex;">
             <span class="button-update" ng-class="{'disabled-click': !self.isSettingChange}" ng-click="self.genHistogramList()">
                 Update
@@ -84,6 +88,11 @@
             <div ng-class="{'active' : isSet(5)}" ng-click="setTab(5)" class="tab-with-label">
                 <div >
                     Layers
+                </div>
+            </div>
+            <div class="tab-with-label" ng-class="{'active' : isSet(8)}" ng-click="setTab(8)">
+                <div >
+                    Print Setting
                 </div>
             </div>
         </div>

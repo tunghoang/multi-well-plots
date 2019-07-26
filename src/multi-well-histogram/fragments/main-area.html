@@ -9,7 +9,7 @@
     <span class="fn-button" ng-click="self.print()">PRINT</span>
 </div>
 <div style="flex: 1; display: flex; flex-direction: column;">
-    <div class="main-body-center border-style" style="position: relative;">
+    <div class="main-body-center border-style printable" style="position: relative;">
         <layer-collection v-padding="50" h-padding='60'>
             <axis-layer min-val="self.getLeft()" max-val="self.getRight()" loga="self.getLoga()"
                 n-ticks="self.getMajor() * self.getMinor()" minor-ticks="self.getMinor()" precision="4"

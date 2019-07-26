@@ -14,7 +14,7 @@ var app = angular.module(componentName, [
     'wiApi', 'editable', 
     'wiDialog',
     'wiDroppable', 'wiDropdownList', 'angularResizable',
-    'plot-toolkit', 
+    'plot-toolkit', 'printSettings',
     'wiLoading', 'line-style'
 ]);
 app.component(componentName, component({
