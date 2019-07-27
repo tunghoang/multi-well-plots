@@ -1478,7 +1478,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         //return self.pickettSets[index].name || `[empty]`;
     }
     this.changePickettSetName = function(index, newVal) {
-        setPickettSetName(self.pickettSets[index], index, newVal);
+        self.setPickettSetName(self.pickettSets[index], index, newVal);
         let pickettLines = self.allPickettLines.filter(pickettLine => pickettLine.pickettSetIdx == index);
         pickettLines.forEach(pickettLine => {
             pickettLine.label = `${newVal}, Sw = ${pickettLine.sw}`;
@@ -2161,9 +2161,12 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         self.pickettSets.push({rw: 0.03, m: 2, n: 2, a: 1, color: 'blue'});
     }
     this.turnOnPickettSet = function($index) {
-        if (self.pickettSets[$index]._used) return;
-        self.pickettSets.forEach(pickettSet => pickettSet._used = false);
-        self.pickettSets[$index]._used = true;
+        if (self.pickettSets[$index]._used) {
+            self.pickettSets[$index]._used = false;
+        } else {
+            self.pickettSets.forEach(pickettSet => pickettSet._used = false);
+            self.pickettSets[$index]._used = true;
+        }
         self.updateAllPickettLines();
         if (self.showAdjuster) {
             self.pickettAdjusterArray.length = 0;
@@ -2187,14 +2190,15 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 m: self.getPickettSetM(pickettSet, pickettSetIdx),
                 n: self.getPickettSetN(pickettSet, pickettSetIdx),
                 a: self.getPickettSetA(pickettSet, pickettSetIdx),
-                sw: 1,
+                sw: swValue,
                 swParamIdx: self.swParamList.length - 1,
                 pickettSetIdx,
                 label: `${self.getPickettSetName(pickettSet, pickettSetIdx)}, Sw = ${swValue}`,
                 style: {
                     fill: pickettSet.color
                 },
-                family: 'pickett'
+                family: 'pickett',
+                _used: pickettSet._used
             })
         })
     }

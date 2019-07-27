@@ -18,6 +18,5 @@ function printSettingsCtrl($scope, $timeout, $element) {
     let self = this;
     
     this.$onInit = function () {
-        console.log('printSettings Ctrl');
     }
 }
