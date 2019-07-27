@@ -2106,8 +2106,11 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         [self.config.xLabel, self.config.yLabel] = [self.config.yLabel, self.config.xLabel];
         reverseOverlayLine();
         self.genLayers();
+        self.isSwapAxisPickett = !self.isSwapAxisPickett;
+        self.updateAllPickettLines();
     }
     function reverseOverlayLine() {
+        if (!self.overlayLineSpec) return;
         self.overlayLineSpec.lines.forEach(ovlLine => {
             ovlLine.data.forEach(point => {
                 [point.x, point.y] = [point.y, point.x];
@@ -2198,7 +2201,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     fill: pickettSet.color
                 },
                 family: 'pickett',
-                _used: pickettSet._used
+                _used: pickettSet._used,
+                isSwap: self.isSwapAxisPickett
             })
         })
     }
@@ -2235,7 +2239,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                         fill: pickettSet.color
                     },
                     family: 'pickett',
-                    _used: pickettSet._used
+                    _used: pickettSet._used,
+                    isSwap: self.isSwapAxisPickett
                 }
                 self.allPickettLines.push(pickett);
             });
@@ -2257,6 +2262,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             familyGroupX = familyX.familyGroup;
             familyGroupY = familyY.familyGroup;
         }
+        self.isSwapAxisPickett = true;
+        if (((familyGroupX == 'Porosity' || familyGroupX == 'Void Fraction') && familyGroupY == 'Resistivity')) self.isSwapAxisPickett = false;
         return self.getLogaX() && self.getLogaY()
             && (((familyGroupX == 'Porosity' || familyGroupX == 'Void Fraction') && familyGroupY == 'Resistivity')
                 || (familyGroupX == 'Resistivity' && (familyGroupY == 'Porosity' || familyGroupY == 'Void Fraction')))
@@ -2452,15 +2459,17 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         let stepDen = 20;
         let step = 1/stepDen;
         let hRange = [self.getLeft() == 0 ? 0.01 : self.getLeft(), self.getRight() == 0 ? 0.01 : self.getRight()].map(v => Math.log10(v));
+        let getYFromX = !self.isSwapAxisPickett ? pickettFn : pickettFnY;
+        
         let firstPointX = Math.pow(10 , hRange[0] + (hRange[1] - hRange[0]) * (1/30));
-        let firstPointY = pickettFn(firstPointX);
+        let firstPointY = getYFromX(firstPointX);
         while((firstPointY - self.getBottom()) * (firstPointY - self.getTop()) > 0) {
             firstPointX = firstPointX + (hRange[1] - hRange[0]) * step;
-            firstPointY = pickettFn(firstPointX);
+            firstPointY = getYFromX(firstPointX);
         }
 
         let secondPointX = Math.pow(10 , hRange[1] - (hRange[1] - hRange[0]) * (1/30));
-        let secondPointY = pickettFn(secondPointX);
+        let secondPointY = getYFromX(secondPointX);
         while((secondPointY - self.getBottom()) * (secondPointY - self.getTop()) > 0) {
             secondPointX = secondPointX - (hRange[1] - hRange[0]) * step;
             if ((secondPointX - firstPointX) * (secondPointX - hRange[1]) > 0) {
@@ -2468,7 +2477,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 step = 1/ (stepDen + 10);
                 secondPointX = secondPointX - (hRange[1] - hRange[0]) * step;
             }
-            secondPointY = pickettFn(secondPointX);
+            secondPointY = getYFromX(secondPointX);
         }
         return [{x: firstPointX, y:firstPointY}, {x:secondPointX, y:secondPointY}];
 
@@ -2487,7 +2496,6 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             let m = self.getPickettSetM(pickettSet);
             let a = self.getPickettSetA(pickettSet);
             return Math.pow(10, (Math.log10(y) - (Math.log10((a*rw) / (sw ** n)))) / (-m));
-            return Math.pow(10, (-m) * (Math.log10(x)) + Math.log10((a*rw) / (sw ** n)));
         }
     }
     function updatePickettParams(formula) {
