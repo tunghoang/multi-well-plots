@@ -1,6 +1,3 @@
-<div class="label-option-sidebar" style="padding: 12px 20px;display: flex;background: #f4f4f4;border-bottom: 1px solid #dcdcdc;justify-content: space-between;flex-direction: column;">
-    <div>Print Setting</div>
-</div>
 <div class="label-option-sidebar"
     style="padding: 20px 20px; display: flex; justify-content: space-between;  flex-direction: column;">
     <div style="display: flex;margin-bottom: 16px;">Print Mode
@@ -51,12 +48,7 @@
 <div class="label-option-sidebar"
     ng-if="self.plotCtrl.printMode === 'pdf'"
     style="padding: 20px 20px; display: flex; justify-content: space-between;  flex-direction: column;">
-    <!--<div style="display: flex;margin-bottom: 16px;">Paper Size-->
-        <!--<div-->
-            <!--style="border-bottom: 1px solid #e4e4e4;flex: 1;margin-left: 15px;margin-bottom: 6px;">-->
-        <!--</div>-->
-    <!--</div>-->
-    <div class="selection-sidebar" style="padding: 9px 10px 5px 10px;">
+    <div class="selection-sidebar">
         <span>Paper Size</span>
         <wi-dropdown-list style="flex:1; margin-left: 10px;" items='self.plotCtrl.paperSizeList'
             current-select="self.plotCtrl.paperSize" on-item-changed="self.plotCtrl.onPaperSizeChange">
@@ -65,11 +57,6 @@
 </div>
 <div class="label-option-sidebar"
     style="padding: 20px 20px; display: flex; justify-content: space-between;  flex-direction: column;">
-    <!--<div style="display: flex;margin-bottom: 16px;">Width-->
-        <!--<div-->
-            <!--style="border-bottom: 1px solid #e4e4e4;flex: 1;margin-left: 15px;margin-bottom: 6px;">-->
-        <!--</div>-->
-    <!--</div>-->
     <div class="selection-sidebar" style="padding: 9px 10px 5px 10px;">
         <editable style="flex:1;display:flex;flex-direction:row;overflow:hidden;"
             item-label="'Width(mm)'" item-value="self.plotCtrl.printWidth"
