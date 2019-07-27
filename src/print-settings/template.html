@@ -18,6 +18,7 @@
     </div>
 </div>
 <div class="label-option-sidebar"
+    ng-if="self.plotCtrl.printMode === 'pdf'"
     style="padding: 20px 20px; display: flex; justify-content: space-between;  flex-direction: column;">
     <div style="display: flex;margin-bottom: 16px;">Orientation
         <div
@@ -41,21 +42,20 @@
         </div>
     </div>
     <div>
-        <span ng-class="{'active' : self.plotCtrl.aspectRatio === '4:3'}"
-            style="margin-right: 8px;" ng-click="self.plotCtrl.aspectRatio='4:3'"
-            class="button-with-label">4:3</span>
-        <span ng-class="{'active' : self.plotCtrl.aspectRatio === '16:9'}"
-            ng-click="self.plotCtrl.aspectRatio='16:9'" class="button-with-label"
-            style="margin-right: 8px;">16:9</span>
+        <span ng-class="{'active' : self.plotCtrl.aspectRatio === aspectRatio}"
+            ng-repeat="aspectRatio in self.plotCtrl.aspectRatioList"
+            style="margin-right: 8px;" ng-click="self.plotCtrl.changeAspectRatio(aspectRatio)"
+            class="button-with-label">{{ aspectRatio }}</span>
     </div>
 </div>
 <div class="label-option-sidebar"
+    ng-if="self.plotCtrl.printMode === 'pdf'"
     style="padding: 20px 20px; display: flex; justify-content: space-between;  flex-direction: column;">
-    <div style="display: flex;margin-bottom: 16px;">Paper Size
-        <div
-            style="border-bottom: 1px solid #e4e4e4;flex: 1;margin-left: 15px;margin-bottom: 6px;">
-        </div>
-    </div>
+    <!--<div style="display: flex;margin-bottom: 16px;">Paper Size-->
+        <!--<div-->
+            <!--style="border-bottom: 1px solid #e4e4e4;flex: 1;margin-left: 15px;margin-bottom: 6px;">-->
+        <!--</div>-->
+    <!--</div>-->
     <div class="selection-sidebar" style="padding: 9px 10px 5px 10px;">
         <span>Paper Size</span>
         <wi-dropdown-list style="flex:1; margin-left: 10px;" items='self.plotCtrl.paperSizeList'
@@ -65,15 +65,50 @@
 </div>
 <div class="label-option-sidebar"
     style="padding: 20px 20px; display: flex; justify-content: space-between;  flex-direction: column;">
-    <div style="display: flex;margin-bottom: 16px;">Width
-        <div
-            style="border-bottom: 1px solid #e4e4e4;flex: 1;margin-left: 15px;margin-bottom: 6px;">
-        </div>
-    </div>
+    <!--<div style="display: flex;margin-bottom: 16px;">Width-->
+        <!--<div-->
+            <!--style="border-bottom: 1px solid #e4e4e4;flex: 1;margin-left: 15px;margin-bottom: 6px;">-->
+        <!--</div>-->
+    <!--</div>-->
     <div class="selection-sidebar" style="padding: 9px 10px 5px 10px;">
         <editable style="flex:1;display:flex;flex-direction:row;overflow:hidden;"
             item-label="'Width(mm)'" item-value="self.plotCtrl.printWidth"
             set-value="self.plotCtrl.setPrintWidth" enabled="true" label-style="{}"
+            content-style="{flex:1,float:'none','text-align':'right'}">
+        </editable>
+    </div>
+</div>
+<div class="label-option-sidebar"
+    ng-if="self.plotCtrl.printMode === 'image'"
+    style="padding: 20px 20px; display: flex; justify-content: space-between;  flex-direction: column;">
+    <div style="display: flex;margin-bottom: 16px;">Margin
+        <div
+            style="border-bottom: 1px solid #e4e4e4;flex: 1;margin-left: 15px;margin-bottom: 6px;">
+        </div>
+    </div>
+    <!--<div>-->
+        <!--<div class="switch-label">-->
+            <!--Use Border-->
+            <!--<label class="switch">-->
+                    <!--<input type="checkbox" checked>-->
+                    <!--<span class="slider round" ng-click="self.plotCtrl.border = !self.plotCtrl.border"></span>-->
+            <!--</label>-->
+        <!--</div>-->
+       <!---->
+    <!--</div>-->
+    <!--<div style="margin-bottom: 15px; "></div>-->
+    <div class="selection-sidebar" style="padding: 9px 10px 5px 10px;">
+        <editable style="flex:1;display:flex;flex-direction:row;overflow:hidden;"
+            item-label="'Vertical Margin(mm)'" item-value="self.plotCtrl.verticalMargin"
+            set-value="self.setVerticalMargin" enabled="true" label-style="{}"
+            content-style="{flex:1,float:'none','text-align':'right'}">
+        </editable>
+    </div>
+    <div style="margin-bottom: 15px; "></div>
+    <div class="selection-sidebar" style="padding: 9px 10px 5px 10px;">
+        <editable style="flex:1;display:flex;flex-direction:row;overflow:hidden;"
+            item-label="'Horizontal Margin(mm)'" item-value="self.plotCtrl.horizontalMargin"
+            set-value="self.setHorizontalMargin" enabled="true" label-style="{}"
             content-style="{flex:1,float:'none','text-align':'right'}">
         </editable>
     </div>
@@ -95,39 +130,5 @@
         <!--<span ng-class="{'active' : self.plotCtrl.alignment === 'right'}"-->
             <!--style="margin-right: 8px;" ng-click="self.plotCtrl.alignment='right'"-->
             <!--class="button-with-label">Right</span>-->
-    <!--</div>-->
-<!--</div>-->
-<!--<div class="label-option-sidebar"-->
-    <!--style="padding: 20px 20px; display: flex; justify-content: space-between;  flex-direction: column;">-->
-    <!--<div style="display: flex;margin-bottom: 16px;">Misc-->
-        <!--<div-->
-            <!--style="border-bottom: 1px solid #e4e4e4;flex: 1;margin-left: 15px;margin-bottom: 6px;">-->
-        <!--</div>-->
-    <!--</div>-->
-    <!--<div>-->
-        <!--<div class="switch-label">-->
-            <!--Use Border-->
-            <!--<label class="switch">-->
-                    <!--<input type="checkbox" checked>-->
-                    <!--<span class="slider round" ng-click="self.plotCtrl.border = !self.plotCtrl.border"></span>-->
-            <!--</label>-->
-        <!--</div>-->
-       <!---->
-    <!--</div>-->
-    <!--<div style="margin-bottom: 15px; "></div>-->
-    <!--<div class="selection-sidebar" style="padding: 9px 10px 5px 10px;">-->
-        <!--<editable style="flex:1;display:flex;flex-direction:row;overflow:hidden;"-->
-            <!--item-label="'Vertical Margin(mm)'" item-value="self.plotCtrl.vMargin"-->
-            <!--set-value="self.setVMarginPrintSettings" enabled="true" label-style="{}"-->
-            <!--content-style="{flex:1,float:'none','text-align':'right'}">-->
-        <!--</editable>-->
-    <!--</div>-->
-    <!--<div style="margin-bottom: 15px; "></div>-->
-    <!--<div class="selection-sidebar" style="padding: 9px 10px 5px 10px;">-->
-        <!--<editable style="flex:1;display:flex;flex-direction:row;overflow:hidden;"-->
-            <!--item-label="'Horizontal Margin(mm)'" item-value="self.plotCtrl.hMargin"-->
-            <!--set-value="self.setHMarginPrintSettings" enabled="true" label-style="{}"-->
-            <!--content-style="{flex:1,float:'none','text-align':'right'}">-->
-        <!--</editable>-->
     <!--</div>-->
 <!--</div>-->

@@ -73,7 +73,7 @@ app.component(componentName, component({
 
 function multiWellCrossplotController($scope, $timeout, $element, $compile, wiToken, wiApi, wiDialog, wiLoading) {
     let self = this;
-    PrintableController.call(this, $scope, $element, $timeout, $compile, wiApi);
+    PrintableController.call(this, $scope, $element, $timeout, $compile, wiApi, wiLoading);
     self.treeConfig = [];
     self.silent = true;
     self.selectedNode = null;
