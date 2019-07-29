@@ -20,7 +20,7 @@
     </div>
 </wi-droppable>
 <div ng-show="tabIndex === $index" class="main" ng-repeat="sV in self.selectionValues track by $index">
-    <multi-well-histogram well-spec="self.wellSpecs" zoneset-name="self.zonesetNames[$index]"
+    <multi-well-histogram well-spec="self.wellSpecs[$index]" zoneset-name="self.zonesetNames[$index]"
         selection-type="self.selectionTypes[$index]" selection-value="self.selectionValues[$index]"
         ctrl-params="self.ctrlParamsList[$index]" zone-set-ctrl-lines="self.zoneSetCtrlLines"
         config="self.configs[$index]" silent="self.silent" prefix='self.prefixs[$index]'
