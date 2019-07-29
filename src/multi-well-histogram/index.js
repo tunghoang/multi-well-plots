@@ -714,7 +714,8 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     for (let bins of allHistogramList) {
                         let maybeMax = d3.max(bins.map(b => b.length));
                         max = (max > maybeMax) ? max : maybeMax;
-                        maxPercentage = max / _.sum(bins.map(b => b.length));
+                        maybeMaxPercentage = maybeMax / _.sum(bins.map(b => b.length));
+                        maxPercentage = (maxPercentage > maybeMaxPercentage) ? maxPercentage : maybeMaxPercentage;
                     }
                     flatten = allHistogramList;
                     break;
@@ -724,7 +725,8 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                             let aggregate = aggregateHistogramList(groupOfBins);
                             let maybeMax = d3.max(aggregate);
                             max = (max > maybeMax) ? max : maybeMax;
-                            maxPercentage = max / _.sum(aggregate);
+                            maybeMaxPercentage = maybeMax / _.sum(aggregate);
+                            maxPercentage = (maxPercentage > maybeMaxPercentage) ? maxPercentage : maybeMaxPercentage;
                             flatten = flatten.concat(groupOfBins);
                         }
                     }
@@ -742,7 +744,8 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                             let aggregate = aggregateHistogramList(groupOfBins);
                             let maybeMax = d3.max(aggregate);
                             max = (max > maybeMax) ? max : maybeMax;
-                            maxPercentage = max / _.sum(aggregate);
+                            maybeMaxPercentage = maybeMax / _.sum(aggregate);
+                            maxPercentage = (maxPercentage > maybeMaxPercentage) ? maxPercentage : maybeMaxPercentage;
                         }
                         allHistogramList = zoneBinsList;
                         flatten = zoneBinsList;
@@ -752,7 +755,8 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     {
                         let aggregate = aggregateHistogramList(allHistogramList);
                         max = d3.max(aggregate);
-                        maxPercentage = d3.max(aggregate) / _.sum(aggregate);
+                        maybeMaxPercentage = maybeMax / _.sum(aggregate);
+                        maxPercentage = (maxPercentage > maybeMaxPercentage) ? maxPercentage : maybeMaxPercentage;
                         flatten = allHistogramList;
                         let stats = setStats(allDataArray.map(d => d.x));
                         stats.top = d3.min(allZones, z => z.startDepth);
@@ -886,6 +890,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         }
         return getCorrectValue(getCorrectValue(self.config.right, self.defaultConfig.right), 0) ;
     } 
+    this.getMaxY = () => {
+        return self.getHistogramMode() === 'percentage' ? self.maxPercentage : self.maxY;
+    }
     this.getLoga = () => (self.config.loga === undefined? self.defaultConfig.loga : self.config.loga)
     this.getMajor = () => ( isNaN(self.config.major) ? (self.defaultConfig.major || 5) : self.config.major)
     this.getMinor = () => ( isNaN(self.config.minor) ? (self.defaultConfig.minor || 1) : self.config.minor)

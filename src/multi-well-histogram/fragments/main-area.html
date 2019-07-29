@@ -24,27 +24,27 @@
                 precision="2" grid="!!self.config.grid" axis-direction="'up'" placement="0"></axis-layer>
             <axis-layer min-val="0" max-val="100" n-ticks="10" minor-ticks="1" precision="4"
                 grid="false" axis-direction="'up'" placement="1"></axis-layer>
-            <canvas-barchart-layer ng-show="!bins._notUsed"
+            <canvas-barchart-layer ng-show="!bins._notUsed" plot-type="self.getHistogramMode()"
                 ng-if="self.getDisplayMode() == 'bar' && self.getStackMode() == 'none'"
                 ng-repeat="bins in self.histogramList" min-val="self.getLeft()" max-val="self.getRight()"
-                min-y='self.minY || 0' max-y='self.maxY || 100' loga="self.getLoga()" autofit='false'
+                min-y='self.minY || 0' max-y='self.getMaxY() || 100' loga="self.getLoga()" autofit='false'
                 bins="bins" bin-gap="self.getBinGap()" color-func="self.colorFn">
             </canvas-barchart-layer>
-            <canvas-barchart-layer ng-show="!groupOfBins._notUsed" ng-if="self.getDisplayMode() == 'bar' && 
+            <canvas-barchart-layer ng-show="!groupOfBins._notUsed" plot-type="self.getHistogramMode()" ng-if="self.getDisplayMode() == 'bar' && 
                 self.getStackMode() == 'well'" ng-repeat="groupOfBins in self.histogramList"
                 min-val="self.getLeft()" max-val="self.getRight()" min-y='self.minY || 0'
-                max-y='self.maxY || 100' loga="self.getLoga()" autofit='false' bins="groupOfBins"
+                max-y='self.getMaxY() || 100' loga="self.getLoga()" autofit='false' bins="groupOfBins"
                 bin-gap="self.getBinGap()" color-func="self.colorFn" multiple='true'>
             </canvas-barchart-layer>
-            <canvas-barchart-layer ng-show="!groupOfBins._notUsed" ng-if="self.getDisplayMode() == 'bar' && 
+            <canvas-barchart-layer ng-show="!groupOfBins._notUsed" plot-type="self.getHistogramMode()" ng-if="self.getDisplayMode() == 'bar' && 
                 self.getStackMode() == 'zone'" ng-repeat="groupOfBins in self.histogramList"
                 min-val="self.getLeft()" max-val="self.getRight()" min-y='self.minY || 0'
-                max-y='self.maxY || 100' loga="self.getLoga()" autofit='false' bins="groupOfBins"
+                max-y='self.getMaxY() || 100' loga="self.getLoga()" autofit='false' bins="groupOfBins"
                 bin-gap="self.getBinGap()" color-func="self.colorFn" multiple='true'>
             </canvas-barchart-layer>
-            <canvas-barchart-layer ng-show="!bins._notUsed" ng-if="self.getDisplayMode() == 'bar' && 
+            <canvas-barchart-layer ng-show="!bins._notUsed" plot-type="self.getHistogramMode()" ng-if="self.getDisplayMode() == 'bar' && 
                 self.getStackMode() == 'all'" min-val="self.getLeft()" max-val="self.getRight()"
-                min-y='self.minY || 0' max-y='self.maxY || 100' loga="self.getLoga()" autofit='false'
+                min-y='self.minY || 0' max-y='self.getMaxY() || 100' loga="self.getLoga()" autofit='false'
                 bins="bins" bin-gap="self.getBinGap()" color-func="self.colorFn" multiple='true'
                 ng-repeat="bins in self.histogramList">
             </canvas-barchart-layer>
