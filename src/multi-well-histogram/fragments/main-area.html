@@ -16,8 +16,12 @@
                 grid="!!self.config.grid" placement="1"
                 get-min-val="self.getLeft" get-max-val="self.getRight">
             </axis-layer>
-            <axis-layer min-val='self.minY || 0' max-val='self.maxY || 100' n-ticks="10" minor-ticks="1"
+            <axis-layer ng-if="self.getHistogramMode() === 'frequency'"
+                min-val='self.minY || 0' max-val='self.maxY || 100' n-ticks="10" minor-ticks="1"
                 precision="4" grid="!!self.config.grid" axis-direction="'up'" placement="0"></axis-layer>
+            <axis-layer ng-if="self.getHistogramMode() === 'percentile'"
+                min-val='0' max-val='self.maxPercentile || 100' n-ticks="10" minor-ticks="1"
+                precision="2" grid="!!self.config.grid" axis-direction="'up'" placement="0"></axis-layer>
             <axis-layer min-val="0" max-val="100" n-ticks="10" minor-ticks="1" precision="4"
                 grid="false" axis-direction="'up'" placement="1"></axis-layer>
             <canvas-barchart-layer ng-show="!bins._notUsed"
@@ -98,7 +102,10 @@
         <p
             style="position: absolute; top: 23px; right: 45%;text-transform: uppercase; font-weight: bold; transform: translateY(-50%);">
             {{self.getConfigTitle()}}</p>
-        <p style="position: absolute; font-weight: bold;top: 23px;left: 15px; transform: translateY(-50%);">Frequency</p>
+        <p style="position: absolute; font-weight: bold;top: 23px;left: 15px; transform: translateY(-50%);"
+            ng-if="self.getHistogramMode() === 'frequency'">Frequency</p>
+        <p style="position: absolute; font-weight: bold;top: 23px;left: 15px; transform: translateY(-50%);"
+            ng-if="self.getHistogramMode() === 'percentile'">Percentile (%)</p>
         <p style="position: absolute; font-weight: bold;top: 23px; right: 15px;transform: translateY(-50%);">Percentage (%)</p>
     </div>
     <div class="statistic-table" resizable r-directions="['top']" r-flex="true">
