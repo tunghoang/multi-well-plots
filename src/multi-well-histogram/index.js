@@ -110,7 +110,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         self.cpMarkerStyle = self.cpMarkerStyle || function (marker, idx) { return  {stroke:marker.color,'stroke-width':'2', fill:'none'} }
         self.cpMarkerName = self.cpMarkerName || function(marker, idx) { return  marker.name; }
         self.ctrlParams = self.ctrlParams || [];
-        self.notCPBackground = self.ctrlParams.length ? false : true;
+        let zoneInfoList = self.ctrlParams.map(ctrlParam => ctrlParam.zoneInfo);
+        wiApi.indexZonesForCorrelation(zoneInfoList);
+        self.notCPBackground = self.notCPBackground != undefined ? self.notCPBackground : true;
         self.ctrlParamsMask = self.ctrlParams.map(c => true);
         self.cpIcon = self.cpIcon || function(node) {
             let idx = self.ctrlParams.indexOf(node);
@@ -378,7 +380,12 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     }
     this.onZonesetSelectionChanged = function(selectedItemProps) {
         self.isSettingChange = true;
-        wiApi.indexZonesForCorrelation((selectedItemProps || {}).zones)
+        let zones = (selectedItemProps || {}).zones;
+        if (zones && zones.length) {
+            wiApi.indexZonesForCorrelation(zones.sort((a, b) => {
+                return a.startDepth - b.startDepth;
+            }))
+        }
         self.zoneTree = (selectedItemProps || {}).zones;
         if (!self.zoneTree || !self.zoneTree.length) return;
         self.zoneTreeUniq = _.uniqBy(self.zoneTree.map(zone => ({name: zone.zone_template.name})), zone => {
@@ -423,7 +430,18 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
 
     this.click2ToggleLayer = function ($event, node, selectedObjs) {
         node._notUsed = !node._notUsed;
+        toggleCtrlParams(node);
         self.selectedLayers = selectedObjs.map(obj => obj.data);
+    }
+    function toggleCtrlParams(layer) {
+        if (self.ctrlParams && self.ctrlParams.length) {
+            self.ctrlParams.forEach((ctrlParam, idx) => {
+                let zoneInfo = ctrlParam.zoneInfo;
+                if (layer.name.includes(`${ctrlParam.wellName}.${zoneInfo.zone_template.name.replace('All', 'ZonationAll')}:${zoneInfo._idx}`)) {
+                    self.ctrlParamsMask[idx] = !layer._notUsed;
+                }
+            })
+        }
     }
     this.click2ToggleCumulative = function ($event, node, selectedObjs) {
         node._useCmlt = !node._useCmlt;
@@ -638,7 +656,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                         return z1.zone_template.name === zone.zone_template.name
                     });
                     return !z._notUsed;
-                });
+                }).sort((a, b) => a.startDepth - b.startDepth);
                 wiApi.indexZonesForCorrelation(zones);
 
                 if (self.getStackMode() === 'all') {
@@ -1117,19 +1135,31 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     }
     this.hideSelectedLayer = function() {
         if(!self.selectedLayers) return;
-        self.selectedLayers.forEach(layer => layer._notUsed = true);
+        self.selectedLayers.forEach(layer => {
+            layer._notUsed = true;
+            toggleCtrlParams(layer);
+        });
     }
     this.showSelectedLayer = function() {
         if(!self.selectedLayers) return;
-        self.selectedLayers.forEach(layer => layer._notUsed = false);
+        self.selectedLayers.forEach(layer => {
+            layer._notUsed = false;
+            toggleCtrlParams(layer);
+        });
         $timeout(() => {});
     }
     this.hideAllLayer = function() {
-        self.histogramList.forEach(bins => bins._notUsed = true);
+        self.histogramList.forEach(bins => {
+            bins._notUsed = true;
+            toggleCtrlParams(bins);
+        });
         $timeout(() => {});
     }
     this.showAllLayer = function() {
-        self.histogramList.forEach(bins => bins._notUsed = false);
+        self.histogramList.forEach(bins => {
+            bins._notUsed = false;
+            toggleCtrlParams(bins);
+        });
         $timeout(() => {});
     }
     this.hideAllCtrlParams = function() {
