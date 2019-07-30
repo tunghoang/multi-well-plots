@@ -270,6 +270,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     async function getTree(wellSpec, callback) {
         let wellIdx = self.treeConfig.findIndex(wellTree => wellTree.idWell === wellSpec.idWell && wellTree._idx === wellSpec._idx);
         let well = await wiApi.getCachedWellPromise(wellSpec.idWell);
+        wellSpec.name = well.name;
         well = Object.assign({}, well);
         well._idx = wellSpec._idx;
         $timeout(() => {
@@ -283,16 +284,21 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         for (let w of self.wellSpec) {
             try {
                 let well = await wiApi.getCachedWellPromise(w.idWell || w);
+                w.name = well.name;
                 well = Object.assign({}, well);
                 well._idx = w._idx;
                 self.treeConfig.push(well);
             }
             catch(e) {
+                w.notFound = true;
+                let msg = `Well ${w.name} not found`;
+                if (__toastr) __toastr.error(msg);
                 console.error(e);
             }
         }
+        self.wellSpec = self.wellSpec.filter(wellspec => !wellspec.notFound);
+        self.save();
         if (!$scope.$root.$$phase) $scope.$digest();
-
         callback && callback();
         wiLoading.hide();
     }
@@ -1246,7 +1252,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                                 let _idx = _.max(self.wellSpec.filter(ws => ws.idWell === idWell).map(ws => ws._idx));
                                 _idx = (_idx >= 0 ? _idx : -1) + 1;
                                 self.wellSpec.push({idWell, _idx});
-                                let wellTree = getTree({idWell, _idx});
+                                let wellTree = getTree(self.wellSpec[self.wellSpec.length - 1]);
                                 let curve = getCurve({...well, _idx});
                                 if (!curve) {
                                     let msg = `Well ${well.name} does not meet requirement`;
