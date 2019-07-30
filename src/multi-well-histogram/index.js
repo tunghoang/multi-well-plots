@@ -297,7 +297,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             }
         }
         self.wellSpec = self.wellSpec.filter(wellspec => !wellspec.notFound);
-        self.save();
+        if (self.idHistogram) {
+            self.save();
+        }
         if (!$scope.$root.$$phase) $scope.$digest();
         callback && callback();
         wiLoading.hide();

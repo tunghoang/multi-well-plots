@@ -553,7 +553,9 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             }
         }
         self.wellSpec = self.wellSpec.filter(wellspec => !wellspec.notFound);
-        self.saveToAsset();
+        if (self.idCrossplot) {
+            self.saveToAsset();
+        }
         if (!$scope.$root.$$phase) $scope.$digest();
         callback && callback();
         wiLoading.hide();
