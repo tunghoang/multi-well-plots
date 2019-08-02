@@ -66,7 +66,8 @@ app.component(componentName, component({
         getPickettSetName: "<",
         setPickettSetName: "<",
         getPickettSetColor: '<',
-        overlayLine: "<"
+        overlayLine: "<",
+        showPickettSetAt: "<"
     },
     transclude: true
 }));
@@ -122,6 +123,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         self.pickettSets.forEach(pickettSet => {
             pickettSet._used = false;
         })
+        if (self.showPickettSetAt !== undefined) self.pickettSets[self.showPickettSetAt]._used = true;
+        self.pickettSets[0]._notHidden = true;
         self.swParamList = self.swParamList || [{sw: 1}, {sw: 0.5}, {sw: 0.3}, {sw: 0.2}];
         self.pointSize = self.pointSize || 10;
         self.isSettingChange = true;
@@ -2179,12 +2182,6 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             self.pickettSets[$index]._used = true;
         }
         self.updateAllPickettLines();
-        if (self.showAdjuster) {
-            self.pickettAdjusterArray.length = 0;
-            self.pickettSets.forEach((pickettSet, pickettSetIdx) => {
-                self.pickettAdjusterArray.push(initPickettControlPoints(pickettSet));
-            })
-        }
     }
     this.addSwParam = function() {
         if (self.swParamList.length >= _PICKETT_LIMIT) {
@@ -2253,6 +2250,12 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 self.allPickettLines.push(pickett);
             });
         })
+        if (self.showAdjuster) {
+            self.pickettAdjusterArray.length = 0;
+            self.pickettSets.forEach((pickettSet, pickettSetIdx) => {
+                self.pickettAdjusterArray.push(initPickettControlPoints(pickettSet));
+            })
+        }
     }
     this.conditionForPickettPlot = conditionForPickettPlot;
     function conditionForPickettPlot() {
