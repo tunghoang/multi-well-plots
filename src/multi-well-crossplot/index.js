@@ -2064,12 +2064,12 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 y = y.concat(layer.dataY);
             }
         }
-        x = x.map(xi => {
+        let yPredict = x.map(xi => {
             return self.regLine.predict(xi)[1];
         });
         self.mse = {
             family: 'mse',
-            mse: self.calcMSE(y, x).toFixed(6)
+            mse: self.calcMSE(y, yPredict).toFixed(6)
         }
     }
     this.click2ToggleRegression = function ($event, node, selectedObjs) {
@@ -2433,30 +2433,38 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     }
 
     this.onChangePal = function (palProps) {
+        if (!palProps) return;
         self.isSettingChange = true;
+        self.config.currentPalName = palProps.name;
         self.palProps = palProps;
     }
     this.onPalsDropdownInit = function(wiDropdownCtrl) {
         self.wiDropdownCtrl = wiDropdownCtrl;
         let palTable = wiApi.getPalettes();
-        wiDropdownCtrl.items = Object.keys(palTable).map(palName => ({
-            data: {
+        wiDropdownCtrl.items = Object.keys(palTable).map(palName => {
+            let data = {
                 label: palName
-            },
-            properties: {
+            };
+            let properties = {
                 name: palName,
                 palette: palTable[palName]
+            };
+            let toReturn = {data, properties};
+            if (self.config.currentPalName && palName === self.config.currentPalName)  {
+                wiDropdownCtrl.selectedItem = toReturn;
+                self.palProps = properties;
             }
-        }));
-        wiDropdownCtrl.items.unshift({
-            data: {
-                name: "[No Palette]"
-            },
-            properties: {
-                name: '[No Palette]',
-                palette: null
-            }
-        })
+            return toReturn;
+        });
+        //wiDropdownCtrl.items.unshift({
+            //data: {
+                //name: "[No Palette]"
+            //},
+            //properties: {
+                //name: '[No Palette]',
+                //palette: null
+            //}
+        //})
     }
     this.validPlotRegion = function() {
         let result = (self.getTop() - self.getBottom()) * (self.getRight() - self.getLeft());
