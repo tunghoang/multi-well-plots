@@ -2527,6 +2527,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         self.updateAllPickettLinesDebounce();
     }
     function calcPickettParamM(slope, intercept, pickettSet) {
+        if (self.isSwapAxisPickett) return -1 / slope;
         return -slope;
     }
     function calcPickettParamRw(slope, intercept, pickettSet) {
@@ -2534,7 +2535,11 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         // 10 ^ intercept = a*Rw/(Sw^n)
         // Rw = (10 ^ intercept) * (sw^n) / a
         let sw = 1;
-        return (Math.pow(10, intercept) * Math.pow(sw, self.getPickettSetN(pickettSet)) / self.getPickettSetA(pickettSet));
+        let m = self.getPickettSetM(pickettSet);
+        let n = self.getPickettSetN(pickettSet);
+        let a = self.getPickettSetA(pickettSet);
+        if (self.isSwapAxisPickett) return (Math.pow(10, m * intercept) * Math.pow(sw, n) / a);
+        return (Math.pow(10, intercept) * Math.pow(sw, n) / a);
     }
     const pickettUpdateFnArray = [];
     this.getUpdatePickettParamsFn = function(pickettIdx) {
