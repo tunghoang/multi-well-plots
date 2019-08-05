@@ -274,6 +274,16 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             $scope.$watch('tab', () => {
                 onTabChange();
             })
+            $scope.$watch(() => {
+                return self.pickettSets.map(pickettSet => `
+                    ${self.getPickettSetRw(pickettSet)}-
+                    ${self.getPickettSetM(pickettSet)}-
+                    ${self.getPickettSetN(pickettSet)}-
+                    ${self.getPickettSetA(pickettSet)}
+                    `).join('');
+            }, () => {
+                updatePickettAdjusterArray();
+            })
 
             getTrees();
         }, 700);
@@ -2172,7 +2182,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         return self.getPickettSetColor(self.pickettSets[pickett.pickettSetIdx], pickett.pickettSetIdx);
     }
     this.addPickettSet = function() {
-        self.pickettSets.push({rw: 0.03, m: 2, n: 2, a: 1, color: 'blue'});
+        self.pickettSets.push({color: 'blue'});
     }
     this.turnOnPickettSet = function($index) {
         if (self.pickettSets[$index]._used) {
@@ -2250,6 +2260,9 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 self.allPickettLines.push(pickett);
             });
         })
+        updatePickettAdjusterArray();
+    }
+    function updatePickettAdjusterArray() {
         if (self.showAdjuster) {
             self.pickettAdjusterArray.length = 0;
             self.pickettSets.forEach((pickettSet, pickettSetIdx) => {
