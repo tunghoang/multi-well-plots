@@ -194,6 +194,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             point.params[1].value = value;
         }
         self.paramGroups = self.paramGroups || [];
+        let zoneInfoList = self.paramGroups.map(paramGroup => paramGroup.properties);
+        wiApi.indexZonesForCorrelation(zoneInfoList);
 
         self.getPickettSetRw = self.getPickettSetRw || function(pickettSet, index) {
             return pickettSet.rw || '[empty]';
@@ -1687,6 +1689,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             if (self.getColorMode() == 'zone') {
                 for (let j = 0; j < zones.length; j++) {
                     let zone = zones[j];
+                    if (self.paramGroups && self.paramGroups.length && !isParamGroupsIncludeZone(zone)) continue;
                     let dataArray = filterData(pointset, zone);
                     let layer = {
                         dataX: dataArray.map(d => d.x),
@@ -1747,6 +1750,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 }
                 for (let j = 0; j < zones.length; j++) {
                     let zone = zones[j];
+                    if (self.paramGroups && self.paramGroups.length && !isParamGroupsIncludeZone(zone)) continue;
                     if (zone._notUsed) continue;
                     let dataArray = filterData(pointset, zone);
                     layer.dataX = layer.dataX.concat(dataArray.map(d => d.x));
@@ -1782,6 +1786,13 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         self.layers = layers;
         self._notUsedLayer = _notUsedLayer;
         wiLoading.hide();
+    }
+    function isParamGroupsIncludeZone(zone) {
+        let toReturn = self.paramGroups.some(paramGroup => {
+            let properties = paramGroup.properties;
+            return zone.zone_template.name === properties.zone_template.name && zone._idx === properties._idx;
+        })
+        return toReturn; 
     }
     function getPointSet(xData, yData, z1Data, z2Data, z3Data) {
         let pointset = [];
@@ -1944,19 +1955,31 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     }
     this.hideSelectedLayer = function() {
         if(!self.selectedLayers) return;                                        
-        self.selectedLayers.forEach(layer => layer._notUsed = true);
+        self.selectedLayers.forEach(layer => {
+            layer._notUsed = true;
+            toggleParamGroup(layer);
+        });
     }                                                                           
     this.showSelectedLayer = function() {                                       
         if(!self.selectedLayers) return;                                        
-        self.selectedLayers.forEach(layer => layer._notUsed = false);           
+        self.selectedLayers.forEach(layer => {
+            layer._notUsed = false;
+            toggleParamGroup(layer);
+        });           
         $timeout(() => {});
     }                                                                           
     this.hideAllLayer = function() {                                            
-        self.layers.forEach(layer => layer._notUsed = true);               
+        self.layers.forEach(layer => {
+            layer._notUsed = true;
+            toggleParamGroup(layer);
+        });               
         $timeout(() => {});
     }                                                                           
     this.showAllLayer = function() {                                            
-        self.layers.forEach(layer => layer._notUsed = false);              
+        self.layers.forEach(layer => {
+            layer._notUsed = false;
+            toggleParamGroup(layer);
+        });
         $timeout(() => {});                                                     
     }
     this.getFilterForLayer = () => {
@@ -1984,7 +2007,20 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     })
     this.click2ToggleLayer = function ($event, node, selectedObjs) {
         node._notUsed = !node._notUsed;
+        toggleParamGroup(node);
         self.selectedLayers = Object.values(selectedObjs).map(o => o.data);
+    }
+    function toggleParamGroup(layer) {
+        if (self.paramGroups && self.paramGroups.length) {
+            for (let i = 0; i < self.paramGroups.length; i++) {
+                let paramGroup = self.paramGroups[i];
+                let properties = paramGroup.properties;
+                if (layer.name.includes(`${properties.zone_template.name}:${properties._idx}`)) {
+                    paramGroup._notShow = layer._notUsed;
+                    break;
+                }
+            }
+        }
     }
 
     // ---REGRESSION---
