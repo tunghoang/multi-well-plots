@@ -116,7 +116,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             let ctrlParamsGroup = _.groupBy(ctrlParamGroupByWell, ctrlParam => ctrlParam.$ref);
             for (let ctrlParams in ctrlParamsGroup) {
                 let zoneInfoList = ctrlParamsGroup[ctrlParams].map(ctrlParam => ctrlParam.zoneInfo);
-                wiApi.indexZonesForCorrelation(zoneInfoList);
+                zoneInfoList.forEach((zoneInfo, idx) => {
+                    zoneInfo._idx = idx;
+                })
             }
         }
         self.notCPBackground = self.notCPBackground != undefined ? self.notCPBackground : true;
@@ -452,7 +454,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         if (self.ctrlParams && self.ctrlParams.length) {
             self.ctrlParams.forEach((ctrlParam, idx) => {
                 let zoneInfo = ctrlParam.zoneInfo;
-                if (layer.name.includes(`${ctrlParam.wellName}.${zoneInfo.zone_template.name.replace('All', 'ZonationAll')}:${zoneInfo._idx}`)) {
+                if (layer.name.includes(`${ctrlParam.wellName}.${zoneInfo.zone_template.name.replace('All', 'ZonationAll')}(${zoneInfo._idx})`)) {
                     self.ctrlParamsMask[idx] = !layer._notUsed;
                 }
             })
@@ -679,8 +681,10 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 }
                 let wellHistogramList = [];
                 let wellDataArray = [];
+                let layerIdx = 0;
                 for (let j = 0; j < zones.length; j++) {
                     let zone = zones[j];
+                    if (self.ctrlParams && self.ctrlParams.length && !isCtrlParamsIncludeZone(zone, layerIdx)) continue;
                     let dataArray = filterData(curveData, zone);
                     dataArray.top = zone.startDepth;
                     dataArray.bottom = zone.endDepth;
@@ -691,7 +695,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     }
                     let bins = genBins(dataArray);
                     bins.color = self.getColor(zone, well);
-                    bins.name = `${well.name}.${zone.zone_template.name}:${zone._idx}`;
+                    bins.name = `${well.name}.${zone.zone_template.name}(${layerIdx})`;
 
                     bins.stats = {};
                     switch (self.getStackMode()) {
@@ -713,7 +717,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                         if (!zoneExisted) {
                             zoneBinsList.push([]);
                             zoneExisted = zoneBinsList[zoneBinsList.length - 1];
-                            zoneExisted.name = `${zone.zone_template.name}:${zone._idx}`;
+                            zoneExisted.name = `${zone.zone_template.name}(${layerIdx})`;
                             if (self.getColorMode() === 'zone') {
                                 zoneExisted.color = self.getColor(zone, well);
                             } else {
@@ -725,6 +729,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                         zoneExisted.push(bins);
                     }
                     wellHistogramList.push(bins);
+                    layerIdx++;
                 }
                 if (self.getStackMode() === 'well') {
                     let stats = setStats(wellDataArray.map(d => d.x));
@@ -818,6 +823,13 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             console.error(e);
         }
         wiLoading.hide();
+    }
+    function isCtrlParamsIncludeZone(zone, layerIdx) {
+        let toReturn = self.ctrlParams.some((ctrlParam, ctrlParamIdx) => {
+            let zoneInfo = ctrlParam.zoneInfo;
+            return zone.zone_template.name === zoneInfo.zone_template.name && layerIdx === zoneInfo._idx;
+        })
+        return toReturn; 
     }
     function setStats(dataArray) {
         let stats = {};
