@@ -110,8 +110,15 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         self.cpMarkerStyle = self.cpMarkerStyle || function (marker, idx) { return  {stroke:marker.color,'stroke-width':'2', fill:'none'} }
         self.cpMarkerName = self.cpMarkerName || function(marker, idx) { return  marker.name; }
         self.ctrlParams = self.ctrlParams || [];
-        let zoneInfoList = self.ctrlParams.map(ctrlParam => ctrlParam.zoneInfo);
-        wiApi.indexZonesForCorrelation(zoneInfoList);
+        let ctrlParamsGroupByWell = _.groupBy(self.ctrlParams, ctrlParam => ctrlParam.wellName);
+        for (let ctrlParamsGroupByWellKey in ctrlParamsGroupByWell) {
+            let ctrlParamGroupByWell = ctrlParamsGroupByWell[ctrlParamsGroupByWellKey];
+            let ctrlParamsGroup = _.groupBy(ctrlParamGroupByWell, ctrlParam => ctrlParam.$ref);
+            for (let ctrlParams in ctrlParamsGroup) {
+                let zoneInfoList = ctrlParamsGroup[ctrlParams].map(ctrlParam => ctrlParam.zoneInfo);
+                wiApi.indexZonesForCorrelation(zoneInfoList);
+            }
+        }
         self.notCPBackground = self.notCPBackground != undefined ? self.notCPBackground : true;
         self.ctrlParamsMask = self.ctrlParams.map(c => true);
         self.cpIcon = self.cpIcon || function(node) {
@@ -946,6 +953,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
 
     this.colorFn = function(bin, bins) {
         if (self.getStackMode() === 'none');
+        if (!bins) return;
         return bins.color;
     }
 
