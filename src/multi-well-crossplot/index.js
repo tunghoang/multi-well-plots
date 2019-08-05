@@ -2017,7 +2017,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             for (let i = 0; i < self.paramGroups.length; i++) {
                 let paramGroup = self.paramGroups[i];
                 let properties = paramGroup.properties;
-                if (layer.name.includes(`${properties.zone_template.name}(${i})`)) {
+                if (layer.name.includes(`${properties.zone_template.name.replace('All', 'ZonationAll')}(${i})`)) {
                     paramGroup._notShow = layer._notUsed;
                     break;
                 }

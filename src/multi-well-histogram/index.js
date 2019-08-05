@@ -447,15 +447,17 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
 
     this.click2ToggleLayer = function ($event, node, selectedObjs) {
         node._notUsed = !node._notUsed;
-        toggleCtrlParams(node);
+        toggleCtrlParams(node, 'layer');
         self.selectedLayers = selectedObjs.map(obj => obj.data);
     }
-    function toggleCtrlParams(layer) {
+    function toggleCtrlParams(node, type) {
         if (self.ctrlParams && self.ctrlParams.length) {
             self.ctrlParams.forEach((ctrlParam, idx) => {
                 let zoneInfo = ctrlParam.zoneInfo;
-                if (layer.name.includes(`${ctrlParam.wellName}.${zoneInfo.zone_template.name.replace('All', 'ZonationAll')}(${zoneInfo._idx})`)) {
-                    self.ctrlParamsMask[idx] = !layer._notUsed;
+                if (type === 'layer' && node.name.includes(`${ctrlParam.wellName}.${zoneInfo.zone_template.name.replace('All', 'ZonationAll')}(${zoneInfo._idx})`)) {
+                    self.ctrlParamsMask[idx] = !node._notUsed;
+                } else if (type === 'well' && node.name.includes(`${ctrlParam.wellName}`)) {
+                    self.ctrlParamsMask[idx] = !node._notUsed;
                 }
             })
         }
@@ -827,7 +829,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     function isCtrlParamsIncludeZone(zone, layerIdx) {
         let toReturn = self.ctrlParams.some((ctrlParam, ctrlParamIdx) => {
             let zoneInfo = ctrlParam.zoneInfo;
-            return zone.zone_template.name === zoneInfo.zone_template.name && layerIdx === zoneInfo._idx;
+            return zone.zone_template.name === zoneInfo.zone_template.name.replace('All', 'ZonationAll') && layerIdx === zoneInfo._idx;
         })
         return toReturn; 
     }
@@ -1165,28 +1167,28 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         if(!self.selectedLayers) return;
         self.selectedLayers.forEach(layer => {
             layer._notUsed = true;
-            toggleCtrlParams(layer);
+            toggleCtrlParams(layer, 'layer');
         });
     }
     this.showSelectedLayer = function() {
         if(!self.selectedLayers) return;
         self.selectedLayers.forEach(layer => {
             layer._notUsed = false;
-            toggleCtrlParams(layer);
+            toggleCtrlParams(layer, 'layer');
         });
         $timeout(() => {});
     }
     this.hideAllLayer = function() {
         self.histogramList.forEach(bins => {
             bins._notUsed = true;
-            toggleCtrlParams(bins);
+            toggleCtrlParams(bins, 'layer');
         });
         $timeout(() => {});
     }
     this.showAllLayer = function() {
         self.histogramList.forEach(bins => {
             bins._notUsed = false;
-            toggleCtrlParams(bins);
+            toggleCtrlParams(bins, 'layer');
         });
         $timeout(() => {});
     }
@@ -1303,6 +1305,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     this.toggleWell = function(well) {
         self.isSettingChange = true;
         well._notUsed = !well._notUsed;
+        toggleCtrlParams(well, 'well');
     }
     this.removeWell = function(well) {
         let index = self.wellSpec.findIndex(wsp => wsp.idWell === well.idWell && wsp._idx === well._idx);
