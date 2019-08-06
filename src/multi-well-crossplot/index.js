@@ -2069,7 +2069,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         let result;
         self.regLine = {
             lineStyle: {
-                lineStyle: [10, 0],
+                lineStyle: (self.regLine.lineStyle || {}).lineStyle || [10, 0],
                 lineColor: (self.regLine.lineStyle || {}).lineColor || colorGenerator(),
                 lineWidth: (self.regLine.lineStyle || {}).lineWidth || 1
             }
@@ -2514,15 +2514,15 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             }
             return toReturn;
         });
-        //wiDropdownCtrl.items.unshift({
-            //data: {
-                //name: "[No Palette]"
-            //},
-            //properties: {
-                //name: '[No Palette]',
-                //palette: null
-            //}
-        //})
+        wiDropdownCtrl.items.unshift({
+            data: {
+                name: "[No Palette]"
+            },
+            properties: {
+                name: '[No Palette]',
+                palette: null
+            }
+        })
     }
     this.validPlotRegion = function() {
         let result = (self.getTop() - self.getBottom()) * (self.getRight() - self.getLeft());
