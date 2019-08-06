@@ -146,8 +146,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         self.selectionValueList.forEach(s => {
             setOnChangeFn(s);
         })
-        self.statisticHeaders = ['X-Axis','Y-Axis','Z1-Axis','Z2-Axis','Z3-Axis','Points','Correlation'];
-        self.statisticHeaderMasks = [true,true, self.getSelectionValue('Z1').isUsed, self.getSelectionValue('Z2').isUsed, self.getSelectionValue('Z3').isUsed,true,true];
+        self.statisticHeaders = ['X-Axis','Y-Axis','Z1-Axis','Z2-Axis', 'Z3-Axis', 'Filter', 'Points', 'Correlation'];
+        self.statisticHeaderMasks = [true,true, self.getSelectionValue('Z1').isUsed, self.getSelectionValue('Z2').isUsed, self.getSelectionValue('Z3').isUsed,true,true,true];
         self.regressionType = self.regressionType || 'Linear';
         // regression type list
         self.regressionTypeList = [{
@@ -325,6 +325,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     return statsArray[row].curveZ2Info || 'N/A';
                 case 'Z3-Axis':
                     return statsArray[row].curveZ3Info || 'N/A';
+                case 'Filter':
+                    return statsArray[row].conditionExpr || 'N/A';
                 case 'Points':
                     return statsArray[row].numPoints;
                 case 'Correlation':
@@ -1709,6 +1711,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                         curveZ2Info: shouldPlotZ2 ? `${datasetZ2.name}.${curveZ2.name}` : 'N/A',
                         curveZ3Info: shouldPlotZ3 ? `${datasetZ3.name}.${curveZ3.name}` : 'N/A',
                         numPoints: dataArray.length,
+                        conditionExpr: self.wellSpec[i].discriminator ? self.wellSpec[i].discriminator.conditionExpr : undefined,
                         correlation: self.calcCorrelation(dataArray.map(d => d.x), dataArray.map(d => d.y))
                     }
                     layer.color = curveZ1 && shouldPlotZ1 ? (function(data, idx) {
@@ -1744,6 +1747,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     layerColor: well.color,
                     name: `${well.name}`,
                     well: `${well.name}:${well._idx}`,
+                    conditionExpr: self.wellSpec[i].discriminator ? self.wellSpec[i].discriminator.conditionExpr : undefined,
                     curveXInfo: `${datasetX.name}.${curveX.name}`,
                     curveYInfo: `${datasetY.name}.${curveY.name}`,
                     curveZ1Info: shouldPlotZ1 ? `${datasetZ1.name}.${curveZ1.name}` : 'N/A',
