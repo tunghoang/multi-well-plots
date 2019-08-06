@@ -110,17 +110,17 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         self.cpMarkerStyle = self.cpMarkerStyle || function (marker, idx) { return  {stroke:marker.color,'stroke-width':'2', fill:'none'} }
         self.cpMarkerName = self.cpMarkerName || function(marker, idx) { return  marker.name; }
         self.ctrlParams = self.ctrlParams || [];
-        let ctrlParamsGroupByWell = _.groupBy(self.ctrlParams, ctrlParam => ctrlParam.wellName);
-        for (let ctrlParamsGroupByWellKey in ctrlParamsGroupByWell) {
-            let ctrlParamGroupByWell = ctrlParamsGroupByWell[ctrlParamsGroupByWellKey];
-            let ctrlParamsGroup = _.groupBy(ctrlParamGroupByWell, ctrlParam => ctrlParam.$ref);
-            for (let ctrlParams in ctrlParamsGroup) {
-                let zoneInfoList = ctrlParamsGroup[ctrlParams].map(ctrlParam => ctrlParam.zoneInfo);
-                zoneInfoList.forEach((zoneInfo, idx) => {
-                    zoneInfo._idx = idx;
-                })
-            }
-        }
+        //let ctrlParamsGroupByWell = _.groupBy(self.ctrlParams, ctrlParam => ctrlParam.wellName);
+        //for (let ctrlParamsGroupByWellKey in ctrlParamsGroupByWell) {
+            //let ctrlParamGroupByWell = ctrlParamsGroupByWell[ctrlParamsGroupByWellKey];
+            //let ctrlParamsGroup = _.groupBy(ctrlParamGroupByWell, ctrlParam => ctrlParam.$ref);
+            //for (let ctrlParams in ctrlParamsGroup) {
+                //let zoneInfoList = ctrlParamsGroup[ctrlParams].map(ctrlParam => ctrlParam.zoneInfo);
+                //zoneInfoList.forEach((zoneInfo, idx) => {
+                    //zoneInfo._idx = idx;
+                //})
+            //}
+        //}
         self.notCPBackground = self.notCPBackground != undefined ? self.notCPBackground : true;
         self.ctrlParamsMask = self.ctrlParams.map(c => true);
         self.cpIcon = self.cpIcon || function(node) {
@@ -454,7 +454,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         if (self.ctrlParams && self.ctrlParams.length) {
             self.ctrlParams.forEach((ctrlParam, idx) => {
                 let zoneInfo = ctrlParam.zoneInfo;
-                if (type === 'layer' && node.name.includes(`${ctrlParam.wellName}.${zoneInfo.zone_template.name.replace('All', 'ZonationAll')}(${zoneInfo._idx})`)) {
+                if (type === 'layer' && node.name.includes(`${ctrlParam.wellName}.${zoneInfo.zone_template.name.replace('All', 'ZonationAll')}(${zoneInfo.__depthIndex || 0})`)) {
                     self.ctrlParamsMask[idx] = !node._notUsed;
                 } else if (type === 'well' && node.name.includes(`${ctrlParam.wellName}`)) {
                     self.ctrlParamsMask[idx] = !node._notUsed;
@@ -686,7 +686,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 let layerIdx = 0;
                 for (let j = 0; j < zones.length; j++) {
                     let zone = zones[j];
-                    if (self.ctrlParams && self.ctrlParams.length && !isCtrlParamsIncludeZone(zone, layerIdx)) continue;
+                    if (self.ctrlParams && self.ctrlParams.length && !isCtrlParamsIncludeZone(zone, j)) continue;
                     let dataArray = filterData(curveData, zone);
                     dataArray.top = zone.startDepth;
                     dataArray.bottom = zone.endDepth;
@@ -697,7 +697,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     }
                     let bins = genBins(dataArray);
                     bins.color = self.getColor(zone, well);
-                    bins.name = `${well.name}.${zone.zone_template.name}(${layerIdx})`;
+                    bins.name = `${well.name}.${zone.zone_template.name}(${j})`;
 
                     bins.stats = {};
                     switch (self.getStackMode()) {
@@ -829,7 +829,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     function isCtrlParamsIncludeZone(zone, layerIdx) {
         let toReturn = self.ctrlParams.some((ctrlParam, ctrlParamIdx) => {
             let zoneInfo = ctrlParam.zoneInfo;
-            return zone.zone_template.name === zoneInfo.zone_template.name.replace('All', 'ZonationAll') && layerIdx === zoneInfo._idx;
+            return zone.zone_template.name === zoneInfo.zone_template.name.replace('All', 'ZonationAll') && layerIdx === (zoneInfo.__depthIndex || 0);
         })
         return toReturn; 
     }

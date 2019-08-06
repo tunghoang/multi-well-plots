@@ -194,8 +194,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             point.params[1].value = value;
         }
         self.paramGroups = self.paramGroups || [];
-        let zoneInfoList = self.paramGroups.map(paramGroup => paramGroup.properties);
-        wiApi.indexZonesForCorrelation(zoneInfoList);
+        //let zoneInfoList = self.paramGroups.map(paramGroup => paramGroup.properties);
+        //wiApi.indexZonesForCorrelation(zoneInfoList);
 
         self.getPickettSetRw = self.getPickettSetRw || function(pickettSet, index) {
             return pickettSet.rw || '[empty]';
@@ -1690,7 +1690,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             if (self.getColorMode() == 'zone') {
                 for (let j = 0; j < zones.length; j++) {
                     let zone = zones[j];
-                    if (self.paramGroups && self.paramGroups.length && !isParamGroupsIncludeZone(zone, layerIdx)) continue;
+                    if (self.paramGroups && self.paramGroups.length && !isParamGroupsIncludeZone(zone, j)) continue;
                     let dataArray = filterData(pointset, zone);
                     let layer = {
                         dataX: dataArray.map(d => d.x),
@@ -1700,7 +1700,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                         dataZ3: dataArray.map(d => d.z3),
                         regColor: self.getColor(zone, well),
                         layerColor: self.getColor(zone, well),
-                        name: `${well.name}.${zone.zone_template.name}(${layerIdx})`,
+                        name: `${well.name}.${zone.zone_template.name}(${j})`,
                         well: `${well.name}:${well._idx}`,
                         zone: `${zone.zone_template.name}`,
                         curveXInfo: `${datasetX.name}.${curveX.name}`,
@@ -1752,7 +1752,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 }
                 for (let j = 0; j < zones.length; j++) {
                     let zone = zones[j];
-                    if (self.paramGroups && self.paramGroups.length && !isParamGroupsIncludeZone(zone, layerIdx)) continue;
+                    if (self.paramGroups && self.paramGroups.length && !isParamGroupsIncludeZone(zone, j)) continue;
                     if (zone._notUsed) continue;
                     let dataArray = filterData(pointset, zone);
                     layer.dataX = layer.dataX.concat(dataArray.map(d => d.x));
@@ -1792,7 +1792,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     function isParamGroupsIncludeZone(zone, layerIdx) {
         let toReturn = self.paramGroups.some((paramGroup, paramGroupIdx) => {
             let properties = paramGroup.properties;
-            return zone.zone_template.name === properties.zone_template.name && layerIdx === paramGroupIdx;
+            return zone.zone_template.name === properties.zone_template.name.replace('All', 'ZonationAll') && layerIdx === (properties.__depthIndex || 0);
         })
         return toReturn; 
     }
@@ -2017,7 +2017,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             for (let i = 0; i < self.paramGroups.length; i++) {
                 let paramGroup = self.paramGroups[i];
                 let properties = paramGroup.properties;
-                if (layer.name.includes(`${properties.zone_template.name.replace('All', 'ZonationAll')}(${i})`)) {
+                if (layer.name.includes(`${properties.zone_template.name.replace('All', 'ZonationAll')}(${properties.__depthIndex || 0})`)) {
                     paramGroup._notShow = layer._notUsed;
                     break;
                 }
