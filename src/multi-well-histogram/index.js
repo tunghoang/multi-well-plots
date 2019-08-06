@@ -104,6 +104,8 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     this.defaultBindings = function() {
         if (self.token)
             wiToken.setToken(self.token);
+        self.verticalMargin = 0;
+        self.horizontalMargin = 0;
         self.isSettingChange = true;
         self.cpGetMarkerVal = self.cpGetMarkerVal || function (marker, idx) { return  marker.value }
         self.cpSetMarkerVal = self.cpSetMarkerVal || function (marker, idx, newVal) {marker.value = newVal;}

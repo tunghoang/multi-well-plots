@@ -115,6 +115,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         if (self.token)
             wiToken.setToken(self.token);
 
+        self.verticalMargin = 0;
+        self.horizontalMargin = 0;
         self.pickettAdjusterArray = [];
         self.allPickettLines = [];
         self.pickettSets = self.pickettSets || [
