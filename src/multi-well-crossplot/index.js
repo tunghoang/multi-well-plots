@@ -286,7 +286,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     ${self.getPickettSetA(pickettSet)}
                     `).join('');
             }, () => {
-                updatePickettAdjusterArray();
+                self.updatePickettAdjusterArrayDebounce();
             })
 
             getTrees();
@@ -1795,6 +1795,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
 
         if (conditionForPickettPlot()) {
             self.updateAllPickettLines();
+            updatePickettAdjusterArray();
         }
         self.layers = layers;
         self._notUsedLayer = _notUsedLayer;
@@ -2284,12 +2285,15 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         self.pickettSets.splice($index, 1);
     }
     this.updateAllPickettLines = updateAllPickettLines;
-    this.updateAllPickettLinesDebounce = _.debounce(updateAllPickettLines, 100);
+    this.updateAllPickettLinesDebounce = _.debounce(updateAllPickettLines, 300);
+    //this.updateAllPickettLinesDebounce = updateAllPickettLines;
     function updateAllPickettLines() {
+        let allPickettLines = [];
         if (!self.pickettSets.length) return;
         self.allPickettLines.length = 0;
         self.swParamList.forEach((swParam, swParamIdx) => {
             self.pickettSets.forEach((pickettSet, pickettSetIdx) => {
+                if (!pickettSet._used) return;
                 let pickett = {
                     rw: self.getPickettSetRw(pickettSet, pickettSetIdx),
                     m: self.getPickettSetM(pickettSet, pickettSetIdx),
@@ -2306,16 +2310,25 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     _used: pickettSet._used,
                     isSwap: self.isSwapAxisPickett
                 }
-                self.allPickettLines.push(pickett);
+                allPickettLines.push(pickett);
             });
+        });
+        $timeout(() => {
+            self.allPickettLines = allPickettLines;
+            self.updatePickettAdjusterArrayDebounce();
         })
-        updatePickettAdjusterArray();
     }
+    this.updatePickettAdjusterArrayDebounce = _.debounce(updatePickettAdjusterArray, 300);
+    this.updatePickettAdjusterArray = updatePickettAdjusterArray;
     function updatePickettAdjusterArray() {
         if (self.showAdjuster) {
-            self.pickettAdjusterArray.length = 0;
             self.pickettSets.forEach((pickettSet, pickettSetIdx) => {
-                self.pickettAdjusterArray.push(initPickettControlPoints(pickettSet));
+                if (!pickettSet._used) return;
+                let twoPoints = initPickettControlPoints(pickettSet);
+                if (twoPoints) {
+                    self.pickettAdjusterArray.length = 0;
+                    self.pickettAdjusterArray.push(twoPoints);
+                }
             })
         }
     }
@@ -2542,29 +2555,41 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     
     function initPickettControlPoints(pickettSet) {
         let stepDen = 20;
+        let hRange = [self.getLeft() == 0 ? 0.01 : self.getLeft(), self.getRight() == 0 ? 0.01 : self.getRight()];
+        let hRangeLoga = hRange.map(v => Math.log10(v));
+        let vRange = [self.getBottom() == 0 ? 0.01 : self.getBottom(), self.getTop() == 0 ? 0.01 : self.getTop()];
+
         let step = 1/stepDen;
-        let hRange = [self.getLeft() == 0 ? 0.01 : self.getLeft(), self.getRight() == 0 ? 0.01 : self.getRight()].map(v => Math.log10(v));
         let getYFromX = !self.isSwapAxisPickett ? pickettFn : pickettFnY;
         
-        let firstPointX = Math.pow(10 , hRange[0] + (hRange[1] - hRange[0]) * (1/30));
-        let firstPointY = getYFromX(firstPointX);
-        while((firstPointY - self.getBottom()) * (firstPointY - self.getTop()) > 0) {
-            firstPointX = firstPointX + (hRange[1] - hRange[0]) * step;
-            firstPointY = getYFromX(firstPointX);
-        }
+        let firstPointXLoga = hRangeLoga[0] + (hRangeLoga[1] - hRangeLoga[0]) * (1/30);
+        let pow10 = (xExponent) => Math.pow(10, xExponent)
 
-        let secondPointX = Math.pow(10 , hRange[1] - (hRange[1] - hRange[0]) * (1/30));
-        let secondPointY = getYFromX(secondPointX);
-        while((secondPointY - self.getBottom()) * (secondPointY - self.getTop()) > 0) {
-            secondPointX = secondPointX - (hRange[1] - hRange[0]) * step;
-            if ((secondPointX - firstPointX) * (secondPointX - hRange[1]) > 0) {
-                secondPointX = secondPointX + (hRange[1] - hRange[0]) * step;
-                step = 1/ (stepDen + 10);
-                secondPointX = secondPointX - (hRange[1] - hRange[0]) * step;
+        let firstPointY = getYFromX( pow10(firstPointXLoga) );
+        while((firstPointY - vRange[0]) * (firstPointY - vRange[1]) > 0) {
+            if ((firstPointXLoga - hRangeLoga[0]) * (firstPointXLoga - hRangeLoga[1]) > 0) {
+                console.log("Oops!");
+                return;
             }
-            secondPointY = getYFromX(secondPointX);
+            firstPointXLoga = firstPointXLoga + (hRangeLoga[1] - hRangeLoga[0]) * step;
+            firstPointY = getYFromX(pow10(firstPointXLoga));
+            console.log('111');
         }
-        return [{x: firstPointX, y:firstPointY}, {x:secondPointX, y:secondPointY}];
+        console.log('done 1');
+        let secondPointXLoga = hRangeLoga[1] - (hRangeLoga[1] - hRangeLoga[0]) * (1/30);
+        let secondPointY = getYFromX(pow10(secondPointXLoga));
+
+        while((secondPointY - vRange[0]) * (secondPointY - vRange[1]) > 0 )  {
+            if ((secondPointXLoga - hRangeLoga[0]) * (secondPointXLoga - hRangeLoga[1]) > 0) {
+                console.log("Oops!");
+                return;
+            }
+            secondPointXLoga = secondPointXLoga - (hRangeLoga[1] - hRangeLoga[0]) * step;
+            secondPointY = getYFromX(pow10(secondPointXLoga));
+            console.log('222');
+        }
+        console.log('done 2')
+        return [{x: pow10(firstPointXLoga), y:firstPointY}, {x: pow10(secondPointXLoga), y:secondPointY}];
 
         function pickettFn(x) {
             let sw = 1;
