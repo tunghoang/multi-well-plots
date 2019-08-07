@@ -2477,10 +2477,14 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
 
     }
     function fromFormulaArray2UDLs(formulaArray) {
+        let regex = /^(y = )/g;
         return formulaArray.map(udl => {
+            let latex = udl.function;
+            if (!regex.test(udl.function))
+                latex = `y = ${latex}`;
             return {
                 text: udl.function,
-                latex: normalizeFormation(udl.function),
+                latex: normalizeFormation(latex),
                 lineStyle: udl.lineStyle,
                 fn: function(x) {
                     return eval(udl.function);
