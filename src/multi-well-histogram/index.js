@@ -797,7 +797,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     {
                         let aggregate = aggregateHistogramList(allHistogramList);
                         max = d3.max(aggregate);
-                        maybeMaxPercentage = maybeMax / _.sum(aggregate);
+                        maybeMaxPercentage = max / _.sum(aggregate);
                         maxPercentage = (maxPercentage > maybeMaxPercentage) ? maxPercentage : maybeMaxPercentage;
                         flatten = allHistogramList;
                         let stats = setStats(allDataArray.map(d => d.x));
