@@ -814,9 +814,46 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     self.maxPercentage = maxPercentage * 100;
                 }
                 if (self.getStackMode() == 'all') {
-                    self.histogramList = [allHistogramList];
+                    if (self.getDisplayMode() == 'line') {
+                        let arr = [];
+                        for (let i = 0; i < allHistogramList.length; i++) {
+                            bins = allHistogramList[i];
+                            for (let j = 0; j < bins.length; j++) {
+                                bin = bins[j];
+                                arr[j] = (arr[j] || []).concat(bin);
+                                arr[j].x0 = bin.x0;
+                                arr[j].x1 = bin.x1;
+                            }
+                        }
+                        arr.name = allHistogramList.name;
+                        self.histogramList = [arr];
+                    } else {
+                        self.histogramList = [allHistogramList];
+                    }
                 } else {
-                    self.histogramList = allHistogramList;
+                    if (self.getDisplayMode() == 'line') {
+                        if (self.getStackMode() == 'well') {
+                            let arr = [];
+                            allHistogramList.forEach((well, wellIdx) => {
+                                let bins = [];
+                                well.forEach((zone, zoneIdx) => {
+                                    zone.forEach((bin, binIdx) => {
+                                        bins[binIdx] = (bins[binIdx] || []).concat(bin);
+                                        bins[binIdx].x0 = bin.x0;
+                                        bins[binIdx].x1 = bin.x1;
+                                    })
+                                })
+                                bins.color = well.color;
+                                bins.name = well.name;
+                                arr.push(bins);
+                            })
+                            self.histogramList = arr;
+                        } else if (self.getStackMode() == 'zone') {
+                            self.histogramList = allHistogramList.flat();
+                        }
+                    } else {
+                        self.histogramList = allHistogramList;
+                    }
                 }
                 flattenHistogramList = flatten;
                 self.setCumulativeData(self.histogramList);
@@ -955,7 +992,8 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     this.getDisplayMode = () => (self.config.displayMode || self.defaultConfig.displayMode || 'bar')
     this.getStackMode = () => {
         if (self.noStack) return 'none';
-        return self.getDisplayMode() === 'bar'?(self.config.stackMode||self.defaultConfig.stackMode||'none'):'none'
+        //return self.getDisplayMode() === 'bar'?(self.config.stackMode||self.defaultConfig.stackMode||'none'):'none'
+        return self.config.stackMode||self.defaultConfig.stackMode||'none'
     }
     this.getBinGap = () => (self.config.binGap || self.defaultConfig.binGap)
     this.getBinX = (bin) => ((bin.x0 + bin.x1)/2)
