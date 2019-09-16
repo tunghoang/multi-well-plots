@@ -14,13 +14,13 @@
 </div>
 <div style="display: flex; padding: 0 15px 10px 15px;">
     <span ng-click="self.hideSelectedRegression()" class="button-with-label-layer"
-        style="margin-left: 0;">Inactive</span>
+        style="margin-left: 0;">Deactivate</span>
     <span ng-click="self.showSelectedRegression()" class="button-with-label-layer"
-        style="margin-left: 10px;">Active</span>
+        style="margin-left: 10px;">Activate</span>
     <span ng-click="self.hideAllRegression()" class="button-with-label-layer"
-        style="margin-left: 10px;">Inactive All</span>
+        style="margin-left: 10px;">Deactivate All</span>
     <span ng-click="self.showAllRegression()" class="button-with-label-layer"
-        style="margin-left: 10px;">Active All</span>
+        style="margin-left: 10px;">Activate All</span>
 </div>
 <div ng-if="self.regLine && self.regLine.lineStyle" style="display: flex; padding: 0 15px 10px 15px;">
     <line-style style="width: 100%; padding: 0 15px;" bind-line-style="self.regLine.lineStyle"></line-style>

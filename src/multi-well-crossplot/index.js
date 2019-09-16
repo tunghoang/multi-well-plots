@@ -1113,7 +1113,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     this.click2ToggleZone = function ($event, node, selectedObjs) {
         self.isSettingChange = true;
         node._notUsed = !node._notUsed;
-        self.onUseZoneChange([node]);
+        //self.onUseZoneChange([node]);
         self.selectedZones = Object.values(selectedObjs).map(o => o.data);
     }
     this.onUseZoneChange = (zones) => {
