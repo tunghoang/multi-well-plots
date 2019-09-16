@@ -29,7 +29,8 @@ app.component(componentName, {
         cpMarkerStyle: '<',
         cpMarkerName: '<',
         cpIcons: '<',
-        cpIconStyle: '<'
+        cpIconStyle: '<',
+        onMarkerDragEnd: "<"
     },
     transclude: true
 });
