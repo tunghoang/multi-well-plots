@@ -19,6 +19,7 @@ app.component(componentName, {
 		idHistograms: "<",
         configs: '<',
         noStack: '<',
+        stackMode: "<",
         ctrlParamsList: '<',
         onSave: '<',
         onSaveAs: '<',

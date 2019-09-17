@@ -26,6 +26,7 @@ app.component(componentName, component({
         idHistogram: "<",
         config: '<',
         noStack: '<',
+        stackMode: "<",
         onSave: '<',
         onSaveAs: '<',
         title: '<',
@@ -149,7 +150,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         self.selectionType = self.selectionType || 'family-group';
         self.zoneTree = [];
         self.zonesetName = self.zonesetName || "ZonationAll";
-        self.config = self.config || {grid:true, displayMode: 'bar', colorMode: 'zone', stackMode: self.noStack ? 'none':'well', binGap: 5, title: self.title || '', notShowCumulative: false};
+        self.config = self.config || {grid:true, displayMode: 'bar', colorMode: 'zone', stackMode: self.stackMode || self.noStack ? 'none':'well', binGap: 5, title: self.title || '', notShowCumulative: false};
         self.getToggleGaussianFn = self.config.notUsedGaussian ? self.click2ToggleLogNormalD : self.click2ToggleGaussian;
         self.getGaussianIconFn = self.config.notUsedGaussian ? self.getLogNormalDIcon : self.getGaussianIcon;
     }
@@ -717,12 +718,12 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     let stats = setStats(dataArray.map(d => d.x));
                     Object.assign(bins.stats, stats);
                     if (self.getStackMode() === 'zone') {
-                        let zoneExisted = zoneBinsList.find(zbl => zbl.name == zone.zone_template.name);
+                        let zoneExisted = zoneBinsList.find(zbl => zbl.name.includes(zone.zone_template.name));
                         let zoneBinsElem;
                         if (!zoneExisted) {
                             zoneBinsList.push([]);
                             zoneExisted = zoneBinsList[zoneBinsList.length - 1];
-                            zoneExisted.name = `${zone.zone_template.name}(${layerIdx})`;
+                            zoneExisted.name = `${zone.zone_template.name}`;
                             if (self.getColorMode() === 'zone') {
                                 zoneExisted.color = self.getColor(zone, well);
                             } else {
