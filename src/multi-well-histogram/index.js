@@ -833,6 +833,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                         self.histogramList = [allHistogramList];
                     }
                 } else {
+                    self.histogramList = allHistogramList;
                     if (self.getDisplayMode() == 'line') {
                         if (self.getStackMode() == 'well') {
                             let arr = [];
@@ -853,8 +854,6 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                         } else if (self.getStackMode() == 'zone') {
                             self.histogramList = allHistogramList.flat();
                         }
-                    } else {
-                        self.histogramList = allHistogramList;
                     }
                 }
                 flattenHistogramList = flatten;
