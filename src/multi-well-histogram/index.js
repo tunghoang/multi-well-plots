@@ -1,6 +1,7 @@
 var componentName = 'multiWellHistogram';
 module.exports.name = componentName;
 require('./style.less');
+const utils = require('../utils');
 var PrintableController = Printable.klass;
 var component = Printable.component;
 
@@ -666,7 +667,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 let dataset = well.datasets.find(ds => ds.idDataset === self.wellSpec[i].idDataset);
 
                 let zoneset = getZoneset(well, self.zonesetName);
-                zoneset = zoneset || genZonationAllZS(datasetTop, datasetBottom, well.color);
+                zoneset = zoneset || genZonationAllZS(datasetTop, datasetBottom, utils.getWellColor(well));
 
                 let curveData = await wiApi.getCachedCurveDataPromise(curve.idCurve);
                 if (self.hasDiscriminator(well)) {
@@ -732,7 +733,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                             if (self.getColorMode() === 'zone') {
                                 zoneExisted.color = self.getColor(zone, well);
                             } else {
-                                zoneExisted.color = well.color;
+                                zoneExisted.color = utils.getWellColor(well);
                             }
                         }
                         //if (!zoneExisted[i]) zoneExisted[i] = [];
@@ -750,7 +751,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     stats.conditionExpr = wellSpec.discriminator ? wellSpec.discriminator.conditionExpr : undefined;
                     listWellStats.push(stats);
                     wellHistogramList.name = well.name;
-                    wellHistogramList.color = well.color;
+                    wellHistogramList.color = utils.getWellColor(well);
                     allHistogramList.push(wellHistogramList);
                 } else allHistogramList.push(...wellHistogramList);
             }
@@ -851,7 +852,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                                         bins[binIdx].x1 = bin.x1;
                                     })
                                 })
-                                bins.color = well.color;
+                                bins.color = utils.getWellColor(well);
                                 bins.name = well.name;
                                 arr.push(bins);
                             })
@@ -993,7 +994,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     this.getColorMode = () => (self.config.colorMode || self.defaultConfig.colorMode || 'zone')
     this.getColor = (zone, well) => {
         let cMode = self.getColorMode();
-        return cMode === 'zone' ? zone.zone_template.background:(cMode === 'well'?well.color:'blue');
+        return cMode === 'zone' ? zone.zone_template.background:(cMode === 'well'?utils.getWellColor(well):'blue');
     }
     this.getDisplayMode = () => (self.config.displayMode || self.defaultConfig.displayMode || 'bar')
     this.getStackMode = () => {

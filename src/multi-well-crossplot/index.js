@@ -2,6 +2,7 @@ var componentName = 'multiWellCrossplot';
 module.exports.name = componentName;
 require('./style.less');
 const regression = require('../../bower_components/regression-js/dist/regression.min.js');
+const utils = require('../utils');
 var PrintableController = Printable.klass;
 var component = Printable.component;
 
@@ -856,7 +857,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     this.getColorMode = () => (self.config.colorMode || self.defaultConfig.colorMode || 'zone')
     this.getColor = (zone, well) => {
         let cMode = self.getColorMode();
-        return cMode === 'zone' ? zone.zone_template.background:(cMode === 'well'?well.color:'red');
+        return cMode === 'zone' ? zone.zone_template.background:(cMode === 'well'?utils.getWellColor(well):'red');
     }
     this.getPointSize = () => (self.pointSize);
     this.setPointSize = (notUse, newVal) => {
@@ -1629,7 +1630,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             let datasetY = well.datasets.find(ds => ds.idDataset === self.wellSpec[i].yAxis.idDataset);
 
             let zoneset = getZoneset(well, self.zonesetName);
-            zoneset = zoneset || genZonationAllZS(d3.max([datasetTopX, datasetTopY]), d3.min([datasetBottomX, datasetBottomY]), well.color)
+            zoneset = zoneset || genZonationAllZS(d3.max([datasetTopX, datasetTopY]), d3.min([datasetBottomX, datasetBottomY]), utils.getWellColor(well))
 
             let curveDataX = await wiApi.getCachedCurveDataPromise(curveX.idCurve);
             if (self.hasDiscriminator(well)) {
@@ -1782,8 +1783,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     dataZ1: [],
                     dataZ2: [],
                     dataZ3: [],
-                    regColor: well.color,
-                    layerColor: well.color,
+                    regColor: getWellSpec(well),
+                    layerColor: utils.getWellColor(well),
                     name: `${well.name}`,
                     well: `${well.name}:${well._idx}`,
                     conditionExpr: self.wellSpec[i].discriminator ? self.wellSpec[i].discriminator.conditionExpr : undefined,
@@ -1807,7 +1808,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 }
                 layer.color = curveZ1 && shouldPlotZ1 ? (function(data, idx) {
                     return getTransformZ1()(this.dataZ1[idx]);
-                }).bind(layer) : well.color;
+                }).bind(layer) : getWellSpec(wellSpec);
                 layer.size = (function(data, idx) {
                     if (curveZ2 && shouldPlotZ2) {
                         return getTransformZ2()(this.dataZ2[idx]);
