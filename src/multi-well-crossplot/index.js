@@ -67,7 +67,8 @@ app.component(componentName, component({
         setPickettSetName: "<",
         getPickettSetColor: '<',
         overlayLine: "<",
-        showPickettSetAt: "<"
+        showPickettSetAt: "<",
+        showTooltip: "<"
     },
     transclude: true
 }));
@@ -131,6 +132,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         self.pointSize = self.pointSize || 10;
         self.isSettingChange = true;
         self.defaultConfig = self.defaultConfig || {};
+        self.showTooltip = self.showTooltip == undefined ? true : self.showTooltip;
         self.wellSpec = self.wellSpec || [];
         self.listOverlayLine = self.listOverlayLine || [];
         self.selectionType = self.selectionType || 'family-group';
@@ -976,7 +978,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             pointSize: self.pointSize,
             udlsAssetId: self.udlsAssetId,
             pickettSets: self.pickettSets,
-            swParamList: self.swParamList
+            swParamList: self.swParamList,
+            showTooltip: self.showTooltip
         }
         if (self.overlayLineSpec) {
             content.overlayLine = {
@@ -1037,6 +1040,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 udlsAssetId: self.udlsAssetId,
                 pickettSets: self.pickettSets,
                 swParamList: self.swParamList,
+                showTooltip: self.showTooltip
             }
             if (self.overlayLineSpec) {
                 content.overlayLine = {
