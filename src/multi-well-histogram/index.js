@@ -150,7 +150,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         self.selectionType = self.selectionType || 'family-group';
         self.zoneTree = [];
         self.zonesetName = self.zonesetName || "ZonationAll";
-        self.config = self.config || {grid:true, displayMode: 'bar', colorMode: 'zone', stackMode: self.stackMode || self.noStack ? 'none':'well', binGap: 5, title: self.title || '', notShowCumulative: false};
+        self.config = self.config || {family: "", grid:true, displayMode: 'bar', colorMode: 'zone', stackMode: self.stackMode || self.noStack ? 'none':'well', binGap: 5, title: self.title || '', notShowCumulative: false};
         self.getToggleGaussianFn = self.config.notUsedGaussian ? self.click2ToggleLogNormalD : self.click2ToggleGaussian;
         self.getGaussianIconFn = self.config.notUsedGaussian ? self.getLogNormalDIcon : self.getGaussianIcon;
     }
@@ -615,6 +615,11 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         let curve = getCurve(self.treeConfig[0], self.wellSpec[0]);
         if (!curve) return;
         let family = wiApi.getFamily(curve.idFamily);
+        if (family != self.config.family) {
+            self.config.family = family;
+            delete self.config.left;
+            delete self.config.right;
+        }
         if (!family) return;
         $timeout(() => {
             self.defaultConfig.left = isNaN(family.family_spec[0].minScale) ? 0 : family.family_spec[0].minScale;

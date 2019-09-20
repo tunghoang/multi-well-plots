@@ -115,7 +115,6 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     this.defaultBindings = function() {
         if (self.token)
             wiToken.setToken(self.token);
-
         self.verticalMargin = 0;
         self.horizontalMargin = 0;
         self.pickettAdjusterArray = [];
@@ -138,7 +137,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         self.selectionType = self.selectionType || 'family-group';
         self.zoneTree = [];
         self.zonesetName = self.zonesetName || "ZonationAll";
-        self.config = self.config || {grid:true, displayMode: 'bar', colorMode: 'zone', stackMode: 'well', binGap: 5, title: self.title || ''};
+        self.config = self.config || {familyX: "", familyY: "", familyZ1: "", familyZ2: "", familyZ3: "", grid:true, displayMode: 'bar', colorMode: 'zone', stackMode: 'well', binGap: 5, title: self.title || ''};
         /*self.printSettings = self.printSettings || {orientation: 'portrait', aspectRatio: '16:9', alignment: 'left', border: false,
             width: 210,
             vMargin: 0,
@@ -917,27 +916,57 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                         self.defaultConfig.left = family.family_spec[0].minScale;
                         self.defaultConfig.right = family.family_spec[0].maxScale;
                         self.defaultConfig.logaX = family.family_spec[0].displayType.toLowerCase() === 'logarithmic';
+                        if (family != self.config.familyX) {
+                            self.config.familyX = family;
+                            delete self.config.left;
+                            delete self.config.right;
+                            delete self.config.logaX;
+                        }
                         break;
                     case 'yAxis':
                         self.defaultConfig.yLabel = self.getSelectionValue('Y').value;
                         self.defaultConfig.top = family.family_spec[0].maxScale;
                         self.defaultConfig.bottom = family.family_spec[0].minScale;
                         self.defaultConfig.logaY = family.family_spec[0].displayType.toLowerCase() === 'logarithmic';
+                        if (family != self.config.familyY) {
+                            self.config.familyY = family;
+                            delete self.config.top;
+                            delete self.config.bottom;
+                            delete self.config.logaY;
+                        }
                         break;
                     case 'z1Axis':
                         self.defaultConfig.z1Max = family.family_spec[0].maxScale || 100;
                         self.defaultConfig.z1Min = family.family_spec[0].minScale || 0;
                         self.defaultConfig.z1N = 5;
+                        if (family != self.config.familyZ1) {
+                            self.config.familyZ1 = family;
+                            delete self.config.z1Max;
+                            delete self.config.z1Min;
+                            delete self.config.z1N;
+                        }
                         break;
                     case 'z2Axis':
                         self.defaultConfig.z2Max = family.family_spec[0].maxScale || 100;
                         self.defaultConfig.z2Min = family.family_spec[0].minScale || 0;
                         self.defaultConfig.z2N = 5;
+                        if (family != self.config.familyZ2) {
+                            self.config.familyZ2 = family;
+                            delete self.config.z2Max;
+                            delete self.config.z2Min;
+                            delete self.config.z2N;
+                        }
                         break;
                     case 'z3Axis':
                         self.defaultConfig.z3Max = family.family_spec[0].maxScale || 100;
                         self.defaultConfig.z3Min = family.family_spec[0].minScale || 0;
                         self.defaultConfig.z3N = 5;
+                        if (family != self.config.familyZ3) {
+                            self.config.familyZ3 = family;
+                            delete self.config.z3Max;
+                            delete self.config.z3Min;
+                            delete self.config.z3N;
+                        }
                         break;
                     default:
                 }
