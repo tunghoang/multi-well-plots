@@ -3,7 +3,7 @@ function getWellColor(well) {
     let color = well.color;
     if (isArray(color)) {
         let colorArr = toArray(color);
-        return colorArr[well._idx % colorArr.length];
+        return colorArr[(well._idx || 0) % colorArr.length];
     }
     return well.color;
 }
