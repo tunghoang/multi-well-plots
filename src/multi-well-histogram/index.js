@@ -1095,6 +1095,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         Object.assign(_zoneNames, self.histogramList.map(bins => bins.name));
         return _zoneNames;
     }
+    this.isLayerUsed = function($index) {
+        return !self.histogramList[$index]._notUsed;
+    }
     self.getStatsRowIcons = function(rowIdx) {
         return ['rectangle'];
     }

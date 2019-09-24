@@ -1097,6 +1097,9 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         Object.assign(_zoneNames, self.layers.map(bins => bins.name));
         return _zoneNames;
     }
+    this.isLayerUsed = function($index) {
+        return !self.layers[$index]._notUsed;
+    }
     let _headers = [];
     self.getHeaders = function (){
         _headers.length = 0;
