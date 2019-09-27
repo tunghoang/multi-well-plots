@@ -71,7 +71,7 @@
                 <!--</div>-->
             <!--</div>-->
             <div ng-class="{'active' : isSet(2)}" ng-click="setTab(2)" class="tab-with-label"
-                ng-show="!self.ctrlParams">
+                ng-show="!self.ctrlParams || !self.ctrlParams.length">
                 <div >
                     Zone
                 </div>
