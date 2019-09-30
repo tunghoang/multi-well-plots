@@ -40,7 +40,8 @@ app.component(componentName, component({
         prefix: '<',
         cpIcons: "<",
         cpIconStyle: "<",
-        onMarkerDragEnd: "<"
+        onMarkerDragEnd: "<",
+        dragHeader: '<'
     },
     transclude: true
 }))
@@ -154,6 +155,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         self.config = self.config || {family: "", grid:true, displayMode: 'bar', colorMode: 'zone', stackMode: self.stackMode || self.noStack ? 'none':'well', binGap: 5, title: self.title || '', notShowCumulative: false};
         self.getToggleGaussianFn = self.config.notUsedGaussian ? self.click2ToggleLogNormalD : self.click2ToggleGaussian;
         self.getGaussianIconFn = self.config.notUsedGaussian ? self.getLogNormalDIcon : self.getGaussianIcon;
+        self.dragHeader = self.dragHeader || false;
     }
     this.$onInit = async function () {
         self.doInit();
