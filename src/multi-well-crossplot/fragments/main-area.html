@@ -178,7 +178,7 @@
             <wi-table-view ng-if="self.layers.length" row-count="self.getZoneNames().length"
                 col-count="self.getHeaders().length" col-headers="self.getHeaders()"
                 get-row-icons="self.getStatsRowIcons" get-row-icon-style="self.getStatsIconStyle"
-                row-headers="self.getZoneNames()" accessor="self.statsValue" is-layer-used="self.isLayerUsed">
+                row-headers="self.getZoneNames()" accessor="self.statsValue" valid-row="self.isLayerUsed">
             </wi-table-view>
         </div>
     </div>

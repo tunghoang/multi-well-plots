@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "run-dev": "webpack -w --mode=development",
-    "webpack": "webpack -w --config webpack.local.js"
+    "dev": "webpack -w --config webpack.local.js"
   },
   "devDependencies": {
     "css-loader": "^2.1.1",
