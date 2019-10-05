@@ -70,6 +70,10 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     this.getFamilyTable = function() {
         return wiApi.getFamilyTable();
     }
+    this.getPals = function() {
+        self.palTable = wiApi.getPalettes();
+        return wiApi.getPalettes();
+    }
     this.discriminatorDialog = function(well) {
         let wSpec = getWellSpec(well);
         let datasetId = wSpec.idDataset;
@@ -708,7 +712,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                         allDataArray = [...allDataArray, ...dataArray];
                     }
                     let bins = genBins(dataArray);
-                    bins.color = self.getColor(zone, well);
+                    bins.color = self.getColor(zone, well, layerIdx);
                     bins.name = `${well.name}.${zone.zone_template.name}(${j})`;
 
                     bins.stats = {};
@@ -994,9 +998,20 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     this.getNotUsedGaussian = () => {self.config.notUsedGaussian || false};
     this.getDivisions = () => (self.config.divisions || self.defaultConfig.divisions || 35)
     this.getColorMode = () => (self.config.colorMode || self.defaultConfig.colorMode || 'zone')
-    this.getColor = (zone, well) => {
+    this.getColor = (zone, well, layerIdx) => {
         let cMode = self.getColorMode();
-        return cMode === 'zone' ? zone.zone_template.background:(cMode === 'well'?utils.getWellColor(well):'blue');
+        switch(cMode) {
+            case 'zone':
+                return zone.zone_template.background;
+            case 'index':
+                if (!layerIdx) {
+                    return zone.zone_template.background;
+                }
+                let ygbPalette = self.palTable.RGB;
+                return utils.palette2RGB(ygbPalette[layerIdx % ygbPalette.length], false);
+            default:
+                return cMode === 'well'?utils.getWellColor(well):'blue';
+        }
     }
     this.getDisplayMode = () => (self.config.displayMode || self.defaultConfig.displayMode || 'bar')
     this.getStackMode = () => {

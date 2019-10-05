@@ -531,14 +531,14 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             self.isSettingChange = true;
         });
         wiApi.updatePalettes(() => {
-            let palTable = wiApi.getPalettes();
-            self.wiDropdownCtrl.items = Object.keys(palTable).map(palName => ({
+            self.palTable = wiApi.getPalettes();
+            self.wiDropdownCtrl.items = Object.keys(self.palTable).map(palName => ({
                 data: {
                     label: palName
                 },
                 properties: {
                     name: palName,
-                    palette: palTable[palName]
+                    palette: self.palTable[palName]
                 }
             }));
         });
@@ -855,9 +855,20 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     this.getLogaX = () => (self.config.logaX == undefined ? (self.logaX || self.defaultConfig.logaX || false) : self.config.logaX)
     this.getLogaY = () => (self.config.logaY == undefined ? (self.logaY || self.defaultConfig.logaY || false) : self.config.logaY)
     this.getColorMode = () => (self.config.colorMode || self.defaultConfig.colorMode || 'zone')
-    this.getColor = (zone, well) => {
+    this.getColor = (zone, well, layerIdx) => {
         let cMode = self.getColorMode();
-        return cMode === 'zone' ? zone.zone_template.background:(cMode === 'well'?utils.getWellColor(well):'red');
+        switch(cMode) {
+            case 'zone':
+                return zone.zone_template.background;
+            case 'index':
+                if (!layerIdx) {
+                    return zone.zone_template.background;
+                }
+                let ygbPalette = self.palTable.RGB;
+                return utils.palette2RGB(ygbPalette[layerIdx % ygbPalette.length], false);
+            default:
+                return cMode === 'well'?utils.getWellColor(well):'red';
+        }
     }
     this.getPointSize = () => (self.pointSize);
     this.setPointSize = (notUse, newVal) => {
@@ -1732,7 +1743,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             //wiApi.indexZonesForCorrelation(zones);
 
             let layerIdx = 0;
-            if (self.getColorMode() == 'zone') {
+            if (self.getColorMode() == 'zone' || self.getColorMode() === 'index') {
                 for (let j = 0; j < zones.length; j++) {
                     let zone = zones[j];
                     if (self.paramGroups && self.paramGroups.length && !isParamGroupsIncludeZone(zone, j)) continue;
@@ -1743,8 +1754,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                         dataZ1: dataArray.map(d => d.z1),
                         dataZ2: dataArray.map(d => d.z2),
                         dataZ3: dataArray.map(d => d.z3),
-                        regColor: self.getColor(zone, well),
-                        layerColor: self.getColor(zone, well),
+                        regColor: self.getColor(zone, well, layerIdx),
+                        layerColor: self.getColor(zone, well, layerIdx),
                         name: `${well.name}.${zone.zone_template.name}(${j})`,
                         well: `${well.name}:${well._idx}`,
                         zone: `${zone.zone_template.name}`,
@@ -1760,7 +1771,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     }
                     layer.color = curveZ1 && shouldPlotZ1 ? (function(data, idx) {
                         return getTransformZ1()(this.dataZ1[idx]);
-                    }).bind(layer) : self.getColor(zone, well);
+                    }).bind(layer) : self.getColor(zone, well, layerIdx);
                     layer.size = (function(data, idx) {
                         if (curveZ2 && shouldPlotZ2) {
                             return getTransformZ2()(this.dataZ2[idx]);
@@ -1915,7 +1926,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
 
         if (self.palProps && self.palProps.palette) {
             for (let i = 0; i < numColor; i++) {
-                colors.push(palette2RGB(self.palProps.palette[i % self.palProps.palette.length], false));
+                colors.push(utils.palette2RGB(self.palProps.palette[i % self.palProps.palette.length], false));
             }
         }
         else {
@@ -2241,7 +2252,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         let n = Math.abs(string2Int(seed));
         let colorTable = getColorPalette();
         if (!colorTable) return;
-        return palette2RGB(colorTable[n % colorTable.length], semiTransparent);
+        return utils.palette2RGB(colorTable[n % colorTable.length], semiTransparent);
     }
 
     function string2Int(str) {
@@ -2254,10 +2265,6 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         }
         return hash;
     };
-    function palette2RGB(palette, semiTransparent) {
-        if (!palette || !Object.keys(palette).length) return 'transparent';
-        return `rgb(${palette.red},${palette.green},${palette.blue},${semiTransparent ? palette.alpha / 2 : 1})`
-    }
 
     this.getColorPalette = getColorPalette;
     function getColorPalette() {
@@ -2560,14 +2567,14 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     }
     this.onPalsDropdownInit = function(wiDropdownCtrl) {
         self.wiDropdownCtrl = wiDropdownCtrl;
-        let palTable = wiApi.getPalettes();
-        wiDropdownCtrl.items = Object.keys(palTable).map(palName => {
+        self.palTable = wiApi.getPalettes();
+        wiDropdownCtrl.items = Object.keys(self.palTable).map(palName => {
             let data = {
                 label: palName
             };
             let properties = {
                 name: palName,
-                palette: palTable[palName]
+                palette: self.palTable[palName]
             };
             let toReturn = {data, properties};
             if (self.config.currentPalName && palName === self.config.currentPalName)  {

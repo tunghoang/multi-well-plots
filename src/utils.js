@@ -37,3 +37,8 @@ function isArray(value) {
     }
     return false;
 }
+exports.palette2RGB = palette2RGB;
+function palette2RGB(palette, semiTransparent) {
+    if (!palette || !Object.keys(palette).length) return 'transparent';
+    return `rgb(${palette.red},${palette.green},${palette.blue},${semiTransparent ? palette.alpha / 2 : 1})`
+}
