@@ -1443,10 +1443,11 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     }
     this.setPolygonLabel = function($index, newLabel) {
         self.polygons[$index].label = newLabel;
+        self.polygons[$index].lineStyle.fillStyle = colorGenerator(newLabel, true);
+        self.polygons[$index].contentStyle.color = self.polygons[$index].lineStyle.fillStyle.replace(/\d+\.?\d*\s*\)$/g, '1)');
     }
 
     this.polygonContentStyle = (polygon) => {
-        //polygon.contentStyle.color = colorGenerator(polygon.label);
         return polygon.contentStyle;
     }
     this.polygonFillStyle = polygon => polygon.lineStyle.fillStyle
