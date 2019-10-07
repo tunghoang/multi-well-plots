@@ -1,0 +1,42 @@
+<div class="label-option-sidebar" style="padding: 12px 20px;display: flex;background: #f4f4f4;border-bottom: 1px solid #dcdcdc;justify-content: space-between;flex-direction: column;">
+    <div>
+       Probability Map 
+    </div>
+</div>
+<div class="label-option-sidebar" style="padding: 10px 15px 0;">
+    <div style="display: flex;">
+        <div class="selection-sidebar" style="padding: 9px 10px 5px 10px; flex: 1;">
+            <editable style="flex:1;display:flex;flex-direction:row;overflow:hidden;"
+                item-label="'Rows Number'" item-value="self.getRowsNumPropMap" set-value="self.setRowsNumPropMap" enabled="true" label-style="{}"
+                content-style="{flex:1,float:'none','text-align':'right'}">
+            </editable>
+        </div>
+        <div style="margin-right: 15px; "></div>
+        <div class="selection-sidebar" style="padding: 9px 10px 5px 10px; flex: 1;">
+            <editable style="flex:1;display:flex;flex-direction:row;overflow:hidden;"
+                item-label="'Cols Number'" item-value="self.getColsNumPropMap"
+                set-value="self.setColsNumPropMap" enabled="true" label-style="{}"
+                content-style="{flex:1,float:'none','text-align':'right'}">
+            </editable>
+        </div>
+    </div>
+</div>
+<div style="display: flex; padding: 10px 15px 10px 15px;">
+    <span ng-click="self.hideSelectedPropMap()" class="button-with-label-layer"
+        style="margin-left: 0;">Deactivate</span>
+    <span ng-click="self.showSelectedPropMap()" class="button-with-label-layer"
+        style="margin-left: 10px;">Activate</span>
+    <span ng-click="self.hideAllPropMap()" class="button-with-label-layer"
+        style="margin-left: 10px;">Deactivate All</span>
+    <span ng-click="self.showAllPropMap()" class="button-with-label-layer"
+        style="margin-left: 10px;">Activate All</span>
+</div>
+<div ng-show="self.layers"
+    style="border: 1px solid #e4e4e4;margin:0 15px;border-radius: 2px;flex: 1;overflow: hidden; " class="disable-node-caret">
+    <wi-tree-view-virtual tree-root="self.getLayerTree()" get-label="self.getLayerLabel"
+        filter="self.layerFilter" get-icon="self.getPropMapTreeIcon"
+        get-icons="self.getPropMapTreeIcons" icon-style="self.getPropMapTreeIconStyle" get-children="self.noChildren" keep-children='true'
+        run-match="self.runLayerMatch" hide-unmatched="true" hide-search='false'
+        click-fn='self.click2TogglePropMap'>
+    </wi-tree-view-virtual>
+</div>
