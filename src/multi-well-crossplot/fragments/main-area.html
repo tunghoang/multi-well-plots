@@ -23,6 +23,12 @@
                 symbol-fill-style="layer.color" symbol-stroke-style="'transparent'" color-func="layer.color"
                 point-size-func="layer.size" symbol-func="layer.textSymbol" ng-repeat="layer in self.layers">
             </scatter-layer>
+			<heat-map
+				min-val="self.getLeft()" max-val="self.getRight()" 
+				min-y="self.getBottom()" max-y="self.getTop()" 
+				loga="self.getLogaX()" ortho-loga="self.getLogaY()" update-trigger="self.propMapUpdateTrigger"
+				n-row="self.getRowsNumPropMap()" n-col="self.getColsNumPropMap()" cell-value-fn="self.cellValuePropMap" cell-color-fn="self.cellColorPropMap">
+			</heat-map>
             <line-formula-layer min-val='self.getLeft()' max-val="self.getRight()" min-draw='self.getLeft()'
                 max-draw="self.getRight()" min-y="self.getBottom()" min-draw-y="self.getBottom()" max-y="self.getTop()"
                 max-draw-y="self.getTop()" ortho-loga="self.getLogaY()" loga="self.getLogaX()" formula="self.regLine"
@@ -79,7 +85,8 @@
                 show-vertex="true" fill-style="'transparent'">
             </polygon-layer>
             <tooltip-layer ng-if="self.showTooltip" min-val="self.getLeft()" max-val="self.getRight()"
-                min-y="self.getBottom()" max-y="self.getTop()" loga="self.getLogaX()" ortho-loga="self.getLogaY()">
+                min-y="self.getBottom()" max-y="self.getTop()" loga="self.getLogaX()" ortho-loga="self.getLogaY()"
+                frequency-x-fn="self.getFrequencyX" frequency-y-fn="self.getFrequencyY" test-binding="self.getFrequencyX">
             </tooltip-layer>
         </layer-collection>
         <p style="position: absolute; font-weight: bold; left: 50%; transform: translateX(-50%); bottom: 0">

@@ -52,6 +52,12 @@ function multiHistogramController($scope, $timeout, $element, wiToken, wiApi, wi
         })
 
     }
+    this.getCtrlParams = function(index) {
+        if (typeof self.ctrlParamsList == 'function') {
+            return self.ctrlParamsList()[index];
+        }
+        return self.ctrlParamsList[index];
+    }
     this.onDrop = function (event, helper, myData) {
         let idCurves = helper.data("idCurves");
         let curveName;

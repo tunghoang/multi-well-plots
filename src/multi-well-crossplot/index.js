@@ -138,7 +138,11 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         self.selectionType = self.selectionType || 'family-group';
         self.zoneTree = [];
         self.zonesetName = self.zonesetName || "ZonationAll";
-        self.config = self.config || {familyX: "", familyY: "", familyZ1: "", familyZ2: "", familyZ3: "", grid:true, displayMode: 'bar', colorMode: 'zone', stackMode: 'well', binGap: 5, title: self.title || ''};
+        self.config = self.config || {familyX: "", familyY: "", familyZ1: "",
+            familyZ2: "", familyZ3: "", grid:true, displayMode: 'bar',
+            colorMode: 'zone', stackMode: 'well', binGap: 5, title: self.title || '',
+            rowsNumPropMap: 5, colsNumPropMap:7
+        };
         /*self.printSettings = self.printSettings || {orientation: 'portrait', aspectRatio: '16:9', alignment: 'left', border: false,
             width: 210,
             vMargin: 0,
@@ -290,7 +294,11 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             }, () => {
                 self.updatePickettAdjusterArrayDebounce();
             })
-
+            $scope.$watch(() => {
+                return self.layers.map(layer => layer._use4PropMap).join('');
+            }, () => {
+               updatePropMap();
+            })
             getTrees();
         }, 700);
 
@@ -864,8 +872,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 if (!layerIdx) {
                     return zone.zone_template.background;
                 }
-                let ygbPalette = self.palTable.RGB;
-                return utils.palette2RGB(ygbPalette[layerIdx % ygbPalette.length], false);
+                let palette = self.palTable.HFU;
+                return utils.palette2RGB(palette[layerIdx % palette.length], false);
             default:
                 return cMode === 'well'?utils.getWellColor(well):'red';
         }
@@ -2095,6 +2103,11 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     this.getRegIconStyle = (node) => ( {
         'background-color': node.regColor
     })
+    this.getPropMapTreeIcon = (node) => ( (node && node._use4PropMap) ? 'layer-16x16': 'fa fa-eye-slash' )
+    this.getPropMapTreeIcons = (node) => ( ["rectangle"] )
+    this.getPropMapTreeIconStyle = (node) => ( {
+        'background-color': node.layerColor
+    })
     this.updateRegressionLine = function(regressionType, polygons) {
         let data = [];
         for (let i = 0; i < self.layers.length; i++) {
@@ -2688,5 +2701,126 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             updateFn = pickettUpdateFnArray[pickettIdx];
         }
         return updateFn;
+    }
+
+	//Probability Map
+    function getPropMapStepX() {
+        return (self.getRight() - self.getLeft()) / self.getColsNumPropMap();
+    }
+    function getPropMapStepY() {
+        return (self.getTop() - self.getBottom()) / self.getRowsNumPropMap();
+    }
+    const getBinsXGen = function(){
+        return d3.histogram()
+            .domain(d3.extent([self.getLeft(), self.getRight()]))
+            .thresholds(d3.range(self.getLeft(), self.getRight(), getPropMapStepX()).sort((a,b) => a - b));
+    }
+    const getBinsYGen = function() {
+        return d3.histogram()
+            .domain(d3.extent([self.getBottom(), self.getTop()]))
+            .thresholds(d3.range(self.getBottom(), self.getTop(), getPropMapStepY()).sort((a,b) => a - b));
+    }
+   	function isReverse(min, max) {
+        return min - max > 0;
+    } 
+	function totalBins(bins) {
+        return _.sum(bins.map(bin => bin.length));
+    }
+    this.hideSelectedPropMap = function() {
+        if(!self.selectedPropMap) return;
+        self.selectedPropMap.forEach(layer => layer._use4PropMap = false);
+        updatePropMap();
+    }
+    this.showSelectedPropMap = function() {
+        if(!self.selectedPropMap) return;
+        self.selectedPropMap.forEach(layer => layer._use4PropMap = true);
+        updatePropMap();
+    }
+    this.hideAllPropMap = function() {
+        self.layers.forEach(layer => layer._use4PropMap = false);
+        updatePropMap();
+        $timeout(() => {});
+    }
+    this.showAllPropMap = function() {
+        self.layers.forEach(layer => layer._use4PropMap = true);
+        updatePropMap();
+        $timeout(() => {});
+    }
+    this.click2TogglePropMap = function ($event, node, selectedObjs) {
+        self.isSettingChange = true;
+        node._use4PropMap = !node._use4PropMap;
+        updatePropMap();
+        self.selectedPropMap = Object.values(selectedObjs).map(o => o.data);
+    }
+    function updatePropMap() {
+        if (!self.layers || !self.layers.length) return;
+        self.propMapUpdateTrigger = Date.now();
+        let layers4PropMap = self.layers.filter(layer => {
+            return layer._use4PropMap;
+        })
+        let dataX = [];
+        let dataY = [];
+        layers4PropMap.forEach(layer => {
+            dataX = dataX.concat(layer.dataX);
+            dataY = dataY.concat(layer.dataY);
+        })
+        self.binsX = getBinsXGen()(dataX);
+        self.binsY = getBinsYGen()(dataY); 
+    }
+    this.cellValuePropMap = function(cellIndex, iRow, iCol) {
+        return '';
+    }
+	function calCellValuePropMap(cellIndex, iRow, iCol) {
+        if (!self.binsX || !self.binsX.length || !self.binsY || !self.binsY.length) return null;
+        const xBin = isReverse(self.getLeft(), self.getRight()) ? self.binsX[self.getColsNumPropMap() - 1 - iCol]:self.binsX[iCol];
+        const yBin = isReverse(self.getBottom(), self.getTop()) ? self.binsY[self.getRowsNumPropMap() - 1 - iRow]:self.binsY[iRow];
+        if (!xBin) return yBin ? yBin.length / totalBins(self.binsX) : 0;
+        if (!yBin) return xBin ? xBin.length / totalBins(self.binsY) : 0;
+        const xPercent = xBin.length / totalBins(self.binsX);
+        const yPercent = yBin.length / totalBins(self.binsY);
+        if (!_.isFinite(xPercent) || !_.isFinite(yPercent)) return null;
+        //return d3.mean([xPercent, yPercent]).toFixed(2);
+        return (xPercent * yPercent) / (Math.abs(xPercent - yPercent)**2);
+    }
+    const colorScale = d3.scaleLinear().domain([0, 1]).range(["rgba(255,255,0,0.5)", "rgba(255,0,0,0.5)"]);
+    this.cellColorPropMap = (cellIndex, iRow, iCol) => {
+        const percent = calCellValuePropMap(cellIndex, iRow, iCol);
+        if (percent == null) return 'transparent';
+        return colorScale(percent);
+    }
+    function isInside(val, range) {
+        return (val - range[0])*(val - range[1]) <= 0;
+    }
+    this.getFrequencyX = function(x) {
+        if (!self.binsX || !self.binsX.length) return 0;
+        const binX = self.binsX.find(bin => isInside(x, [bin.x0, bin.x1]));
+        if (!binX) return 0;
+        const freq = wiApi.bestNumberFormat(binX.length / totalBins(self.binsX), 3);
+        let range0 = wiApi.bestNumberFormat(binX.x0, 2);
+        let range1 = wiApi.bestNumberFormat(binX.x1, 2);
+        return `X[${range0}-${range1}]: ${freq * 100}%`
+    }
+    this.getFrequencyY = function(y) {
+        if (!self.binsY || !self.binsY.length) return 0;
+        const binY = self.binsY.find(bin => isInside(y, [bin.x0, bin.x1]));
+        if (!binY) return 0;
+        const freq = wiApi.bestNumberFormat(binY.length / totalBins(self.binsY), 3);
+        let range0 = wiApi.bestNumberFormat(binY.x0, 2);
+        let range1 = wiApi.bestNumberFormat(binY.x1, 2);
+        return `Y[${range0}-${range1}]: ${freq * 100}%`
+    }
+    this.getRowsNumPropMap = function() {
+        return self.config.rowsNumPropMap || 5;
+    }
+    this.getColsNumPropMap = function() {
+        return self.config.colsNumPropMap || 7;
+    }
+    this.setRowsNumPropMap = function(notUse, newVal) {
+        self.config.rowsNumPropMap = newVal;
+        updatePropMap();
+    }
+    this.setColsNumPropMap = function(notUse, newVal) {
+        self.config.colsNumPropMap = newVal;
+        updatePropMap();
     }
 }

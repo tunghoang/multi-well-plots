@@ -1007,8 +1007,8 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 if (!layerIdx) {
                     return zone.zone_template.background;
                 }
-                let ygbPalette = self.palTable.RGB;
-                return utils.palette2RGB(ygbPalette[layerIdx % ygbPalette.length], false);
+                let palette = self.palTable.HFU;
+                return utils.palette2RGB(palette[layerIdx % palette.length], false);
             default:
                 return cMode === 'well'?utils.getWellColor(well):'blue';
         }
