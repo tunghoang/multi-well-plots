@@ -880,7 +880,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 if (!layerIdx) {
                     return zone.zone_template.background;
                 }
-                let palette = self.palTable.HFU;
+                let palette = self.palTable.RandomColor || self.palTable.HFU;
                 return utils.palette2RGB(palette[layerIdx % palette.length], false);
             default:
                 return cMode === 'well'?utils.getWellColor(well):'red';
