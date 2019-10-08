@@ -2774,6 +2774,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         })
         self.binsX = getBinsXGen()(dataX);
         self.binsY = getBinsYGen()(dataY); 
+        updateColorScale();
     }
     this.cellValuePropMap = function(cellIndex, iRow, iCol) {
         return '';
@@ -2787,10 +2788,10 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         const xPercent = xBin.length / totalBins(self.binsX);
         const yPercent = yBin.length / totalBins(self.binsY);
         if (!_.isFinite(xPercent) || !_.isFinite(yPercent)) return null;
-        //return d3.mean([xPercent, yPercent]).toFixed(2);
-        return (xPercent * yPercent) / (Math.abs(xPercent - yPercent)**2);
+        return d3.mean([xPercent, yPercent]);
+        // return (xPercent * yPercent) / (Math.abs(xPercent - yPercent)**2);
     }
-    const colorScale = d3.scaleLinear().domain([0, 1]).range(["rgba(255,255,0,0.5)", "rgba(255,0,0,0.5)"]);
+    const colorScale = d3.scaleLinear().range(["rgba(255,255,255,0.9)", "rgba(255, 240, 128, 0.9)", "rgba(255, 128, 0, 0.9)", "rgba(50,0,0,0.9)"]);
     this.cellColorPropMap = (cellIndex, iRow, iCol) => {
         const percent = calCellValuePropMap(cellIndex, iRow, iCol);
         if (percent == null) return 'transparent';
@@ -2798,6 +2799,18 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     }
     function isInside(val, range) {
         return (val - range[0])*(val - range[1]) <= 0;
+    }
+    function updateColorScale() {
+        const nCol = self.getColsNumPropMap();
+        const nRow = self.getRowsNumPropMap();
+        const arr = new Array(nRow * nCol).fill(0).map((d, i) => {
+            const iRow = Math.floor(i / nCol);
+            const iCol = i % nCol;
+            return calCellValuePropMap(i, iRow, iCol);
+        })
+        //colorScale.domain([d3.extent(arr)]);
+        const ext = d3.extent(arr);
+        colorScale.domain([ext[0], (ext[1] - ext[0])/3 , (ext[1] - ext[0])*2/3, ext[1]]);
     }
     this.getFrequencyX = function(x) {
         if (!self.binsX || !self.binsX.length) return 0;
