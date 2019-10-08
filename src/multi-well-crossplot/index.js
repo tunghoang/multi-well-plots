@@ -69,7 +69,8 @@ app.component(componentName, component({
         getPickettSetColor: '<',
         overlayLine: "<",
         showPickettSetAt: "<",
-        showTooltip: "<"
+        showTooltip: "<",
+        onReload: '<'
     },
     transclude: true
 }));
@@ -533,23 +534,30 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         }
     }
     this.refresh = function(){
-        getTrees(() => {
-            getZonesetsFromWells(self.treeConfig);
-            self.genLayers();
-            self.isSettingChange = true;
-        });
-        wiApi.updatePalettes(() => {
-            self.palTable = wiApi.getPalettes();
-            self.wiDropdownCtrl.items = Object.keys(self.palTable).map(palName => ({
-                data: {
-                    label: palName
-                },
-                properties: {
-                    name: palName,
-                    palette: self.palTable[palName]
-                }
-            }));
-        });
+        if (self.onReload) {
+            self.onReload(refresh);
+        } else {
+            refresh();
+        }
+        function refresh() {
+            getTrees(() => {
+                getZonesetsFromWells(self.treeConfig);
+                self.genLayers();
+                self.isSettingChange = true;
+            });
+            wiApi.updatePalettes(() => {
+                self.palTable = wiApi.getPalettes();
+                self.wiDropdownCtrl.items = Object.keys(self.palTable).map(palName => ({
+                    data: {
+                        label: palName
+                    },
+                    properties: {
+                        name: palName,
+                        palette: self.palTable[palName]
+                    }
+                }));
+            });
+        }
     };
     async function getTree(wellSpec, callback) {
         let wellIdx = self.treeConfig.findIndex(wellTree => wellTree.idWell === wellSpec.idWell && wellTree._idx === wellSpec._idx);

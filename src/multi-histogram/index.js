@@ -31,7 +31,8 @@ app.component(componentName, {
         cpMarkerName: '<',
         cpIcons: '<',
         cpIconStyle: '<',
-        onMarkerDragEnd: "<"
+        onMarkerDragEnd: "<",
+        onReload: '<'
     },
     transclude: true
 });
@@ -55,8 +56,12 @@ function multiHistogramController($scope, $timeout, $element, wiToken, wiApi, wi
     this.getCtrlParams = function(index) {
         if (typeof self.ctrlParamsList == 'function') {
             return self.ctrlParamsList()[index];
+            //self.ctrlParamsList().then(result => {
+                //return result[index];
+            //});
+        } else {
+            return self.ctrlParamsList[index];
         }
-        return self.ctrlParamsList[index];
     }
     this.onDrop = function (event, helper, myData) {
         let idCurves = helper.data("idCurves");

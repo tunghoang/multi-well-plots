@@ -30,6 +30,7 @@ app.component(componentName, component({
         stackMode: "<",
         onSave: '<',
         onSaveAs: '<',
+        onReload: '<',
         title: '<',
         silent: "<", 
         ctrlParams: "<",
@@ -282,10 +283,19 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     this.refresh = function(){
         // self.histogramList.length = 0;
         // self.treeConfig.length = 0;
-        self.isSettingChange = true;
-        getTrees(()=> {
-            self.genHistogramList();
-        });
+        if (self.onReload) {
+            self.onReload(function() {
+                self.isSettingChange = true;
+                getTrees(()=> {
+                    self.genHistogramList();
+                });
+            })
+        } else {
+            self.isSettingChange = true;
+            getTrees(()=> {
+                self.genHistogramList();
+            });
+        }
     };
     async function getTree(wellSpec, callback) {
         let wellIdx = self.treeConfig.findIndex(wellTree => wellTree.idWell === wellSpec.idWell && wellTree._idx === wellSpec._idx);

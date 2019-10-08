@@ -22,11 +22,12 @@
 <div ng-show="tabIndex === $index" class="main" ng-repeat="sV in self.selectionValues track by $index">
     <multi-well-histogram well-spec="self.wellSpecs[$index]" zoneset-name="self.zonesetNames[$index]"
         selection-type="self.selectionTypes[$index]" selection-value="self.selectionValues[$index]"
-        ctrl-params="self.ctrlParamsList[$index]" zone-set-ctrl-lines="self.zoneSetCtrlLines"
+        ctrl-params="self.getCtrlParams($index)" zone-set-ctrl-lines="self.zoneSetCtrlLines"
         config="self.configs[$index]" silent="self.silent" prefix='self.prefixs[$index]'
         cp-get-marker-val='self.cpGetMarkerVal' cp-set-marker-val='self.cpSetMarkerVal'
         cp-marker-style='self.cpMarkerStyle' cp-marker-name='self.cpMarkerName'
         cp-icons='self.cpIcons' cp-icon-style='self.cpIconStyle' no-stack="self.noStack"
-        stack-mode="self.stackMode" on-marker-drag-end="self.onMarkerDragEnd">
+        stack-mode="self.stackMode" on-marker-drag-end="self.onMarkerDragEnd"
+        on-reload="self.onReload">
     </multi-well-histogram>
 </div>

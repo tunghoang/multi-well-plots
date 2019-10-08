@@ -28,7 +28,7 @@
         scale-top="self.scaleTop"
         selection-type="self.selectionTypes[idx]" 
         selection-value-list="self.getSelectionValueList(idx)"
-        param-groups="self.paramGroups"
+        param-groups="self.getParamGroups()"
         param-group-points-fn="self.paramGroupPointsFn"
         get-param-group-x="self.getParamGroupX"
         get-param-group-y="self.getParamGroupY"
@@ -51,6 +51,7 @@
         get-pickett-set-color="self.getPickettSetColor"
         overlay-line="self.overlayLine"
         show-pickett-set-at="self.showPickettSetAt"
-        on-init-fn="self.onInitFn">
+        on-init-fn="self.onInitFn"
+        on-reload="self.onReload">
     </multi-well-crossplot>
 </div>

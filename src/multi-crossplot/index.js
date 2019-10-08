@@ -52,7 +52,8 @@ app.component(componentName, {
         getPickettSetColor: "<",
         overlayLine: "<",
         showPickettSetAt: "<",
-        onInitFn: "<"
+        onInitFn: "<",
+        onReload: '<'
     },
     transclude: true
 });
@@ -73,6 +74,13 @@ function multiCrossplotController($scope, $timeout, $element, wiToken, wiApi, wi
             $scope.tabIndex = $index;
         })
 
+    }
+    this.getParamGroups = function() {
+        if (typeof self.paramGroups == 'function') {
+            return self.paramGroups();
+        } else {
+            return self.paramGroups;
+        }
     }
     this.getSelectionValueList = function(idx) {
         svl[idx].length = 0;
