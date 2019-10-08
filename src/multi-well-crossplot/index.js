@@ -2813,19 +2813,21 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         colorScale.domain([ext[0], (ext[1] - ext[0])/3 , (ext[1] - ext[0])*2/3, ext[1]]);
     }
     this.getFrequencyX = function(x) {
-        if (!self.binsX || !self.binsX.length) return 0;
+        if (!self.binsX || !self.binsX.length) return undefined;
         const binX = self.binsX.find(bin => isInside(x, [bin.x0, bin.x1]));
-        if (!binX) return 0;
+        if (!binX) return undefined;
         const freq = wiApi.bestNumberFormat(binX.length / totalBins(self.binsX), 3);
+        if (isNaN(freq)) return undefined;
         let range0 = wiApi.bestNumberFormat(binX.x0, 2);
         let range1 = wiApi.bestNumberFormat(binX.x1, 2);
         return `X[${range0}-${range1}]: ${freq * 100}%`
     }
     this.getFrequencyY = function(y) {
-        if (!self.binsY || !self.binsY.length) return 0;
+        if (!self.binsY || !self.binsY.length) return undefined;
         const binY = self.binsY.find(bin => isInside(y, [bin.x0, bin.x1]));
-        if (!binY) return 0;
+        if (!binY) return undefined;
         const freq = wiApi.bestNumberFormat(binY.length / totalBins(self.binsY), 3);
+        if (isNaN(freq)) return undefined;
         let range0 = wiApi.bestNumberFormat(binY.x0, 2);
         let range1 = wiApi.bestNumberFormat(binY.x1, 2);
         return `Y[${range0}-${range1}]: ${freq * 100}%`
