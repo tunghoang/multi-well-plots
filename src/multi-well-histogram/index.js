@@ -154,6 +154,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
 
         self.defaultConfig = self.defaultConfig || {};
         self.wellSpec = self.wellSpec || [];
+        console.log(self.wellSpec)
         self.selectionType = self.selectionType || 'family-group';
         self.zoneTree = [];
         self.zonesetName = self.zonesetName || "ZonationAll";
@@ -236,6 +237,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             data:{label:item}, 
             properties:{name:item} 
         }));
+    }
+    this.sortableUpdate = function() {
+        $scope.$digest();
     }
 
     this.runMatch = function (node, criteria) {
@@ -634,17 +638,33 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         let family = wiApi.getFamily(curve.idFamily);
         if (family != self.config.family) {
             self.config.family = family;
+            delete self.config.xUnit;
             delete self.config.left;
             delete self.config.right;
         }
         if (!family) return;
-        $timeout(() => {
+        $timeout(async () => {
             self.defaultConfig.left = isNaN(family.family_spec[0].minScale) ? 0 : family.family_spec[0].minScale;
             self.defaultConfig.right = isNaN(family.family_spec[0].maxScale) ? 100 : family.family_spec[0].maxScale;
             //self.config.left = isNaN(family.family_spec[0].minScale) ? 0 : family.family_spec[0].minScale;
             //self.config.right = isNaN(family.family_spec[0].maxScale) ? 100 : family.family_spec[0].maxScale;
             self.defaultConfig.loga = family.family_spec[0].displayType.toLowerCase() === 'logarithmic';
+            self.xUnitList = await wiApi.getListUnit({
+                idFamily: family.idFamily,
+                idCurve: curve.idCurve
+            })
+            self.xUnitList = self.xUnitList.map(item => ({
+                data:{label:item.name}, 
+                properties:{name:item.name} 
+            }))
+            self.defaultConfig.xUnit = family.family_spec[0].unit;
         })
+    }
+    this.onUnitChange = function(selectedItemProps) {
+        let oldUnit = self.config.xUnit;
+        self.config.xUnit = (selectedItemProps || {}).name;
+        self.config.left = wiApi.convertUnit(self.config.left || self.defaultConfig.left, oldUnit, self.config.xUnit);
+        self.config.right = wiApi.convertUnit(self.config.right || self.defaultConfig.right, oldUnit, self.config.xUnit);
     }
 
     this.histogramList = [];
@@ -714,6 +734,14 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     let zone = zones[j];
                     if (self.ctrlParams && self.ctrlParams.length && !isCtrlParamsIncludeZone(zone, j)) continue;
                     let dataArray = filterData(curveData, zone);
+                    let destUnit = self.config.xUnit || self.defaultConfig.xUnit; 
+                    if (curve.unit != destUnit) {
+                        dataArray = dataArray.map(data => ({
+                            y: data.y,
+                            depth: data.depth,
+                            x: wiApi.convertUnit(data.x, curve.unit, self.config.xUnit || self.defaultConfig.xUnit)
+                        }))
+                    }
                     dataArray.top = zone.startDepth;
                     dataArray.bottom = zone.endDepth;
                     if (self.getStackMode() === 'well') {

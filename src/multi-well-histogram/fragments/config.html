@@ -27,6 +27,13 @@
             </editable>
         </div>
         <div style="margin-bottom: 15px; "></div>
+        <div class="selection-sidebar" style="flex: 1;">
+            <span>Unit</span>
+            <wi-dropdown-list style="flex:1; margin-left: 10px;" items='self.xUnitList'
+                current-select="self.config.xUnit || self.defaultConfig.xUnit" on-item-changed="self.onUnitChange">
+            </wi-dropdown-list>
+        </div>
+        <div style="margin-bottom: 15px; "></div>
 
         <div style="display: flex;">
             <div class="selection-sidebar" style="padding: 9px 10px 5px 10px; flex: 1;">

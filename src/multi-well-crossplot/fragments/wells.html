@@ -45,47 +45,49 @@
     </div>
 </div>
 <div style="overflow: overlay; display:flex; flex-direction: column;">
-    <div style="border: 1px solid #e4e4e4;margin: 5px 15px;border-radius: 2px; cursor: pointer;"
-        ng-repeat='well in self.treeConfig track by $index'>
-        <div style="display: flex; flex-direction: row;padding: 10px;background: #f4f4f4; align-items: center;justify-content: space-between;text-align: center;">
-                <div style=" display: flex;align-items: center;">
-                    <i class="header-icon"
-                        ng-class="{'fa fa-caret-down': well._notHidden, 'fa fa-caret-right': !well._notHidden}"
-                        ng-click="well._notHidden = !well._notHidden"></i>
-                    <div ng-bind="well.name" style="font-weight: bold; max-width: 120px; white-space: nowrap;text-overflow: ellipsis; overflow: hidden;"></div>
-                </div>
-               
-                <div>
-                    <span
-                        ng-class="{'red-color fa fa-eye-slash': well._notUsed, 'blue-color fa fa-eye': !well._notUsed }"
-                        ng-click="self.toggleWell(well)"
-                        style="cursor: pointer; margin-right: 15px;">
-                    </span>
-                    <span class="fa fa-filter"
-                        ng-class="{'blue-color': self.hasDiscriminator(well)}"
-                        ng-click="self.discriminatorDialog(well)"
-                        style="cursor: pointer; margin-right: 17px;">
-                    </span>
-                    <span class="fa fa-times-circle" ng-click="self.removeWell(well)"
-                        style="color: rgb(163, 163, 163);cursor: pointer;margin-right: 5px;">
-                    </span>
-                </div>
-        </div>
-        <div style="display: flex; flex-direction: row ; flex-wrap: wrap; max-width: 420px; background: #f4f4f4; align-items: center;justify-content: flex-start;text-align: center;">
-            <div class="axis-bar" ng-class='{"selected": well.isSettingAxis == selectionValue.name}'
-                ng-click="well.isSettingAxis = selectionValue.name"
-                ng-repeat="selectionValue in self.selectionValueList" ng-show="selectionValue.isUsed">
-                <div ng-bind="selectionValue.name" style="font-weight: bold;"></div>
-                <div style="margin: 0 10px; max-width: 70px; flex: 1;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;"
-                    ng-bind="self.getWellSpec(well)[self.getAxisKey(selectionValue.name)].datasetName"></div>
-                <div ng-bind="self.getCurve(well, self.getAxisKey(selectionValue.name)).name"></div>
+    <wi-sortable item-list="self.treeConfig" update-fn="self.sortableUpdate">
+        <div class="sort-item" style="border: 1px solid #e4e4e4;margin: 5px 15px;border-radius: 2px; cursor: pointer;"
+            ng-repeat='well in self.treeConfig track by $index'>
+            <div style="display: flex; flex-direction: row;padding: 10px;background: #f4f4f4; align-items: center;justify-content: space-between;text-align: center;">
+                    <div style=" display: flex;align-items: center;">
+                        <i class="header-icon"
+                            ng-class="{'fa fa-caret-down': well._notHidden, 'fa fa-caret-right': !well._notHidden}"
+                            ng-click="well._notHidden = !well._notHidden"></i>
+                        <div ng-bind="well.name" style="font-weight: bold; max-width: 120px; white-space: nowrap;text-overflow: ellipsis; overflow: hidden;"></div>
+                    </div>
+                   
+                    <div>
+                        <span
+                            ng-class="{'red-color fa fa-eye-slash': well._notUsed, 'blue-color fa fa-eye': !well._notUsed }"
+                            ng-click="self.toggleWell(well)"
+                            style="cursor: pointer; margin-right: 15px;">
+                        </span>
+                        <span class="fa fa-filter"
+                            ng-class="{'blue-color': self.hasDiscriminator(well)}"
+                            ng-click="self.discriminatorDialog(well)"
+                            style="cursor: pointer; margin-right: 17px;">
+                        </span>
+                        <span class="fa fa-times-circle" ng-click="self.removeWell(well)"
+                            style="color: rgb(163, 163, 163);cursor: pointer;margin-right: 5px;">
+                        </span>
+                    </div>
             </div>
+            <div style="display: flex; flex-direction: row ; flex-wrap: wrap; max-width: 420px; background: #f4f4f4; align-items: center;justify-content: flex-start;text-align: center;">
+                <div class="axis-bar" ng-class='{"selected": well.isSettingAxis == selectionValue.name}'
+                    ng-click="well.isSettingAxis = selectionValue.name"
+                    ng-repeat="selectionValue in self.selectionValueList" ng-show="selectionValue.isUsed">
+                    <div ng-bind="selectionValue.name" style="font-weight: bold;"></div>
+                    <div style="margin: 0 10px; max-width: 70px; flex: 1;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;"
+                        ng-bind="self.getWellSpec(well)[self.getAxisKey(selectionValue.name)].datasetName"></div>
+                    <div ng-bind="self.getCurve(well, self.getAxisKey(selectionValue.name)).name"></div>
+                </div>
+            </div>
+            <wi-tree-view-virtual ng-show="well._notHidden" tree-root="well" get-label="self.getLabel"
+                filter="self.getFilterForWell(self.getAxisKey(well.isSettingAxis))" get-icon="self.getIcon"
+                get-children="self.getChildren" keep-children='true' uncollapsible='true'
+                run-match="self.runWellMatch" hide-unmatched="true" hide-search='true'
+                click-fn='self.clickFunction' collapsed="false">
+            </wi-tree-view-virtual>
         </div>
-        <wi-tree-view-virtual ng-show="well._notHidden" tree-root="well" get-label="self.getLabel"
-            filter="self.getFilterForWell(self.getAxisKey(well.isSettingAxis))" get-icon="self.getIcon"
-            get-children="self.getChildren" keep-children='true' uncollapsible='true'
-            run-match="self.runWellMatch" hide-unmatched="true" hide-search='true'
-            click-fn='self.clickFunction' collapsed="false">
-        </wi-tree-view-virtual>
-    </div>
+    </wi-sortable>
 </div>

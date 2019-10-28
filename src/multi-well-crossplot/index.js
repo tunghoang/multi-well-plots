@@ -239,6 +239,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         self.getPickettSetColor = self.getPickettSetColor || function(pickettSet, idx) {
             return pickettSet.color || 'black';
         }
+        self.xUnitList = self.xUnitList || [];
+        self.yUnitList = self.yUnitList || [];
     }
     this.$onInit = function () {
         self.doInit();
@@ -310,6 +312,10 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 polygon.mode = null;
             })
         }
+    }
+
+    this.sortableUpdate = function() {
+        $scope.$digest();
     }
 
     this.eqnOffsetY = function($index) {
@@ -930,6 +936,33 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         }
         //END overlay line---------------------------------------------------
 
+        async function updateUnitList(axis, idFamily, idCurve) { 
+            let list = await wiApi.getListUnit({
+                idFamily: idFamily,
+                idCurve: idCurve
+            })
+            list = list.map(item => ({
+                data: {label: item.name},
+                properties: {name: item.name}
+            }))
+            switch (axis) {
+                case 'xAxis':
+                    self.xUnitList = list;
+                    break;
+                case 'yAxis':
+                    self.yUnitList = list;
+                    break;
+                case 'z1Axis':
+                    self.z1UnitList = list;
+                    break;
+                case 'z2Axis':
+                    self.z2UnitList = list;
+                    break;
+                case 'z3Axis':
+                    self.z3UnitList = list;
+                    break;
+            }
+        }
         function setDefaultConfig(axis, index) {
             if (index >= self.treeConfig.length) return;
             let curve = getCurve(self.treeConfig[index], axis);
@@ -938,14 +971,17 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             } else {
                 let family = wiApi.getFamily(curve.idFamily);
                 if (!family) return;
+                updateUnitList(axis, family.idFamily, curve.idCurve);
                 switch (axis) {
                     case 'xAxis':
                         self.defaultConfig.xLabel = self.getSelectionValue('X').value;
                         self.defaultConfig.left = family.family_spec[0].minScale;
                         self.defaultConfig.right = family.family_spec[0].maxScale;
                         self.defaultConfig.logaX = family.family_spec[0].displayType.toLowerCase() === 'logarithmic';
+                        self.defaultConfig.xUnit = family.family_spec[0].unit;
                         if (family != self.config.familyX) {
                             self.config.familyX = family;
+                            delete self.config.xUnit;
                             delete self.config.left;
                             delete self.config.right;
                             delete self.config.logaX;
@@ -956,8 +992,10 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                         self.defaultConfig.top = family.family_spec[0].maxScale;
                         self.defaultConfig.bottom = family.family_spec[0].minScale;
                         self.defaultConfig.logaY = family.family_spec[0].displayType.toLowerCase() === 'logarithmic';
+                        self.defaultConfig.yUnit = family.family_spec[0].unit;
                         if (family != self.config.familyY) {
                             self.config.familyY = family;
+                            delete self.config.yUnit;
                             delete self.config.top;
                             delete self.config.bottom;
                             delete self.config.logaY;
@@ -966,9 +1004,11 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     case 'z1Axis':
                         self.defaultConfig.z1Max = family.family_spec[0].maxScale || 100;
                         self.defaultConfig.z1Min = family.family_spec[0].minScale || 0;
+                        self.defaultConfig.z1Unit = family.family_spec[0].unit;
                         self.defaultConfig.z1N = 5;
                         if (family != self.config.familyZ1) {
                             self.config.familyZ1 = family;
+                            delete self.config.z1Unit;
                             delete self.config.z1Max;
                             delete self.config.z1Min;
                             delete self.config.z1N;
@@ -978,8 +1018,10 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                         self.defaultConfig.z2Max = family.family_spec[0].maxScale || 100;
                         self.defaultConfig.z2Min = family.family_spec[0].minScale || 0;
                         self.defaultConfig.z2N = 5;
+                        self.defaultConfig.z2Unit = family.family_spec[0].unit;
                         if (family != self.config.familyZ2) {
                             self.config.familyZ2 = family;
+                            delete self.config.z2Unit;
                             delete self.config.z2Max;
                             delete self.config.z2Min;
                             delete self.config.z2N;
@@ -988,9 +1030,11 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     case 'z3Axis':
                         self.defaultConfig.z3Max = family.family_spec[0].maxScale || 100;
                         self.defaultConfig.z3Min = family.family_spec[0].minScale || 0;
+                        self.defaultConfig.z3Unit = family.family_spec[0].unit;
                         self.defaultConfig.z3N = 5;
                         if (family != self.config.familyZ3) {
                             self.config.familyZ3 = family;
+                            delete self.config.z3Unit;
                             delete self.config.z3Max;
                             delete self.config.z3Min;
                             delete self.config.z3N;
@@ -1000,6 +1044,41 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 }
             }
         }
+    }
+
+    this.onXUnitChange = function(selectedItemProps) {
+        let oldUnit = self.config.xUnit;
+        self.config.xUnit = (selectedItemProps || {}).name;
+        self.config.left = wiApi.convertUnit(self.config.left || self.defaultConfig.left, oldUnit, self.config.xUnit);
+        self.config.right = wiApi.convertUnit(self.config.right || self.defaultConfig.right, oldUnit, self.config.xUnit);
+    }
+
+    this.onYUnitChange = function(selectedItemProps) {
+        let oldUnit = self.config.yUnit;
+        self.config.yUnit = (selectedItemProps || {}).name;
+        self.config.top = wiApi.convertUnit(self.config.top || self.defaultConfig.top, oldUnit, self.config.yUnit);
+        self.config.bottom = wiApi.convertUnit(self.config.bottom || self.defaultConfig.bottom, oldUnit, self.config.yUnit);
+    }
+
+    this.onZ1UnitChange = function(selectedItemProps) {
+        let oldUnit = self.config.z1Unit;
+        self.config.z1Unit = (selectedItemProps || {}).name;
+        self.config.z1Min = wiApi.convertUnit(self.config.z1Min || self.defaultConfig.z1Min, oldUnit, self.config.z1Unit);
+        self.config.z1Max = wiApi.convertUnit(self.config.z1Max || self.defaultConfig.z1Max, oldUnit, self.config.z1Unit);
+    }
+
+    this.onZ2UnitChange = function(selectedItemProps) {
+        let oldUnit = self.config.z2Unit;
+        self.config.z2Unit = (selectedItemProps || {}).name;
+        self.config.z2Min = wiApi.convertUnit(self.config.z2Min || self.defaultConfig.z2Min, oldUnit, self.config.z2Unit);
+        self.config.z2Max = wiApi.convertUnit(self.config.z2Max || self.defaultConfig.z2Max, oldUnit, self.config.z2Unit);
+    }
+
+    this.onZ3UnitChange = function(selectedItemProps) {
+        let oldUnit = self.config.z3Unit;
+        self.config.z3Unit = (selectedItemProps || {}).name;
+        self.config.z3Min = wiApi.convertUnit(self.config.z3Min || self.defaultConfig.z3Min, oldUnit, self.config.z3Unit);
+        self.config.z3Max = wiApi.convertUnit(self.config.z3Max || self.defaultConfig.z3Max, oldUnit, self.config.z3Unit);
     }
 
     function genZonationAllZS(top, bottom, color = 'blue') {
@@ -1765,11 +1844,11 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     if (self.paramGroups && self.paramGroups.length && !isParamGroupsIncludeZone(zone, j)) continue;
                     let dataArray = filterData(pointset, zone);
                     let layer = {
-                        dataX: dataArray.map(d => d.x),
-                        dataY: dataArray.map(d => d.y),
-                        dataZ1: dataArray.map(d => d.z1),
-                        dataZ2: dataArray.map(d => d.z2),
-                        dataZ3: dataArray.map(d => d.z3),
+                        dataX: convertUnitData(dataArray.map(d => d.x), curveX.unit, self.config.xUnit || self.defaultConfig.xUnit),
+                        dataY: convertUnitData(dataArray.map(d => d.y), curveY.unit, self.config.yUnit || self.defaultConfig.yUnit),
+                        dataZ1: convertUnitData(dataArray.map(d => d.z1), (curveZ1 || {}).unit, self.config.z1Unit || self.defaultConfig.z1Unit),
+                        dataZ2: convertUnitData(dataArray.map(d => d.z2), (curveZ2 || {}).unit, self.config.z2Unit || self.defaultConfig.z2Unit),
+                        dataZ3: convertUnitData(dataArray.map(d => d.z3), (curveZ3 || {}).unit, self.config.z3Unit || self.defaultConfig.z3Unit),
                         regColor: self.getColor(zone, well, layerIdx),
                         layerColor: self.getColor(zone, well, layerIdx),
                         name: `${well.name}.${zone.zone_template.name}(${j})`,
@@ -1831,11 +1910,11 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     if (self.paramGroups && self.paramGroups.length && !isParamGroupsIncludeZone(zone, j)) continue;
                     if (zone._notUsed) continue;
                     let dataArray = filterData(pointset, zone);
-                    layer.dataX = layer.dataX.concat(dataArray.map(d => d.x));
-                    layer.dataY = layer.dataY.concat(dataArray.map(d => d.y));
-                    layer.dataZ1 = layer.dataZ1.concat(dataArray.map(d => d.z1));
-                    layer.dataZ2 = layer.dataZ2.concat(dataArray.map(d => d.z2));
-                    layer.dataZ3 = layer.dataZ3.concat(dataArray.map(d => d.z3));
+                    layer.dataX = layer.dataX.concat(convertUnitData(dataArray.map(d => d.x), curveX.unit, self.config.xUnit || self.defaultConfig.xUnit));
+                    layer.dataY = layer.dataY.concat(convertUnitData(dataArray.map(d => d.y), curveY.unit, self.config.yUnit || self.defaultConfig.yUnit));
+                    layer.dataZ1 = layer.dataZ1.concat(convertUnitData(dataArray.map(d => d.z1), (curveZ1 || {}).unit, self.config.z1Unit || self.defaultConfig.z1Unit));
+                    layer.dataZ2 = layer.dataZ2.concat(convertUnitData(dataArray.map(d => d.z2), (curveZ2 || {}).unit, self.config.z2Unit || self.defaultConfig.z2Unit));
+                    layer.dataZ3 = layer.dataZ3.concat(convertUnitData(dataArray.map(d => d.z3), (curveZ3 || {}).unit, self.config.z3Unit || self.defaultConfig.z3Unit));
                 }
                 layer.color = curveZ1 && shouldPlotZ1 ? (function(data, idx) {
                     return getTransformZ1()(this.dataZ1[idx]);
@@ -1865,6 +1944,12 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         self.layers = layers;
         self._notUsedLayer = _notUsedLayer;
         wiLoading.hide();
+    }
+    function convertUnitData(data, fromUnit, toUnit) {
+        if (fromUnit && toUnit && fromUnit != toUnit) {
+            data = data.map(item => wiApi.convertUnit(item, fromUnit, toUnit));
+        }
+        return data;
     }
     function isParamGroupsIncludeZone(zone, layerIdx) {
         let toReturn = self.paramGroups.some((paramGroup, paramGroupIdx) => {
