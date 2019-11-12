@@ -142,7 +142,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         self.config = self.config || {familyX: "", familyY: "", familyZ1: "",
             familyZ2: "", familyZ3: "", grid:true, displayMode: 'bar',
             colorMode: 'zone', stackMode: 'well', binGap: 5, title: self.title || '',
-            rowsNumPropMap: 5, colsNumPropMap:7
+            rowsNumPropMap: 5, colsNumPropMap:7, polynomialOrder: 2
         };
         /*self.printSettings = self.printSettings || {orientation: 'portrait', aspectRatio: '16:9', alignment: 'left', border: false,
             width: 210,
@@ -168,6 +168,9 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         }, {
             data: {label: 'Power'},
             properties: {name: 'Power'}
+        }, {
+            data: {label: 'Polynomial'},
+            properties: {name: 'Polynomial'}
         }];
 
         if (self.udlsAssetId) {
@@ -896,6 +899,11 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     this.setPointSize = (notUse, newVal) => {
         self.isSettingChange = true;
         self.pointSize = parseFloat(newVal);
+    }
+    this.getPolynomialOrder = () => (self.config.polynomialOrder || 2);
+    this.setPolynomialOrder = (notUse, newVal) => {
+        self.isSettingChange = true;
+        self.config.polynomialOrder = parseFloat(newVal);
     }
 
     // ---DEFAULT CONFIG
@@ -2270,6 +2278,16 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     predict: result.predict,
                     r2: result.r2
                 };
+                break;
+            case 'Polynomial':
+                result = regression.polynomial(data, { order: self.getPolynomialOrder() })
+                self.regLine = {
+                    ...self.regLine,
+                    family: self.regressionType.toLowerCase(),
+                    equation: result.equation,
+                    predict: result.predict,
+                    r2: result.r2
+                }
                 break;
         }
         // Calc MSE
