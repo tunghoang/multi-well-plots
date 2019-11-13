@@ -1058,35 +1058,45 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         let oldUnit = self.config.xUnit;
         self.config.xUnit = (selectedItemProps || {}).name;
         self.config.left = wiApi.convertUnit(self.config.left || self.defaultConfig.left, oldUnit, self.config.xUnit);
+        self.config.left = parseFloat(wiApi.bestNumberFormat(self.config.left), 4)
         self.config.right = wiApi.convertUnit(self.config.right || self.defaultConfig.right, oldUnit, self.config.xUnit);
+        self.config.right = parseFloat(wiApi.bestNumberFormat(self.config.right), 4)
     }
 
     this.onYUnitChange = function(selectedItemProps) {
         let oldUnit = self.config.yUnit;
         self.config.yUnit = (selectedItemProps || {}).name;
         self.config.top = wiApi.convertUnit(self.config.top || self.defaultConfig.top, oldUnit, self.config.yUnit);
+        self.config.top = parseFloat(wiApi.bestNumberFormat(self.config.top), 4)
         self.config.bottom = wiApi.convertUnit(self.config.bottom || self.defaultConfig.bottom, oldUnit, self.config.yUnit);
+        self.config.bottom = parseFloat(wiApi.bestNumberFormat(self.config.bottom), 4)
     }
 
     this.onZ1UnitChange = function(selectedItemProps) {
         let oldUnit = self.config.z1Unit;
         self.config.z1Unit = (selectedItemProps || {}).name;
         self.config.z1Min = wiApi.convertUnit(self.config.z1Min || self.defaultConfig.z1Min, oldUnit, self.config.z1Unit);
+        self.config.z1Min = parseFloat(wiApi.bestNumberFormat(self.config.z1Min), 4)
         self.config.z1Max = wiApi.convertUnit(self.config.z1Max || self.defaultConfig.z1Max, oldUnit, self.config.z1Unit);
+        self.config.z1Max = parseFloat(wiApi.bestNumberFormat(self.config.z1Max), 4)
     }
 
     this.onZ2UnitChange = function(selectedItemProps) {
         let oldUnit = self.config.z2Unit;
         self.config.z2Unit = (selectedItemProps || {}).name;
         self.config.z2Min = wiApi.convertUnit(self.config.z2Min || self.defaultConfig.z2Min, oldUnit, self.config.z2Unit);
+        self.config.z2Min = parseFloat(wiApi.bestNumberFormat(self.config.z2Min), 4)
         self.config.z2Max = wiApi.convertUnit(self.config.z2Max || self.defaultConfig.z2Max, oldUnit, self.config.z2Unit);
+        self.config.z2Max = parseFloat(wiApi.bestNumberFormat(self.config.z2Max), 4)
     }
 
     this.onZ3UnitChange = function(selectedItemProps) {
         let oldUnit = self.config.z3Unit;
         self.config.z3Unit = (selectedItemProps || {}).name;
         self.config.z3Min = wiApi.convertUnit(self.config.z3Min || self.defaultConfig.z3Min, oldUnit, self.config.z3Unit);
+        self.config.z3Min = parseFloat(wiApi.bestNumberFormat(self.config.z3Min), 4)
         self.config.z3Max = wiApi.convertUnit(self.config.z3Max || self.defaultConfig.z3Max, oldUnit, self.config.z3Unit);
+        self.config.z3Max = parseFloat(wiApi.bestNumberFormat(self.config.z3Max), 4)
     }
 
     function genZonationAllZS(top, bottom, color = 'blue') {
