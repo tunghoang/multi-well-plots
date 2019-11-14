@@ -70,7 +70,8 @@ app.component(componentName, component({
         overlayLine: "<",
         showPickettSetAt: "<",
         showTooltip: "<",
-        onReload: '<'
+        onReload: '<',
+        afterNewPlotCreated: '<'
     },
     transclude: true
 }));
@@ -1154,6 +1155,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                         wiLoading.hide();
                         close && close();
                         self.onSave && self.onSave(res);
+                        self.afterNewPlotCreated && self.afterNewPlotCreated(res);
                     })
                     .catch(e => {
                         wiLoading.hide();
@@ -1205,6 +1207,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             wiApi.newAssetPromise(self.idProject, name, type, content)
                 .then(res => {
                     self.onSaveAs && self.onSaveAs(res);
+                    self.afterNewPlotCreated && self.afterNewPlotCreated(res);
                 })
                 .catch(e => {
                     let msg = `Asset ${name} has been existed`;

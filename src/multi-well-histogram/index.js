@@ -42,7 +42,8 @@ app.component(componentName, component({
         cpIcons: "<",
         cpIconStyle: "<",
         onMarkerDragEnd: "<",
-        dragHeader: '<'
+        dragHeader: '<',
+        afterNewPlotCreated: '<'
     },
     transclude: true
 }))
@@ -1092,6 +1093,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 wiApi.newAssetPromise(self.idProject, name, type, content).then(res => {
                     self.idHistogram = res.idParameterSet;
                     self.onSave && self.onSave(res);
+                    self.afterNewPlotCreated && self.afterNewPlotCreated(res);
                 }).catch(e => {
                     let msg = `Asset ${name} has been existed`;
                     if (__toastr) __toastr.warning(msg);
@@ -1135,6 +1137,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             }
             wiApi.newAssetPromise(self.idProject, name, type, content).then(res => {
                 self.onSaveAs && self.onSaveAs(res);
+                self.afterNewPlotCreated && self.afterNewPlotCreated(res);
             })
                 .catch(e => {
                     let msg = `Asset ${name} has been existed`;
