@@ -492,6 +492,9 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             data:{label:item}, 
             properties:{name:item} 
         }));
+        self.selectionList.sort((a, b) => {
+            return a.data.label.localeCompare(b.data.label);
+        })
     }
 
     this.getLabel = function (node) {
@@ -603,9 +606,9 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             }
         }
         self.wellSpec = self.wellSpec.filter(wellspec => !wellspec.notFound);
-        if (self.idCrossplot) {
-            self.saveToAsset();
-        }
+        //if (self.idCrossplot) {
+            //self.saveToAsset();
+        //}
         if (!$scope.$root.$$phase) $scope.$digest();
         callback && callback();
         wiLoading.hide();
@@ -1155,6 +1158,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                         wiLoading.hide();
                         close && close();
                         self.onSave && self.onSave(res);
+                        __toastr && __toastr.success('Successfully saved Crossplot ' + name)
                         self.afterNewPlotCreated && self.afterNewPlotCreated(res);
                     })
                     .catch(e => {
@@ -1169,6 +1173,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             content.idParameterSet = self.idParameterSet;
             wiApi.editAssetPromise(self.idCrossplot, content).then(res => {
                 wiLoading.hide();
+                __toastr && __toastr.success('Successfully saved Crossplot ' + res.name)
                 close && close();
             })
                 .catch(e => {
@@ -1207,6 +1212,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             wiApi.newAssetPromise(self.idProject, name, type, content)
                 .then(res => {
                     self.onSaveAs && self.onSaveAs(res);
+                    __toastr && __toastr.success('Successfully saved Crossplot ' + name)
                     self.afterNewPlotCreated && self.afterNewPlotCreated(res);
                 })
                 .catch(e => {

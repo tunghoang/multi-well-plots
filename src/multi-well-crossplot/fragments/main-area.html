@@ -90,11 +90,11 @@
             </tooltip-layer>
         </layer-collection>
         <p style="position: absolute; font-weight: bold; left: 50%; transform: translateX(-50%); bottom: 0">
-            {{self.getConfigXLabel()}} </p>
+            {{self.getConfigXLabel()}} ({{ self.config.xUnit || self.defaultConfig.xUnit }})</p>
         <p style="position: absolute; top: 23px; right: 45%;text-transform: uppercase; font-weight: bold; transform: translateY(-50%);">
             {{self.getConfigTitle()}}</p>
         <p style="position: absolute;left: 18px; top: 50%;font-weight: bold;transform: translate(-50%, -50%) rotate(-90deg);">
-            {{self.getConfigYLabel()}}</p>
+            {{self.getConfigYLabel()}} ({{ self.config.yUnit || self.defaultConfig.yUnit }})</p>
     </div>
 
     <div class="axis-info" ng-if="(self.getSelectionValue('Z1').isUsed && self.zColors) || (self.getSelectionValue('Z2').isUsed && self.zSizes) || (self.getSelectionValue('Z3').isUsed && self.zSymbols)">

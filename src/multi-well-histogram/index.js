@@ -238,6 +238,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             data:{label:item}, 
             properties:{name:item} 
         }));
+        self.selectionList.sort((a, b) => {
+            return a.data.label.localeCompare(b.data.label);
+        })
     }
     this.sortableUpdate = function() {
         $scope.$digest();
@@ -332,9 +335,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             }
         }
         self.wellSpec = self.wellSpec.filter(wellspec => !wellspec.notFound);
-        if (self.idHistogram) {
-            self.save();
-        }
+        //if (self.idHistogram) {
+            //self.save();
+        //}
         if (!$scope.$root.$$phase) $scope.$digest();
         callback && callback();
         wiLoading.hide();
@@ -654,11 +657,13 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 idFamily: family.idFamily,
                 idCurve: curve.idCurve
             })
-            self.xUnitList = self.xUnitList.map(item => ({
-                data:{label:item.name}, 
-                properties:{name:item.name} 
-            }))
-            self.defaultConfig.xUnit = family.family_spec[0].unit;
+            $scope.$apply(() => {
+                self.xUnitList = self.xUnitList.map(item => ({
+                    data:{label:item.name}, 
+                    properties:{name:item.name} 
+                }))
+                self.defaultConfig.xUnit = family.family_spec[0].unit;
+            })
         })
     }
     this.onUnitChange = function(selectedItemProps) {
@@ -1075,7 +1080,6 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     }
 
     this.save = function() {
-        console.log('save');
         if (!self.idHistogram) {
             wiDialog.promptDialog({
                 title: 'New Histogram',
@@ -1093,6 +1097,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 wiApi.newAssetPromise(self.idProject, name, type, content).then(res => {
                     self.idHistogram = res.idParameterSet;
                     self.onSave && self.onSave(res);
+                    __toastr && __toastr.success('Successfully saved Histogram ' + name)
                     self.afterNewPlotCreated && self.afterNewPlotCreated(res);
                 }).catch(e => {
                     let msg = `Asset ${name} has been existed`;
@@ -1113,6 +1118,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             }
             wiApi.editAssetPromise(self.idHistogram, content).then(res => {
                 console.log(res);
+                __toastr && __toastr.success('Successfully saved Histogram ' + res.name)
             }).catch(e => {
                     let msg = `Asset ${name} has been existed`;
                     if (__toastr) __toastr.warning(msg);
@@ -1137,6 +1143,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             }
             wiApi.newAssetPromise(self.idProject, name, type, content).then(res => {
                 self.onSaveAs && self.onSaveAs(res);
+                __toastr && __toastr.success('Successfully saved Histogram ' + name)
                 self.afterNewPlotCreated && self.afterNewPlotCreated(res);
             })
                 .catch(e => {
