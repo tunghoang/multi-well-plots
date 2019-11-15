@@ -1925,7 +1925,6 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     name: `${well.name}`,
                     well: `${well.name}:${well._idx}`,
                     conditionExpr: self.wellSpec[i].discriminator ? self.wellSpec[i].discriminator.conditionExpr : undefined,
-                    mse: self.calcMSE(dataArray.map(d => d.x), dataArray.map(d => d.y)).toFixed(3),
                     curveXInfo: `${datasetX.name}.${curveX.name}`,
                     curveYInfo: `${datasetY.name}.${curveY.name}`,
                     curveZ1Info: shouldPlotZ1 ? `${datasetZ1.name}.${curveZ1.name}` : 'N/A',
@@ -1945,7 +1944,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 }
                 layer.color = curveZ1 && shouldPlotZ1 ? (function(data, idx) {
                     return getTransformZ1()(this.dataZ1[idx]);
-                }).bind(layer) : getWellSpec(wellSpec);
+                }).bind(layer) : getWellSpec(self.wellSpec);
                 layer.size = (function(data, idx) {
                     if (curveZ2 && shouldPlotZ2) {
                         return getTransformZ2()(this.dataZ2[idx]);
@@ -1958,6 +1957,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 }).bind(layer) : null;
                 layer.numPoints = layer.dataX.length;
                 layer.correlation = self.calcCorrelation(layer.dataX, layer.dataY);
+                layer.mse = self.calcMSE(layer.dataX, layer.dataY).toFixed(3),
                 $timeout(() => {
                     layers.push(layer);
                 })
