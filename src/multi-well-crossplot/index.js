@@ -1,7 +1,7 @@
 var componentName = 'multiWellCrossplot';
 module.exports.name = componentName;
 require('./style.less');
-const regression = require('../../bower_components/regression-js/dist/regression.min.js');
+const regression = require('../vendor/js/wi-regression');
 const utils = require('../utils');
 var PrintableController = Printable.klass;
 var component = Printable.component;
