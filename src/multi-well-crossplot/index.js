@@ -899,6 +899,14 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 return cMode === 'well'?utils.getWellColor(well):'red';
         }
     }
+    this.getFitX = () => self.config.fitX || 'NaN';
+    this.setFitX = (notUse, newVal) => {
+        self.config.fitX = parseFloat(newVal);
+    }
+    this.getFitY = () => self.config.fitY || 'NaN';
+    this.setFitY = (notUse, newVal) => {
+        self.config.fitY = parseFloat(newVal);
+    }
     this.getPointSize = () => (self.pointSize);
     this.setPointSize = (notUse, newVal) => {
         self.isSettingChange = true;
@@ -2264,9 +2272,13 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 lineWidth: (self.regLine.lineStyle || {}).lineWidth || 1
             }
         }
+        let fitPoint = {
+            fitX: self.config.fitX,
+            fitY: self.config.fitY
+        }
         switch(regressionType) {
             case 'Linear':
-                result = regression.linear(data, {precision: 6});
+                result = regression.linear(data, {precision: 6, ...fitPoint});
                 self.regLine = {
                     ...self.regLine,
                     family: self.regressionType.toLowerCase(), 
@@ -2277,7 +2289,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 };
                 break;
             case 'Exponential':
-                result = regression.exponential(data, {precision: 6});
+                result = regression.exponential(data, {precision: 6, ...fitPoint});
                 self.regLine = {
                     ...self.regLine,
                     family: self.regressionType.toLowerCase(), 
@@ -2288,7 +2300,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 };
                 break;
             case 'Power':
-                result = regression.power(data, {precision: 6});
+                result = regression.power(data, {precision: 6, ...fitPoint});
                 self.regLine = {
                     ...self.regLine,
                     family: self.regressionType.toLowerCase(), 
