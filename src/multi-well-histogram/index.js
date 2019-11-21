@@ -640,13 +640,13 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         let curve = getCurve(self.treeConfig[0], self.wellSpec[0]);
         if (!curve) return;
         let family = wiApi.getFamily(curve.idFamily);
-        if (family != self.config.family) {
-            self.config.family = family;
+        if (!family) return;
+        if (family.idFamily != self.config.idFamily) {
+            self.config.idFamily = family.idFamily;
             delete self.config.xUnit;
             delete self.config.left;
             delete self.config.right;
         }
-        if (!family) return;
         $timeout(async () => {
             self.defaultConfig.left = isNaN(family.family_spec[0].minScale) ? 0 : family.family_spec[0].minScale;
             self.defaultConfig.right = isNaN(family.family_spec[0].maxScale) ? 100 : family.family_spec[0].maxScale;
@@ -669,8 +669,8 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     this.onUnitChange = function(selectedItemProps) {
         let oldUnit = self.config.xUnit;
         self.config.xUnit = (selectedItemProps || {}).name;
-        self.config.left = wiApi.convertUnit(self.config.left || self.defaultConfig.left, oldUnit, self.config.xUnit);
-        self.config.right = wiApi.convertUnit(self.config.right || self.defaultConfig.right, oldUnit, self.config.xUnit);
+        self.config.left = wiApi.convertUnit(self.getLeft(), oldUnit, self.config.xUnit);
+        self.config.right = wiApi.convertUnit(self.getRight(), oldUnit, self.config.xUnit);
     }
 
     this.histogramList = [];
@@ -1119,6 +1119,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             wiApi.editAssetPromise(self.idHistogram, content).then(res => {
                 console.log(res);
                 __toastr && __toastr.success('Successfully saved Histogram ' + res.name)
+                self.afterNewPlotCreated && self.afterNewPlotCreated(res);
             }).catch(e => {
                     let msg = `Asset ${name} has been existed`;
                     if (__toastr) __toastr.warning(msg);

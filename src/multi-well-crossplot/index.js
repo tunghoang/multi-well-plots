@@ -876,7 +876,13 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     this.getTop = () => (isNaN(self.config.top) ? (self.scaleTop || self.defaultConfig.top || 0) : self.config.top)
     this.getBottom = () => (isNaN(self.config.bottom) ? (self.scaleBottom || self.defaultConfig.bottom || 0) : self.config.bottom)
     this.getLeft = () => (isNaN(self.config.left) ? (self.scaleLeft || self.defaultConfig.left || 0) : self.config.left)
-    this.getRight = () => (isNaN(self.config.right) ? (self.scaleRight || self.defaultConfig.right || 0) : self.config.right)
+    //this.getRight = () => (isNaN(self.config.right) ? (self.scaleRight || self.defaultConfig.right || 0) : self.config.right)
+    this.getRight = function() {
+        if (isNaN(self.config.right)) {
+            return (self.scaleRight || self.defaultConfig.right || 0);
+        }
+        return self.config.right;
+    }
     this.getMajorX = () => ( isNaN(self.config.majorX) ? (self.defaultConfig.majorX || 5) : self.config.majorX)
     this.getMajorY = () => ( isNaN(self.config.majorY) ? (self.defaultConfig.majorY || 5) : self.config.majorY)
     this.getMinorX = () => ( isNaN(self.config.minorX) ? (self.defaultConfig.minorX || 1) : self.config.minorX)
@@ -999,8 +1005,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                         self.defaultConfig.right = family.family_spec[0].maxScale;
                         self.defaultConfig.logaX = family.family_spec[0].displayType.toLowerCase() === 'logarithmic';
                         self.defaultConfig.xUnit = family.family_spec[0].unit;
-                        if (family != self.config.familyX) {
-                            self.config.familyX = family;
+                        if (family.idFamily != self.config.xIdFamily) {
+                            self.config.xIdFamily = family.idFamily;
                             delete self.config.xUnit;
                             delete self.config.left;
                             delete self.config.right;
@@ -1013,8 +1019,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                         self.defaultConfig.bottom = family.family_spec[0].minScale;
                         self.defaultConfig.logaY = family.family_spec[0].displayType.toLowerCase() === 'logarithmic';
                         self.defaultConfig.yUnit = family.family_spec[0].unit;
-                        if (family != self.config.familyY) {
-                            self.config.familyY = family;
+                        if (family.idFamily != self.config.yIdFamily) {
+                            self.config.yIdFamily = family.idFamily;
                             delete self.config.yUnit;
                             delete self.config.top;
                             delete self.config.bottom;
@@ -1026,8 +1032,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                         self.defaultConfig.z1Min = family.family_spec[0].minScale || 0;
                         self.defaultConfig.z1Unit = family.family_spec[0].unit;
                         self.defaultConfig.z1N = 5;
-                        if (family != self.config.familyZ1) {
-                            self.config.familyZ1 = family;
+                        if (family.idFamily != self.config.z1IdFamily) {
+                            self.config.z1IdFamily = family.idFamily;
                             delete self.config.z1Unit;
                             delete self.config.z1Max;
                             delete self.config.z1Min;
@@ -1039,8 +1045,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                         self.defaultConfig.z2Min = family.family_spec[0].minScale || 0;
                         self.defaultConfig.z2N = 5;
                         self.defaultConfig.z2Unit = family.family_spec[0].unit;
-                        if (family != self.config.familyZ2) {
-                            self.config.familyZ2 = family;
+                        if (family.idFamily != self.config.z2IdFamily) {
+                            self.config.z2IdFamily = family.idFamily;
                             delete self.config.z2Unit;
                             delete self.config.z2Max;
                             delete self.config.z2Min;
@@ -1052,8 +1058,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                         self.defaultConfig.z3Min = family.family_spec[0].minScale || 0;
                         self.defaultConfig.z3Unit = family.family_spec[0].unit;
                         self.defaultConfig.z3N = 5;
-                        if (family != self.config.familyZ3) {
-                            self.config.familyZ3 = family;
+                        if (family.idFamily != self.config.z3IdFamily) {
+                            self.config.z3IdFamily = family.idFamily;
                             delete self.config.z3Unit;
                             delete self.config.z3Max;
                             delete self.config.z3Min;
@@ -1069,45 +1075,45 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     this.onXUnitChange = function(selectedItemProps) {
         let oldUnit = self.config.xUnit;
         self.config.xUnit = (selectedItemProps || {}).name;
-        self.config.left = wiApi.convertUnit(self.config.left || self.defaultConfig.left, oldUnit, self.config.xUnit);
+        self.config.left = wiApi.convertUnit(self.getLeft(), oldUnit, self.config.xUnit);
         self.config.left = parseFloat(wiApi.bestNumberFormat(self.config.left), 4)
-        self.config.right = wiApi.convertUnit(self.config.right || self.defaultConfig.right, oldUnit, self.config.xUnit);
+        self.config.right = wiApi.convertUnit(self.getRight(), oldUnit, self.config.xUnit);
         self.config.right = parseFloat(wiApi.bestNumberFormat(self.config.right), 4)
     }
 
     this.onYUnitChange = function(selectedItemProps) {
         let oldUnit = self.config.yUnit;
         self.config.yUnit = (selectedItemProps || {}).name;
-        self.config.top = wiApi.convertUnit(self.config.top || self.defaultConfig.top, oldUnit, self.config.yUnit);
+        self.config.top = wiApi.convertUnit(self.getTop(), oldUnit, self.config.yUnit);
         self.config.top = parseFloat(wiApi.bestNumberFormat(self.config.top), 4)
-        self.config.bottom = wiApi.convertUnit(self.config.bottom || self.defaultConfig.bottom, oldUnit, self.config.yUnit);
+        self.config.bottom = wiApi.convertUnit(self.getBottom(), oldUnit, self.config.yUnit);
         self.config.bottom = parseFloat(wiApi.bestNumberFormat(self.config.bottom), 4)
     }
 
     this.onZ1UnitChange = function(selectedItemProps) {
         let oldUnit = self.config.z1Unit;
         self.config.z1Unit = (selectedItemProps || {}).name;
-        self.config.z1Min = wiApi.convertUnit(self.config.z1Min || self.defaultConfig.z1Min, oldUnit, self.config.z1Unit);
+        self.config.z1Min = wiApi.convertUnit(self.getZ1Min(), oldUnit, self.config.z1Unit);
         self.config.z1Min = parseFloat(wiApi.bestNumberFormat(self.config.z1Min), 4)
-        self.config.z1Max = wiApi.convertUnit(self.config.z1Max || self.defaultConfig.z1Max, oldUnit, self.config.z1Unit);
+        self.config.z1Max = wiApi.convertUnit(self.getZ1Max(), oldUnit, self.config.z1Unit);
         self.config.z1Max = parseFloat(wiApi.bestNumberFormat(self.config.z1Max), 4)
     }
 
     this.onZ2UnitChange = function(selectedItemProps) {
         let oldUnit = self.config.z2Unit;
         self.config.z2Unit = (selectedItemProps || {}).name;
-        self.config.z2Min = wiApi.convertUnit(self.config.z2Min || self.defaultConfig.z2Min, oldUnit, self.config.z2Unit);
+        self.config.z2Min = wiApi.convertUnit(self.getZ2Min(), oldUnit, self.config.z2Unit);
         self.config.z2Min = parseFloat(wiApi.bestNumberFormat(self.config.z2Min), 4)
-        self.config.z2Max = wiApi.convertUnit(self.config.z2Max || self.defaultConfig.z2Max, oldUnit, self.config.z2Unit);
+        self.config.z2Max = wiApi.convertUnit(self.getZ2Max(), oldUnit, self.config.z2Unit);
         self.config.z2Max = parseFloat(wiApi.bestNumberFormat(self.config.z2Max), 4)
     }
 
     this.onZ3UnitChange = function(selectedItemProps) {
         let oldUnit = self.config.z3Unit;
         self.config.z3Unit = (selectedItemProps || {}).name;
-        self.config.z3Min = wiApi.convertUnit(self.config.z3Min || self.defaultConfig.z3Min, oldUnit, self.config.z3Unit);
+        self.config.z3Min = wiApi.convertUnit(self.getZ3Min(), oldUnit, self.config.z3Unit);
         self.config.z3Min = parseFloat(wiApi.bestNumberFormat(self.config.z3Min), 4)
-        self.config.z3Max = wiApi.convertUnit(self.config.z3Max || self.defaultConfig.z3Max, oldUnit, self.config.z3Unit);
+        self.config.z3Max = wiApi.convertUnit(self.getZ3Max(), oldUnit, self.config.z3Unit);
         self.config.z3Max = parseFloat(wiApi.bestNumberFormat(self.config.z3Max), 4)
     }
 
@@ -1183,6 +1189,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 wiLoading.hide();
                 __toastr && __toastr.success('Successfully saved Crossplot ' + res.name)
                 close && close();
+                self.afterNewPlotCreated && self.afterNewPlotCreated(res);
             })
                 .catch(e => {
                     wiLoading.hide();
