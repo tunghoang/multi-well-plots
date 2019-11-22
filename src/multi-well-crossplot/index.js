@@ -1959,7 +1959,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 }
                 layer.color = curveZ1 && shouldPlotZ1 ? (function(data, idx) {
                     return getTransformZ1()(this.dataZ1[idx]);
-                }).bind(layer) : getWellSpec(self.wellSpec);
+                }).bind(layer) : self.getColor(null, well);
                 layer.size = (function(data, idx) {
                     if (curveZ2 && shouldPlotZ2) {
                         return getTransformZ2()(this.dataZ2[idx]);
