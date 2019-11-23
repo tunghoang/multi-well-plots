@@ -3,8 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "run-dev": "webpack -w --mode=development",
-    "start:dev": "webpack -w --config webpack.local.js",
-    "postinstall": "bower update -F"
+    "start:dev": "webpack -w --config webpack.local.js"
   },
   "devDependencies": {
     "bower": "^1.8.8",
