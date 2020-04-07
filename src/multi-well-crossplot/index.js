@@ -1996,8 +1996,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     let data = await wiApi.getCachedCurveDataPromise(curve.idCurve);
     if (data.name && data.name == "Error") {
       wiLoading.hide();
-      if (__toastr) __toastr.error(`Can not get data ${curve.name}-${well.name} or it is empty`);
-      console.error(new Error(`Can not get data ${curve.name}-${well.name} or it is empty`));
+      if (__toastr) __toastr.error(`Can not get data of ${curve.name}-${well.name} or it is empty`);
+      console.error(new Error(`Can not get data of ${curve.name}-${well.name} or it is empty`));
       return undefined;
     }
     return data;
