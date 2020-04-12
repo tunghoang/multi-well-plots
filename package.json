@@ -1,6 +1,7 @@
 {
   "name": "multi-well-plots",
   "version": "0.0.1",
+  "main": "./dist/multi-well-plots.js",
   "scripts": {
     "run-dev": "webpack -w --mode=development",
     "start": "webpack -w --config webpack.local.js"
