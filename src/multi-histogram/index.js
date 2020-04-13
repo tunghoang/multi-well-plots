@@ -36,7 +36,7 @@ app.component(componentName, {
     },
     transclude: true
 });
-
+multiHistogramController.$inject = ['$scope', '$timeout', '$element', 'wiToken', 'wiApi', 'wiDialog', 'wiLoading']
 function multiHistogramController($scope, $timeout, $element, wiToken, wiApi, wiDialog, wiLoading) {
     let self = this;
     self.silent = true;

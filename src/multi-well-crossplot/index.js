@@ -75,7 +75,7 @@ app.component(componentName, component({
   },
   transclude: true
 }));
-
+multiWellCrossplotController.$inject = ['$scope', '$timeout', '$element', '$compile', 'wiToken', 'wiApi', 'wiDialog', 'wiLoading'];
 function multiWellCrossplotController($scope, $timeout, $element, $compile, wiToken, wiApi, wiDialog, wiLoading) {
   let self = this;
   PrintableController.call(this, $scope, $element, $timeout, $compile, wiApi, wiLoading);

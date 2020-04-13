@@ -57,7 +57,7 @@ app.component(componentName, {
     },
     transclude: true
 });
-
+multiCrossplotController.$inject = ['$scope', '$timeout', '$element', 'wiToken', 'wiApi', 'wiDialog', 'wiLoading'];
 function multiCrossplotController($scope, $timeout, $element, wiToken, wiApi, wiDialog, wiLoading) {
     let self = this;
     self.silent = true;

@@ -47,7 +47,7 @@ app.component(componentName, component({
     },
     transclude: true
 }))
-
+multiWellHistogramController.$inject = ['$scope', '$timeout', '$element', '$compile', 'wiToken', 'wiApi', 'wiDialog', 'wiLoading'];
 function multiWellHistogramController($scope, $timeout, $element, $compile, wiToken, wiApi, wiDialog, wiLoading) {
     let self = this;
     PrintableController.call(this, $scope, $element, $timeout, $compile, wiApi);
