@@ -814,7 +814,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     for (let bins of allHistogramList) {
                         let maybeMax = d3.max(bins.map(b => b.length));
                         max = (max > maybeMax) ? max : maybeMax;
-                        maybeMaxPercentage = maybeMax / _.sum(bins.map(b => b.length));
+                        const maybeMaxPercentage = maybeMax / _.sum(bins.map(b => b.length));
                         maxPercentage = (maxPercentage > maybeMaxPercentage) ? maxPercentage : maybeMaxPercentage;
                     }
                     flatten = allHistogramList;
@@ -825,7 +825,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                             let aggregate = aggregateHistogramList(groupOfBins);
                             let maybeMax = d3.max(aggregate);
                             max = (max > maybeMax) ? max : maybeMax;
-                            maybeMaxPercentage = maybeMax / _.sum(aggregate);
+                            const maybeMaxPercentage = maybeMax / _.sum(aggregate);
                             maxPercentage = (maxPercentage > maybeMaxPercentage) ? maxPercentage : maybeMaxPercentage;
                             flatten = flatten.concat(groupOfBins);
                         }
@@ -844,7 +844,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                             let aggregate = aggregateHistogramList(groupOfBins);
                             let maybeMax = d3.max(aggregate);
                             max = (max > maybeMax) ? max : maybeMax;
-                            maybeMaxPercentage = maybeMax / _.sum(aggregate);
+                            const maybeMaxPercentage = maybeMax / _.sum(aggregate);
                             maxPercentage = (maxPercentage > maybeMaxPercentage) ? maxPercentage : maybeMaxPercentage;
                         }
                         allHistogramList = zoneBinsList;
@@ -855,7 +855,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     {
                         let aggregate = aggregateHistogramList(allHistogramList);
                         max = d3.max(aggregate);
-                        maybeMaxPercentage = max / _.sum(aggregate);
+                        const maybeMaxPercentage = max / _.sum(aggregate);
                         maxPercentage = (maxPercentage > maybeMaxPercentage) ? maxPercentage : maybeMaxPercentage;
                         flatten = allHistogramList;
                         let stats = setStats(allDataArray.map(d => d.x));
@@ -875,9 +875,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     if (self.getDisplayMode() == 'line') {
                         let arr = [];
                         for (let i = 0; i < allHistogramList.length; i++) {
-                            bins = allHistogramList[i];
+                            const bins = allHistogramList[i];
                             for (let j = 0; j < bins.length; j++) {
-                                bin = bins[j];
+                                const bin = bins[j];
                                 arr[j] = (arr[j] || []).concat(bin);
                                 arr[j].x0 = bin.x0;
                                 arr[j].x1 = bin.x1;

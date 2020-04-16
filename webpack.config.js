@@ -1,3 +1,5 @@
+const webpack = require('webpack');
+
 module.exports = {
     context: __dirname + '/src',
     mode: "development",
@@ -11,20 +13,20 @@ module.exports = {
     module: {
         rules: [{
             test: /\.html$/,
-            use: [{                                                                                        
-                loader: 'html-loader',                                                                     
-                options: {                                                                                 
-                    interpolate: true                                                                      
-                }                                                                                          
+            use: [{
+                loader: 'html-loader',
+                options: {
+                    interpolate: true
+                }
             }]
         }, {
             test: /\.css$/,
             use: ['style-loader', 'css-loader'],
         },
-            {
-                test: /\.less$/,
-                use: ['style-loader','css-loader','less-loader'],
-            }
+        {
+            test: /\.less$/,
+            use: ['style-loader', 'css-loader', 'less-loader'],
+        }
         ],
     },
 }

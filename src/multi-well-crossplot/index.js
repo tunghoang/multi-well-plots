@@ -399,7 +399,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         d[i] = x[i] - xBar;
       }
       return d;
-    };
+    }
   }
 
   this.onSelectionValueListChange = function(axisName) {   
@@ -1537,7 +1537,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
       if (__toastr) __toastr.error(msg);
       console.error(new Error(msg));
       return;
-    };
+    }
     self.isSettingChange = true;
     let polygon = {};
     polygon.label = 'New polygon';
@@ -1583,7 +1583,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         for (let p of ppoints) {
           if (d3.polygonContains(p, d)) {
             resultData.push(d);
-          };
+          }
         }
       }
       return resultData;
@@ -2142,8 +2142,8 @@ if (!Array.prototype.rotate) {
     value: function (count) {
       var push = Array.prototype.push,
         splice = Array.prototype.splice;
-      var len = this.length >>> 0, // convert to uint
-        count = count >> 0; // convert to int
+      var len = this.length >>> 0; // convert to uint
+      count = count >> 0; // convert to int
 
       // convert count to value in range [0, len)
       count = ((count % len) + len) % len;
@@ -2441,7 +2441,7 @@ function string2Int(str) {
     hash |= 0; // Convert to 32bit integer
   }
   return hash;
-};
+}
 
 this.getColorPalette = getColorPalette;
 function getColorPalette() {
