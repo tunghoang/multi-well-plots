@@ -8,7 +8,7 @@ module.exports = {
     main: "./index.js",
   },
   output: {
-    path: path.resolve(__dirname, '../wi-angular/watch/bower_components/multi-well-plots/dist'),
+    path: path.resolve(__dirname, '../wi-angular/node_modules/multi-well-plots/dist'),
     filename: 'multi-well-plots.js'
   },
   module: {
@@ -31,6 +31,6 @@ module.exports = {
     ],
   },
   plugins: [
-    new HardSourceWebpackPlugin()
+    //new HardSourceWebpackPlugin()
   ]
 }
