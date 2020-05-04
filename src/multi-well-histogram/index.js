@@ -636,6 +636,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         self.defaultConfig = {};
     }
     function updateDefaultConfig() {
+        self.isUpdatingDefaultConfig = true;
         clearDefaultConfig();
         let curve = getCurve(self.treeConfig[0], self.wellSpec[0]);
         if (!curve) return;
@@ -647,30 +648,40 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             delete self.config.left;
             delete self.config.right;
         }
-        $timeout(async () => {
-            self.defaultConfig.left = isNaN(family.family_spec[0].minScale) ? 0 : family.family_spec[0].minScale;
-            self.defaultConfig.right = isNaN(family.family_spec[0].maxScale) ? 100 : family.family_spec[0].maxScale;
-            //self.config.left = isNaN(family.family_spec[0].minScale) ? 0 : family.family_spec[0].minScale;
-            //self.config.right = isNaN(family.family_spec[0].maxScale) ? 100 : family.family_spec[0].maxScale;
-            self.defaultConfig.loga = family.family_spec[0].displayType.toLowerCase() === 'logarithmic';
-            self.xUnitList = await wiApi.getListUnit({
-                idFamily: family.idFamily,
-                idCurve: curve.idCurve
-            })
-            $scope.$apply(() => {
+        wiApi.getListUnit({
+            idFamily: family.idFamily,
+            idCurve: curve.idCurve
+        }).then(res => {
+            $timeout(() => {
+                self.isUpdatingDefaultConfig = false;
+                self.xUnitList = res;
+                self.defaultConfig.left = isNaN(family.family_spec[0].minScale) ? 0 : family.family_spec[0].minScale;
+                self.defaultConfig.right = isNaN(family.family_spec[0].maxScale) ? 100 : family.family_spec[0].maxScale;
+                self.defaultConfig.loga = family.family_spec[0].displayType.toLowerCase() === 'logarithmic';
+                // $scope.$apply(() => {
                 self.xUnitList = self.xUnitList.map(item => ({
-                    data:{label:item.name}, 
-                    properties:{name:item.name} 
+                    data: { label: item.name },
+                    properties: { name: item.name }
                 }))
                 self.defaultConfig.xUnit = family.family_spec[0].unit;
+                if (!self.xUnitList.includes(unit => {
+                    return unit.properties.name === self.config.xUnit;
+                })) {
+                    self.config.xUnit = undefined;
+                    self.onUnitChange({ name: self.defaultConfig.xUnit });
+                }
+                // })
             })
         })
     }
     this.onUnitChange = function(selectedItemProps) {
+        if(self.isUpdatingDefaultConfig) return;
         let oldUnit = self.config.xUnit;
         self.config.xUnit = (selectedItemProps || {}).name;
-        self.config.left = wiApi.convertUnit(self.getLeft(), oldUnit, self.config.xUnit);
-        self.config.right = wiApi.convertUnit(self.getRight(), oldUnit, self.config.xUnit);
+        if (oldUnit && oldUnit != self.config.xUnit) {
+            self.config.left = wiApi.convertUnit(self.getLeft(), oldUnit, self.config.xUnit).toFixed(4);
+            self.config.right = wiApi.convertUnit(self.getRight(), oldUnit, self.config.xUnit).toFixed(4);
+        }
     }
 
     this.histogramList = [];
