@@ -390,7 +390,8 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     this.getCurve = getCurve;
     function getCurve(well) {
         let wellSpec = getWellSpec(well);
-        if (!Object.keys(wellSpec || {}).length) return {};
+        if (!Object.keys(wellSpec || {}).length
+            || !self.selectionValue) return {};
         let curves = getCurvesInWell(well).filter(c => self.runMatch(c, self.selectionValue));
         let curve = wellSpec.idCurve ? (curves.find(c => c.idCurve === wellSpec.idCurve) || curves[0]) : curves[0];
         if (!curve) {
@@ -636,52 +637,37 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         self.defaultConfig = {};
     }
     function updateDefaultConfig() {
-        self.isUpdatingDefaultConfig = true;
         clearDefaultConfig();
         let curve = getCurve(self.treeConfig[0], self.wellSpec[0]);
         if (!curve) return;
         let family = wiApi.getFamily(curve.idFamily);
         if (!family) return;
-        if (family.idFamily != self.config.idFamily) {
-            self.config.idFamily = family.idFamily;
-            delete self.config.xUnit;
-            delete self.config.left;
-            delete self.config.right;
-        }
         wiApi.getListUnit({
             idFamily: family.idFamily,
             idCurve: curve.idCurve
         }).then(res => {
-            $timeout(() => {
-                self.isUpdatingDefaultConfig = false;
-                self.xUnitList = res;
-                self.defaultConfig.left = isNaN(family.family_spec[0].minScale) ? 0 : family.family_spec[0].minScale;
-                self.defaultConfig.right = isNaN(family.family_spec[0].maxScale) ? 100 : family.family_spec[0].maxScale;
-                self.defaultConfig.loga = family.family_spec[0].displayType.toLowerCase() === 'logarithmic';
-                // $scope.$apply(() => {
-                self.xUnitList = self.xUnitList.map(item => ({
-                    data: { label: item.name },
-                    properties: { name: item.name }
-                }))
-                self.defaultConfig.xUnit = family.family_spec[0].unit;
-                if (!self.xUnitList.includes(unit => {
-                    return unit.properties.name === self.config.xUnit;
-                })) {
-                    self.config.xUnit = undefined;
-                    self.onUnitChange({ name: self.defaultConfig.xUnit });
-                }
-                // })
-            })
+            self.xUnitList = res;
+            self.defaultConfig.left = isNaN(family.family_spec[0].minScale) ? 0 : family.family_spec[0].minScale;
+            self.defaultConfig.right = isNaN(family.family_spec[0].maxScale) ? 100 : family.family_spec[0].maxScale;
+            self.defaultConfig.loga = family.family_spec[0].displayType.toLowerCase() === 'logarithmic';
+            self.xUnitList = self.xUnitList.map(item => ({
+                data: { label: item.name },
+                properties: { name: item.name }
+            }))
+            self.defaultConfig.xUnit = family.family_spec[0].unit;
+            if (family.idFamily != self.config.idFamily) {
+                self.config.idFamily = family.idFamily;
+                delete self.config.xUnit;
+                delete self.config.left;
+                delete self.config.right;
+            }
         })
     }
-    this.onUnitChange = function(selectedItemProps) {
-        if(self.isUpdatingDefaultConfig) return;
+    this.onUnitChange = function (selectedItemProps) {
         let oldUnit = self.config.xUnit;
         self.config.xUnit = (selectedItemProps || {}).name;
-        if (oldUnit && oldUnit != self.config.xUnit) {
-            self.config.left = wiApi.convertUnit(self.getLeft(), oldUnit, self.config.xUnit).toFixed(4);
-            self.config.right = wiApi.convertUnit(self.getRight(), oldUnit, self.config.xUnit).toFixed(4);
-        }
+        self.config.left = wiApi.convertUnit(self.getLeft(), oldUnit, self.config.xUnit).toFixed(4);
+        self.config.right = wiApi.convertUnit(self.getRight(), oldUnit, self.config.xUnit).toFixed(4);
     }
 
     this.histogramList = [];
