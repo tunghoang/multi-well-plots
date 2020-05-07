@@ -639,7 +639,9 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         }));
         self.zonesetList.splice(0, 0, {data: {label: 'ZonationAll'}, properties: genZonationAllZS(0, 1)});
         let selectedZonesetProps = (self.zonesetList.find(zs => zs.properties.name === self.zonesetName) || {}).properties;
-        if (!selectedZonesetProps) return;
+        if (!selectedZonesetProps) {
+            selectedZonesetProps = self.zonesetList[0].properties;
+        }
         self.onZonesetSelectionChanged(selectedZonesetProps);
         if (!$scope.$root.$$phase) $scope.$digest();
     }
