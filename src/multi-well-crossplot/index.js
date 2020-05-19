@@ -251,6 +251,22 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         self.onInitFn && self.onInitFn(self);
 
         $timeout(() => {
+    this.getFamilyTable = function() {
+        return wiApi.getFamilyTable();
+    }
+    this.getPals = function() {
+        return wiApi.getPalettes();
+    }
+            $scope.$watch(() => {
+                return self.getFamilyTable();
+            }, (newVal, oldVal) => {
+                self.familyTable = newVal;
+            })
+            $scope.$watch(() => {
+                return self.getPals();
+            }, (newVal, oldVal) => {
+                self.pals = newVal;
+            })
             $scope.$watch(() => self.config, (newVal, oldVal) => {
                 self.isSettingChange = true;
             }, true);

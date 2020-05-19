@@ -170,9 +170,13 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             $scope.$watch(() => self.config, (newVal, oldVal) => {
                 self.isSettingChange = true;
             }, true);
-            $scope.$watch(() => self.getFamilyTable(), () => {
+            $scope.$watch(() => self.getFamilyTable(), (newVal, oldVal) => {
+                self.familyTable = newVal;
                 getSelectionList(self.selectionType, self.treeConfig);
                 updateDefaultConfig();
+            });
+            $scope.$watch(() => self.getPals(), (newVal, oldVal) => {
+                self.palTable = newVal;
             });
             $scope.$watch(() => {
                 return self.wellSpec.map(wsp => {
