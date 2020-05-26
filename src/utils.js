@@ -1,3 +1,42 @@
+exports.convertToCSV = convertToCSV;
+function convertToCSV(objArray) {
+    let array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+    let str = '';
+
+    for (var i = 0; i < array.length; i++) {
+        let line = '';
+        for (let index in array[i]) {
+            if (line != '') line += ','
+
+            line += array[i][index];
+        }
+        str += line + '\r\n';
+    }
+    return str;
+}
+
+exports.exportCSVFile = function(headers, items, fileTitle) {
+    if (headers) {
+        items.unshift(headers);
+    }
+    let jsonObject = JSON.stringify(items);
+    let csv = convertToCSV(jsonObject);
+    let exportedFilenmae = fileTitle + '.csv' || 'export.csv';
+    let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    if (navigator.msSaveBlob) { // IE 10+
+        navigator.msSaveBlob(blob, exportedFilenmae);
+    } else {
+        let a = document.createElement("a");
+        document.body.appendChild(a);
+        a.style = "display: none";
+        url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = exportedFilenmae;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }
+}
+
 exports.getWellColor = getWellColor;
 function getWellColor(well) {
     let color = well.color;

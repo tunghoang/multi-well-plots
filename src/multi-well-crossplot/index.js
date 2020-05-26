@@ -246,6 +246,35 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         self.xUnitList = self.xUnitList || [];
         self.yUnitList = self.yUnitList || [];
     }
+    this.exportStatistic = function () {
+        if (!self.layers.length) {
+            let msg = `No statistic data to export`;
+            if (__toastr) __toastr.error(msg);
+            console.error(msg);
+            return;
+        }
+        let rowHeaders = self.getZoneNames();
+        let colHeaders = self.getHeaders();
+        let items = [];
+        let headers = {
+            Layer: 'Layer'
+        };
+
+        colHeaders.forEach((cHeader, cHeaderIdx) => {
+            headers[cHeader] = cHeader;
+        })
+        rowHeaders.forEach((rHeader, rHeaderIdx) => {
+            let item = {
+                "Layer": rHeader
+            };
+            colHeaders.forEach((cHeader, cHeaderIdx) => {
+                item[cHeader] = self.statsValue([rHeaderIdx, cHeaderIdx]);
+            })
+            items.push(item);
+        });
+        let fileTitle = self.getConfigTitle();
+        utils.exportCSVFile(headers, items, fileTitle);
+    }
     this.$onInit = function () {
         self.doInit();
         self.onInitFn && self.onInitFn(self);

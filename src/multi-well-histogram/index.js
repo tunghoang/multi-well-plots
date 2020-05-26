@@ -164,6 +164,35 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         self.getGaussianIconFn = self.config.notUsedGaussian ? self.getLogNormalDIcon : self.getGaussianIcon;
         self.dragHeader = self.dragHeader || false;
     }
+    this.exportStatistic = function () {
+        if (!self.histogramList.length) {
+            let msg = `No statistic data to export`;
+            if (__toastr) __toastr.error(msg);
+            console.error(msg);
+            return;
+        }
+        let rowHeaders = self.getZoneNames();
+        let colHeaders = self.getHeaders();
+        let items = [];
+        let headers = {
+            Layer: 'Layer'
+        };
+
+        colHeaders.forEach((cHeader, cHeaderIdx) => {
+            headers[cHeader] = cHeader;
+        })
+        rowHeaders.forEach((rHeader, rHeaderIdx) => {
+            let item = {
+                "Layer": rHeader
+            };
+            colHeaders.forEach((cHeader, cHeaderIdx) => {
+                item[cHeader] = self.statsValue([rHeaderIdx, cHeaderIdx]);
+            })
+            items.push(item);
+        });
+        let fileTitle = self.getConfigTitle();
+        utils.exportCSVFile(headers, items, fileTitle);
+    }
     this.$onInit = async function () {
         self.doInit();
         $timeout(() => {
@@ -677,9 +706,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     }
 
     this.histogramList = [];
-    var flattenHistogramList = [];
-    var listWellStats = [];
-    var listAllStats = [];
+    let flattenHistogramList = [];
+    let listWellStats = [];
+    let listAllStats = [];
     this.genHistogramList = async function() {
         if (!self.isSettingChange) return;
         self.isSettingChange = false;
