@@ -280,12 +280,6 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         self.onInitFn && self.onInitFn(self);
 
         $timeout(() => {
-    this.getFamilyTable = function() {
-        return wiApi.getFamilyTable();
-    }
-    this.getPals = function() {
-        return wiApi.getPalettes();
-    }
             $scope.$watch(() => {
                 return self.getFamilyTable();
             }, (newVal, oldVal) => {
@@ -294,7 +288,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             $scope.$watch(() => {
                 return self.getPals();
             }, (newVal, oldVal) => {
-                self.pals = newVal;
+                self.palTable = newVal;
             })
             $scope.$watch(() => self.config, (newVal, oldVal) => {
                 self.isSettingChange = true;
@@ -2794,7 +2788,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     }
     this.onPalsDropdownInit = function(wiDropdownCtrl) {
         self.wiDropdownCtrl = wiDropdownCtrl;
-        self.palTable = wiApi.getPalettes();
+        self.palTable = self.palTable || wiApi.getPalettes();
         wiDropdownCtrl.items = Object.keys(self.palTable).map(palName => {
             let data = {
                 label: palName
