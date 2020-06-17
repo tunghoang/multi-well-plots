@@ -4,7 +4,7 @@
   "main": "./dist/multi-well-plots.js",
   "scripts": {
     "run-dev": "webpack -w --mode=development",
-    "start": "webpack -w --config webpack.local.js"
+    "start": "webpack -w --mode=development"
   },
   "devDependencies": {
     "bower": "^1.8.8",
