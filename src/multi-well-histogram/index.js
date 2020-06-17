@@ -800,7 +800,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                             bins.stats.curveInfo = `${well.name}.${curve.name}`;
                             break;
                     }
-                    bins.stats.conditionExpr = wellSpec.discriminator ? wellSpec.discriminator.conditionExpr : undefined;
+                    bins.stats.conditionExpr = wellSpec.discriminator && wellSpec.discriminator.active ? wellSpec.discriminator.conditionExpr : undefined;
                     bins.stats.top = zone.startDepth;
                     bins.stats.bottom = zone.endDepth;
                     let stats = setStats(dataArray.map(d => d.x));
@@ -830,7 +830,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     stats.top = d3.min(zones, z => z.startDepth);
                     stats.bottom = d3.max(zones, z => z.endDepth);
                     stats.curveInfo = `${curve.name}`;
-                    stats.conditionExpr = wellSpec.discriminator ? wellSpec.discriminator.conditionExpr : undefined;
+                    stats.conditionExpr = wellSpec.discriminator && wellSpec.discriminator.active ? wellSpec.discriminator.conditionExpr : undefined;
                     listWellStats.push(stats);
                     wellHistogramList.name = well.name;
                     wellHistogramList.color = utils.getWellColor(well);

@@ -1952,7 +1952,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                         curveZ3Info: shouldPlotZ3 ? `${datasetZ3.name}.${curveZ3.name}` : 'N/A',
                         numPoints: dataArray.length,
                         mse: self.calcMSE(dataArray.map(d => d.x), dataArray.map(d => d.y)).toFixed(3),
-                        conditionExpr: self.wellSpec[i].discriminator ? self.wellSpec[i].discriminator.conditionExpr : undefined,
+                        conditionExpr: self.wellSpec[i].discriminator && self.wellSpec[i].discriminator.active ? self.wellSpec[i].discriminator.conditionExpr : undefined,
                         correlation: self.calcCorrelation(dataArray.map(d => d.x), dataArray.map(d => d.y))
                     }
                     layer.color = curveZ1 && shouldPlotZ1 ? (function(data, idx) {
@@ -1988,7 +1988,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     layerColor: utils.getWellColor(well),
                     name: `${well.name}`,
                     well: `${well.name}:${well._idx}`,
-                    conditionExpr: self.wellSpec[i].discriminator ? self.wellSpec[i].discriminator.conditionExpr : undefined,
+                    conditionExpr: self.wellSpec[i].discriminator && self.wellSpec[i].discriminator.active ? self.wellSpec[i].discriminator.conditionExpr : undefined,
                     curveXInfo: `${datasetX.name}.${curveX.name}`,
                     curveYInfo: `${datasetY.name}.${curveY.name}`,
                     curveZ1Info: shouldPlotZ1 ? `${datasetZ1.name}.${curveZ1.name}` : 'N/A',
