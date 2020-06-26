@@ -10,8 +10,8 @@ const _DECIMAL_LEN = 4;
 var app = angular.module(componentName, [
     'sideBar', 'wiTreeViewVirtual', 'wiTableView',
     'wiApi', 'editable', 'wiDialog',
-    'wiDroppable', 'wiDropdownList','plot-toolkit',
-    'wiLoading','angularResizable','wiDiscriminator',
+    'wiDroppable', 'wiDropdownList', 'plot-toolkit',
+    'wiLoading', 'angularResizable', 'wiDiscriminator',
     'printSettings'
 ]);
 app.component(componentName, component({
@@ -32,7 +32,7 @@ app.component(componentName, component({
         onSaveAs: '<',
         onReload: '<',
         title: '<',
-        silent: "<", 
+        silent: "<",
         ctrlParams: "<",
         cpGetMarkerVal: "<",
         cpSetMarkerVal: "<",
@@ -55,44 +55,44 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     self.treeConfig = [];
     self.selectedNode = null;
     self.datasets = {};
-    self.statisticHeaders = ['X-Axis','Filter','Top','Bottom','Points','Avg','Min', 'Max', 'Avgdev', 'Stddev', 'Var', 'Skew', 'Kurtosis', 'Median', 'P10', 'P50', 'P90'];
-    self.statisticHeaderMasks = [true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true];
+    self.statisticHeaders = ['X-Axis', 'Filter', 'Top', 'Bottom', 'Points', 'Avg', 'Min', 'Max', 'Avgdev', 'Stddev', 'Var', 'Skew', 'Kurtosis', 'Median', 'P10', 'P50', 'P90'];
+    self.statisticHeaderMasks = [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true];
     //--------------
     $scope.tab = 1;
     self.selectionTab = self.selectionTab || 'Wells';
 
-    $scope.setTab = function(newTab){
+    $scope.setTab = function (newTab) {
         $scope.tab = newTab;
     };
 
-    $scope.isSet = function(tabNum){
+    $scope.isSet = function (tabNum) {
         return $scope.tab === tabNum;
     };
 
-    this.getFamilyTable = function() {
+    this.getFamilyTable = function () {
         return wiApi.getFamilyTable();
     }
-    this.getPals = function() {
+    this.getPals = function () {
         self.palTable = wiApi.getPalettes();
         return wiApi.getPalettes();
     }
-    this.discriminatorDialog = function(well) {
+    this.discriminatorDialog = function (well) {
         let wSpec = getWellSpec(well);
         let datasetId = wSpec.idDataset;
         let dataset = well.datasets.find(ds => ds.idDataset === wSpec.idDataset);
 
-        let curvesArr = dataset.curves.map( c => ({type:'curve',name:c.name}) );
-        wiDialog.discriminator(wSpec.discriminator, curvesArr, function(discrmnt) {
+        let curvesArr = dataset.curves.map(c => ({ type: 'curve', name: c.name }));
+        wiDialog.discriminator(wSpec.discriminator, curvesArr, function (discrmnt) {
             self.isSettingChange = true;
             wSpec.discriminator = discrmnt;
         });
     }
-    this.hasDiscriminator = function(well) {
+    this.hasDiscriminator = function (well) {
         let wSpec = getWellSpec(well);
         return Object.keys(((wSpec || {}).discriminator) || {}).length > 0 && wSpec.discriminator.active;
     }
     //--------------
-    this.getDataset = function(well) {
+    this.getDataset = function (well) {
         wiApi.getCachedWellPromise(well.idWell).then((well) => {
             self.datasets[well] = well.datasets;
         }).catch(e => console.error(e));
@@ -111,40 +111,40 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         let familyList = curves.map(c => wiApi.getFamily(c.idFamily));
         return familyList;
     }
-    this.defaultBindings = function() {
+    this.defaultBindings = function () {
         if (self.token)
             wiToken.setToken(self.token);
         self.verticalMargin = 0;
         self.horizontalMargin = 0;
         self.isSettingChange = true;
-        self.cpGetMarkerVal = self.cpGetMarkerVal || function (marker, idx) { return  marker.value }
-        self.cpSetMarkerVal = self.cpSetMarkerVal || function (marker, idx, newVal) {marker.value = newVal;}
-        self.cpMarkerStyle = self.cpMarkerStyle || function (marker, idx) { return  {stroke:marker.color,'stroke-width':'2', fill:'none'} }
-        self.cpMarkerName = self.cpMarkerName || function(marker, idx) { return  marker.name; }
+        self.cpGetMarkerVal = self.cpGetMarkerVal || function (marker, idx) { return marker.value }
+        self.cpSetMarkerVal = self.cpSetMarkerVal || function (marker, idx, newVal) { marker.value = newVal; }
+        self.cpMarkerStyle = self.cpMarkerStyle || function (marker, idx) { return { stroke: marker.color, 'stroke-width': '2', fill: 'none' } }
+        self.cpMarkerName = self.cpMarkerName || function (marker, idx) { return marker.name; }
         self.ctrlParams = self.ctrlParams || [];
         //let ctrlParamsGroupByWell = _.groupBy(self.ctrlParams, ctrlParam => ctrlParam.wellName);
         //for (let ctrlParamsGroupByWellKey in ctrlParamsGroupByWell) {
-            //let ctrlParamGroupByWell = ctrlParamsGroupByWell[ctrlParamsGroupByWellKey];
-            //let ctrlParamsGroup = _.groupBy(ctrlParamGroupByWell, ctrlParam => ctrlParam.$ref);
-            //for (let ctrlParams in ctrlParamsGroup) {
-                //let zoneInfoList = ctrlParamsGroup[ctrlParams].map(ctrlParam => ctrlParam.zoneInfo);
-                //zoneInfoList.forEach((zoneInfo, idx) => {
-                    //zoneInfo._idx = idx;
-                //})
-            //}
+        //let ctrlParamGroupByWell = ctrlParamsGroupByWell[ctrlParamsGroupByWellKey];
+        //let ctrlParamsGroup = _.groupBy(ctrlParamGroupByWell, ctrlParam => ctrlParam.$ref);
+        //for (let ctrlParams in ctrlParamsGroup) {
+        //let zoneInfoList = ctrlParamsGroup[ctrlParams].map(ctrlParam => ctrlParam.zoneInfo);
+        //zoneInfoList.forEach((zoneInfo, idx) => {
+        //zoneInfo._idx = idx;
+        //})
+        //}
         //}
         self.notCPBackground = self.notCPBackground != undefined ? self.notCPBackground : true;
         self.ctrlParamsMask = self.ctrlParams.map(c => true);
-        self.cpIcon = self.cpIcon || function(node) {
+        self.cpIcon = self.cpIcon || function (node) {
             let idx = self.ctrlParams.indexOf(node);
             if (idx >= 0) {
                 let use = self.ctrlParamsMask[idx];
-                return use ? 'layer-16x16': 'fa fa-eye-slash';
+                return use ? 'layer-16x16' : 'fa fa-eye-slash';
             }
         }
-        self.cpIcons = self.cpIcons || function (node){ return ["rectangle"] }
-        self.cpIconStyle = self.cpIconStyle || function(node) { 
-            return  {
+        self.cpIcons = self.cpIcons || function (node) { return ["rectangle"] }
+        self.cpIconStyle = self.cpIconStyle || function (node) {
+            return {
                 'background-color': node.color || 'red'
             }
         }
@@ -159,7 +159,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         self.selectionType = self.selectionType || 'family-group';
         self.zoneTree = [];
         self.zonesetName = self.zonesetName || "ZonationAll";
-        self.config = self.config || {family: "", grid:true, displayMode: 'bar', colorMode: 'zone', stackMode: self.stackMode || self.noStack ? 'none':'well', binGap: 5, title: self.title || '', notShowCumulative: false};
+        self.config = self.config || { family: "", grid: true, displayMode: 'bar', colorMode: 'zone', stackMode: self.stackMode || self.noStack ? 'none' : 'well', binGap: 5, title: self.title || '', notShowCumulative: false };
         self.getToggleGaussianFn = self.config.notUsedGaussian ? self.click2ToggleLogNormalD : self.click2ToggleGaussian;
         self.getGaussianIconFn = self.config.notUsedGaussian ? self.getLogNormalDIcon : self.getGaussianIcon;
         self.dragHeader = self.dragHeader || false;
@@ -196,7 +196,12 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     this.$onInit = async function () {
         self.doInit();
         $timeout(() => {
-            $scope.$watch(() => self.config, (newVal, oldVal) => {
+            $scope.$watch(() => {
+                let config = angular.copy(self.config);
+                delete config.notShowCumulative;
+                delete config.notUsedGaussian;
+                return config;
+            }, (newVal, oldVal) => {
                 self.isSettingChange = true;
             }, true);
             $scope.$watch(() => self.getFamilyTable(), (newVal, oldVal) => {
@@ -235,7 +240,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
 
     }
 
-    this.onInputSelectionChanged = function(selectedItemProps) {
+    this.onInputSelectionChanged = function (selectedItemProps) {
         self.selectionValue = (selectedItemProps || {}).name;
     }
 
@@ -246,49 +251,49 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             let curvesInWell = getCurvesInWell(well);
             allCurves.push(...curvesInWell);
         });
-        switch(selectionType) {
+        switch (selectionType) {
             case 'curve':
                 allCurves.forEach(curve => {
                     selectionHash[curve.name] = 1;
                 })
                 break;
-            case 'family': 
+            case 'family':
                 allCurves.forEach(curve => {
                     let family = wiApi.getFamily(curve.idFamily);
-                    if(family)
+                    if (family)
                         selectionHash[family.name] = 1;
                 })
                 break;
             case 'family-group':
                 allCurves.forEach(curve => {
                     let family = wiApi.getFamily(curve.idFamily);
-                    if(family)
+                    if (family)
                         selectionHash[family.familyGroup] = 1;
                 })
                 break;
         }
-        self.selectionList = Object.keys(selectionHash).map(item => ({ 
-            data:{label:item}, 
-            properties:{name:item} 
+        self.selectionList = Object.keys(selectionHash).map(item => ({
+            data: { label: item },
+            properties: { name: item }
         }));
         self.selectionList.sort((a, b) => {
             return a.data.label.localeCompare(b.data.label);
         })
     }
-    this.sortableUpdate = function() {
+    this.sortableUpdate = function () {
         $scope.$digest();
     }
 
     this.runMatch = function (node, criteria) {
         let family;
         if (!criteria) return true;
-        switch(self.selectionType) {
-            case 'family-group': 
+        switch (self.selectionType) {
+            case 'family-group':
                 family = wiApi.getFamily(node.idFamily);
                 if (!family) return null;
                 return family.familyGroup.trim().toLowerCase() === criteria.trim().toLowerCase();
 
-            case 'family': 
+            case 'family':
                 family = wiApi.getFamily(node.idFamily);
                 if (!family) return null;
                 return family.name.trim().toLowerCase() === criteria.trim().toLowerCase();
@@ -321,19 +326,19 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         wellSpec.idDataset = node.idDataset;
         wellSpec.curveName = node.Name;
     }
-    this.refresh = function(){
+    this.refresh = function () {
         // self.histogramList.length = 0;
         // self.treeConfig.length = 0;
         if (self.onReload) {
-            self.onReload(function() {
+            self.onReload(function () {
                 self.isSettingChange = true;
-                getTrees(()=> {
+                getTrees(() => {
                     self.genHistogramList();
                 });
             })
         } else {
             self.isSettingChange = true;
-            getTrees(()=> {
+            getTrees(() => {
                 self.genHistogramList();
             });
         }
@@ -360,7 +365,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 well._idx = w._idx;
                 self.treeConfig.push(well);
             }
-            catch(e) {
+            catch (e) {
                 w.notFound = true;
                 let msg = `Well ${w.name} not found`;
                 if (__toastr) __toastr.error(msg);
@@ -369,7 +374,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         }
         self.wellSpec = self.wellSpec.filter(wellspec => !wellspec.notFound);
         //if (self.idHistogram) {
-            //self.save();
+        //self.save();
         //}
         if (!$scope.$root.$$phase) $scope.$digest();
         callback && callback();
@@ -390,13 +395,13 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 break;
             }
         }
-        self.zonesetList = (zsList || []).map( zs => ({
+        self.zonesetList = (zsList || []).map(zs => ({
             data: {
                 label: zs.name
             },
             properties: zs
         }));
-        self.zonesetList.splice(0, 0, {data: {label: 'ZonationAll'}, properties: genZonationAllZS(0, 1)});
+        self.zonesetList.splice(0, 0, { data: { label: 'ZonationAll' }, properties: genZonationAllZS(0, 1) });
         let selectedZonesetProps = (self.zonesetList.find(zs => zs.properties.name === self.zonesetName) || {}).properties;
         if (!selectedZonesetProps) {
             selectedZonesetProps = self.zonesetList[0].properties;
@@ -444,7 +449,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         wellSpec.idDataset = curve.idDataset;
 
         let datasets = self.getChildren(well);
-        let dataset = wellSpec.idDataset ? datasets.find(ds => ds.idDataset === wellSpec.idDataset):datasets[0];
+        let dataset = wellSpec.idDataset ? datasets.find(ds => ds.idDataset === wellSpec.idDataset) : datasets[0];
         wellSpec.datasetName = dataset.name;
         wellSpec.datasetTop = parseFloat(dataset.top);
         wellSpec.datasetBottom = parseFloat(dataset.bottom);
@@ -453,14 +458,14 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     }
     function getZoneset(well, zonesetName = "") {
         let zonesets = well.zone_sets;
-        if (zonesetName === "" || zonesetName === "ZonationAll") 
+        if (zonesetName === "" || zonesetName === "ZonationAll")
             return null;
         return zonesets.find(zs => zs.name === zonesetName);
     }
-    this.onZonesetDropdownInit = function(wiDropdownListCtrl) {
+    this.onZonesetDropdownInit = function (wiDropdownListCtrl) {
         self.zonesetDropdownCtrl = wiDropdownListCtrl;
     }
-    this.onZonesetSelectionChanged = function(selectedItemProps) {
+    this.onZonesetSelectionChanged = function (selectedItemProps) {
         self.isSettingChange = true;
         let zones = (selectedItemProps || {}).zones;
         if (zones && zones.length) {
@@ -470,7 +475,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         }
         self.zoneTree = (selectedItemProps || {}).zones;
         if (!self.zoneTree || !self.zoneTree.length) return;
-        self.zoneTreeUniq = _.uniqBy(self.zoneTree.map(zone => ({name: zone.zone_template.name})), zone => {
+        self.zoneTreeUniq = _.uniqBy(self.zoneTree.map(zone => ({ name: zone.zone_template.name })), zone => {
             return zone.name;
         });
         self.zonesetName = (selectedItemProps || {}).name || 'ZonationAll';
@@ -481,16 +486,16 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         return searchArray.includes(keySearch);
     }
     this.getZoneLabel = function (node) {
-        if(!node || !node.name){
+        if (!node || !node.name) {
             return 'aaa';
         }
         //return node.zone_template.name;
         return node.name;
     }
 
-    this.getZoneIcon = (node) => ( (node && !node._notUsed) ? 'zone-16x16': 'fa fa-ban' )
+    this.getZoneIcon = (node) => ((node && !node._notUsed) ? 'zone-16x16' : 'fa fa-ban')
     const EMPTY_ARRAY = []
-    this.validPlotRegion = function() {
+    this.validPlotRegion = function () {
         let result = (self.getRight() - self.getLeft());
         return _.isFinite(result) && result != 0;
     }
@@ -506,7 +511,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         })
         self.selectedZones = selectedObjs.map(obj => obj.data);
     }
-    this.getZoneTreeMaxHeight = function() {
+    this.getZoneTreeMaxHeight = function () {
         return $element.height();
     }
 
@@ -553,7 +558,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         node._useLogNormalD = !node._useLogNormalD;
         self.setLogNormalDFn(self.histogramList);
     }
-    this.toggleGaussianLine = function(notUsedGaussian) {
+    this.toggleGaussianLine = function (notUsedGaussian) {
         self.config.notUsedGaussian = notUsedGaussian;
         if (notUsedGaussian) {
             self.getToggleGaussianFn = self.click2ToggleLogNormalD;
@@ -577,22 +582,22 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         return searchArray.includes(keySearch);
     }
     let _layerTree = [];
-    this.getLayerTree = function() {
+    this.getLayerTree = function () {
         //if(self.getStackMode() === 'all') {
-            //_layerTree[0] = self.histogramList;
-            //return _layerTree;
+        //_layerTree[0] = self.histogramList;
+        //return _layerTree;
         //}
         return self.histogramList;
     }
     this.getLayerLabel = (node) => node.name
-    this.getLayerIcon = (node) => ( (node && !node._notUsed) ? 'layer-16x16': 'fa fa-eye-slash' )
-    this.getLayerIcons = (node) => ( ["rectangle"] )
-    this.getLayerIconStyle = (node) => ( {
+    this.getLayerIcon = (node) => ((node && !node._notUsed) ? 'layer-16x16' : 'fa fa-eye-slash')
+    this.getLayerIcons = (node) => (["rectangle"])
+    this.getLayerIconStyle = (node) => ({
         'background-color': node.color
     })
-    this.getCumulativeIcon = (node) => ( (node && node._useCmlt) ? 'layer-16x16': 'fa fa-eye-slash' )
-    this.getCumulativeIcons = (node) => ( ["rectangle"] )
-    this.getCumulativeIconStyle = (node) => ( {
+    this.getCumulativeIcon = (node) => ((node && node._useCmlt) ? 'layer-16x16' : 'fa fa-eye-slash')
+    this.getCumulativeIcons = (node) => (["rectangle"])
+    this.getCumulativeIconStyle = (node) => ({
         'background-color': node.color
     })
     /*
@@ -609,27 +614,27 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             'background-color': self.cpMarkerStyle(node).color
         }
     }*/
-    this.getGaussianIcon = function(node) {
-        return (node && node._useGssn) ? 'layer-16x16': 'fa fa-eye-slash';
+    this.getGaussianIcon = function (node) {
+        return (node && node._useGssn) ? 'layer-16x16' : 'fa fa-eye-slash';
     }
-    this.getLogNormalDIcon = function(node) {
-        return (node && node._useLogNormalD) ? 'layer-16x16': 'fa fa-eye-slash';
+    this.getLogNormalDIcon = function (node) {
+        return (node && node._useLogNormalD) ? 'layer-16x16' : 'fa fa-eye-slash';
     }
-    this.getGaussianIcons = (node) => ( ["rectangle"] )
-    this.getGaussianIconStyle = (node) => ( {
+    this.getGaussianIcons = (node) => (["rectangle"])
+    this.getGaussianIconStyle = (node) => ({
         'background-color': node.color
-    } )
-    this.getConfigLeft = function() {
+    })
+    this.getConfigLeft = function () {
         self.config = self.config || {};
-        return isNaN(self.config.left) ? "[empty]": wiApi.bestNumberFormat(self.config.left, 3);
+        return isNaN(self.config.left) ? "[empty]" : wiApi.bestNumberFormat(self.config.left, 3);
     }
     this.getConfigLimitTop = function () {
         self.config = self.config || {};
-        return isNaN(self.config.limitTop) ? "[empty]": wiApi.bestNumberFormat(self.config.limitTop, 3);
+        return isNaN(self.config.limitTop) ? "[empty]" : wiApi.bestNumberFormat(self.config.limitTop, 3);
     }
     this.getConfigLimitBottom = function () {
         self.config = self.config || {};
-        return isNaN(self.config.limitBottom) ? "[empty]": wiApi.bestNumberFormat(self.config.limitBottom, 3);
+        return isNaN(self.config.limitBottom) ? "[empty]" : wiApi.bestNumberFormat(self.config.limitBottom, 3);
     }
     this.setConfigLimitTop = function (notUse, newValue) {
         self.config.limitTop = parseFloat(newValue)
@@ -637,35 +642,35 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     this.setConfigLimitBottom = function (notUse, newValue) {
         self.config.limitBottom = parseFloat(newValue)
     }
-    this.setConfigLeft = function(notUse, newValue) {
+    this.setConfigLeft = function (notUse, newValue) {
         self.config.left = parseFloat(newValue);
     }
-    this.getConfigRight = function() {
+    this.getConfigRight = function () {
         self.config = self.config || {};
-        return isNaN(self.config.right) ? "[empty]": wiApi.bestNumberFormat(self.config.right, 3);
+        return isNaN(self.config.right) ? "[empty]" : wiApi.bestNumberFormat(self.config.right, 3);
     }
-    this.setConfigRight = function(notUse, newValue) {
+    this.setConfigRight = function (notUse, newValue) {
         self.config.right = parseFloat(newValue);
     }
-    this.getConfigDivisions = function() {
+    this.getConfigDivisions = function () {
         self.config = self.config || {};
-        return isNaN(self.config.divisions) ? "[empty]": self.config.divisions;
+        return isNaN(self.config.divisions) ? "[empty]" : self.config.divisions;
     }
-    this.setConfigDivisions = function(notUse, newValue) {
+    this.setConfigDivisions = function (notUse, newValue) {
         self.config.divisions = parseInt(newValue);
     }
-    this.getConfigTitle = function() {
+    this.getConfigTitle = function () {
         self.config = self.config || {};
         return (self.config.title || "").length ? self.config.title : "New Histogram";
     }
-    this.setConfigTitle = function(notUse, newValue) {
+    this.setConfigTitle = function (notUse, newValue) {
         self.config.title = newValue;
     }
-    this.getConfigXLabel = function() {
+    this.getConfigXLabel = function () {
         self.config = self.config || {};
         return (self.config.xLabel || "").length ? self.config.xLabel : self.selectionValue;
     }
-    this.setConfigXLabel = function(notUse, newValue) {
+    this.setConfigXLabel = function (notUse, newValue) {
         self.config.xLabel = newValue;
     }
     function clearDefaultConfig() {
@@ -709,7 +714,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     let flattenHistogramList = [];
     let listWellStats = [];
     let listAllStats = [];
-    this.genHistogramList = async function() {
+    this.genHistogramList = async function () {
         if (!self.isSettingChange) return;
         self.isSettingChange = false;
         let preLayers = self.histogramList.map(layer => layer.name);
@@ -751,8 +756,8 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 curveData = curveData
                     .filter(d => _.isFinite(d.x))
                     .map(d => ({
-                        ...d, 
-                        depth: datasetStep>0?(datasetTop + d.y * datasetStep):d.y
+                        ...d,
+                        depth: datasetStep > 0 ? (datasetTop + d.y * datasetStep) : d.y
                     }));
                 let zones = zoneset.zones.filter(zone => {
                     let z = self.zoneTree.find(z1 => {
@@ -772,7 +777,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     let zone = zones[j];
                     if (self.ctrlParams && self.ctrlParams.length && !isCtrlParamsIncludeZone(zone, j)) continue;
                     let dataArray = filterData(curveData, zone);
-                    let destUnit = self.config.xUnit || self.defaultConfig.xUnit; 
+                    let destUnit = self.config.xUnit || self.defaultConfig.xUnit;
                     if (curve.unit != destUnit) {
                         dataArray = dataArray.map(data => ({
                             y: data.y,
@@ -841,7 +846,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             let max = 0;
             let maxPercentage = 0;
             let flatten = [];
-            switch(self.getStackMode()) {
+            switch (self.getStackMode()) {
                 case 'none':
                     for (let bins of allHistogramList) {
                         let maybeMax = d3.max(bins.map(b => b.length));
@@ -883,7 +888,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                         flatten = zoneBinsList;
                     }
                     break;
-                case 'all': 
+                case 'all':
                     {
                         let aggregate = aggregateHistogramList(allHistogramList);
                         max = d3.max(aggregate);
@@ -949,7 +954,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 self.setGaussianData(self.histogramList);
             });
         }
-        catch(e) {
+        catch (e) {
             console.error(e);
         }
         wiLoading.hide();
@@ -959,7 +964,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             let zoneInfo = ctrlParam.zoneInfo;
             return zone.zone_template.name === zoneInfo.zone_template.name.replace('All', 'ZonationAll') && layerIdx === (zoneInfo.__depthIndex || 0);
         })
-        return toReturn; 
+        return toReturn;
     }
     function setStats(dataArray) {
         let stats = {};
@@ -978,7 +983,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             stats.p50 = calPercentile(dataArray, 0.5);
             stats.p90 = calPercentile(dataArray, 0.9);
         }
-        catch(e) {
+        catch (e) {
             console.error(e);
         }
         return stats;
@@ -1035,48 +1040,48 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             let domain = d3.extent([left, right]);
             let thresholds;
             if (!loga) {
-                thresholds = d3.range(domain[0], domain[1], (domain[1] - domain[0])/divisions);
+                thresholds = d3.range(domain[0], domain[1], (domain[1] - domain[0]) / divisions);
             }
             else {
                 let logMinVal = Math.log10(domain[0] || 0.01);
                 let logMaxVal = Math.log10(domain[1] || 0.01);
-                thresholds = d3.range(logMinVal, logMaxVal, (logMaxVal - logMinVal)/divisions).map(v => Math.pow(10, v)); 
+                thresholds = d3.range(logMinVal, logMaxVal, (logMaxVal - logMinVal) / divisions).map(v => Math.pow(10, v));
             }
             _histogramGen = d3.histogram().domain(domain).thresholds(thresholds);
         }
         return _histogramGen;
     }
     function filterData(curveData, zone) {
-        return curveData.filter(d => ((zone.startDepth - d.depth)*(zone.endDepth - d.depth) <= 0));
+        return curveData.filter(d => ((zone.startDepth - d.depth) * (zone.endDepth - d.depth) <= 0));
     }
     function getCorrectValue(val1, val2) {
         return _.isFinite(val1) ? val1 : val2;
 
     }
     this.getLeft = () => {
-        if(self.config.flipHorizontal) {
-            return getCorrectValue(getCorrectValue(self.config.right, self.defaultConfig.right), 1) ;
+        if (self.config.flipHorizontal) {
+            return getCorrectValue(getCorrectValue(self.config.right, self.defaultConfig.right), 1);
         }
-        return getCorrectValue(getCorrectValue(self.config.left, self.defaultConfig.left), 0) ;
+        return getCorrectValue(getCorrectValue(self.config.left, self.defaultConfig.left), 0);
     }
     this.getRight = () => {
-        if(self.config.flipHorizontal) {
-            return getCorrectValue(getCorrectValue(self.config.left, self.defaultConfig.left), 1) ;
+        if (self.config.flipHorizontal) {
+            return getCorrectValue(getCorrectValue(self.config.left, self.defaultConfig.left), 1);
         }
-        return getCorrectValue(getCorrectValue(self.config.right, self.defaultConfig.right), 0) ;
-    } 
+        return getCorrectValue(getCorrectValue(self.config.right, self.defaultConfig.right), 0);
+    }
     this.getMaxY = () => {
         return self.getHistogramMode() === 'percentage' ? self.maxPercentage : self.maxY;
     }
-    this.getLoga = () => (self.config.loga === undefined? self.defaultConfig.loga : self.config.loga)
-    this.getMajor = () => ( isNaN(self.config.major) ? (self.defaultConfig.major || 5) : self.config.major)
-    this.getMinor = () => ( isNaN(self.config.minor) ? (self.defaultConfig.minor || 1) : self.config.minor)
-    this.getNotUsedGaussian = () => {self.config.notUsedGaussian || false};
+    this.getLoga = () => (self.config.loga === undefined ? self.defaultConfig.loga : self.config.loga)
+    this.getMajor = () => (isNaN(self.config.major) ? (self.defaultConfig.major || 5) : self.config.major)
+    this.getMinor = () => (isNaN(self.config.minor) ? (self.defaultConfig.minor || 1) : self.config.minor)
+    this.getNotUsedGaussian = () => { self.config.notUsedGaussian || false };
     this.getDivisions = () => (self.config.divisions || self.defaultConfig.divisions || 35)
     this.getColorMode = () => (self.config.colorMode || self.defaultConfig.colorMode || 'zone')
     this.getColor = (zone, well, layerIdx) => {
         let cMode = self.getColorMode();
-        switch(cMode) {
+        switch (cMode) {
             case 'zone':
                 return zone.zone_template.background;
             case 'index':
@@ -1086,45 +1091,45 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 let palette = self.palTable.RandomColor || self.palTable.HFU;
                 return utils.palette2RGB(palette[layerIdx % palette.length], false);
             default:
-                return cMode === 'well'?utils.getWellColor(well):'blue';
+                return cMode === 'well' ? utils.getWellColor(well) : 'blue';
         }
     }
     this.getDisplayMode = () => (self.config.displayMode || self.defaultConfig.displayMode || 'bar')
     this.getStackMode = () => {
         if (self.noStack) return 'none';
         //return self.getDisplayMode() === 'bar'?(self.config.stackMode||self.defaultConfig.stackMode||'none'):'none'
-        return self.config.stackMode||self.defaultConfig.stackMode||'none'
+        return self.config.stackMode || self.defaultConfig.stackMode || 'none'
     }
     this.getBinGap = () => (self.config.binGap || self.defaultConfig.binGap)
-    this.getBinX = (bin) => ((bin.x0 + bin.x1)/2)
+    this.getBinX = (bin) => ((bin.x0 + bin.x1) / 2)
     this.getBinY = (bin) => (bin.length)
-    this.setConfigMajor = function(notUse, newValue) {
+    this.setConfigMajor = function (notUse, newValue) {
         self.config.major = parseFloat(newValue);
     }
-    this.setConfigMinor = function(notUse, newValue) {
+    this.setConfigMinor = function (notUse, newValue) {
         self.config.minor = parseFloat(newValue);
     }
 
-    this.colorFn = function(bin, bins) {
+    this.colorFn = function (bin, bins) {
         if (self.getStackMode() === 'none');
         if (!bins) return;
         return bins.color;
     }
 
-    this.save = function() {
+    this.save = function () {
         if (!self.idHistogram) {
             wiDialog.promptDialog({
                 title: 'New Histogram',
                 inputName: 'Histogram Name',
                 input: self.getConfigTitle(),
-            }, function(name) {
+            }, function (name) {
                 let type = 'HISTOGRAM';
                 let content = {
                     wellSpec: self.wellSpec,
                     zonesetName: self.zonesetName,
                     selectionType: self.selectionType,
                     selectionValue: self.selectionValue,
-                    config: self.config	
+                    config: self.config
                 }
                 wiApi.newAssetPromise(self.idProject, name, type, content).then(res => {
                     self.idHistogram = res.idParameterSet;
@@ -1146,26 +1151,26 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 zonesetName: self.zonesetName,
                 selectionType: self.selectionType,
                 selectionValue: self.selectionValue,
-                config: self.config	
+                config: self.config
             }
             wiApi.editAssetPromise(self.idHistogram, content).then(res => {
                 console.log(res);
                 __toastr && __toastr.success('Successfully saved Histogram ' + res.name)
                 self.afterNewPlotCreated && self.afterNewPlotCreated(res);
             }).catch(e => {
-                    let msg = `Asset ${name} has been existed`;
-                    if (__toastr) __toastr.warning(msg);
-                    self.save();
-                });
+                let msg = `Asset ${name} has been existed`;
+                if (__toastr) __toastr.warning(msg);
+                self.save();
+            });
         }
     }
-    this.saveAs = function() {
+    this.saveAs = function () {
         console.log("saveAs");
         wiDialog.promptDialog({
             title: 'Save As Histogram',
             inputName: 'Histogram Name',
             input: '',
-        }, function(name) {
+        }, function (name) {
             let type = 'HISTOGRAM';
             let content = {
                 wellSpec: self.wellSpec,
@@ -1188,25 +1193,25 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     }
 
     let _zoneNames = []
-    self.getZoneNames = function() {
+    self.getZoneNames = function () {
         _zoneNames.length = 0;
         Object.assign(_zoneNames, self.histogramList.map(bins => bins.name));
         return _zoneNames;
     }
-    this.isLayerUsed = function($index) {
+    this.isLayerUsed = function ($index) {
         return !self.histogramList[$index]._notUsed;
     }
-    self.getStatsRowIcons = function(rowIdx) {
+    self.getStatsRowIcons = function (rowIdx) {
         return ['rectangle'];
     }
-    self.getStatsIconStyle = function(rowIdx) {
+    self.getStatsIconStyle = function (rowIdx) {
         return {
             'background-color': self.histogramList[rowIdx].color
         }
     }
     self.statsValue = function ([row, col]) {
         let statsArray = [];
-        switch(self.getStackMode()) {
+        switch (self.getStackMode()) {
             case 'none':
                 statsArray = flattenHistogramList.map(e => e.stats);
                 break;
@@ -1225,14 +1230,14 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         }
 
         try {
-            switch(_headers[col]){
+            switch (_headers[col]) {
                 case 'X-Axis':
                     return statsArray[row].curveInfo || 'N/A';
                 case 'Filter':
                     return statsArray[row].conditionExpr || 'N/A';
-                case 'Top': 
+                case 'Top':
                     return isNaN(statsArray[row].top) ? 'N/A' : wiApi.bestNumberFormat(statsArray[row].top, 4);
-                case 'Bottom': 
+                case 'Bottom':
                     return isNaN(statsArray[row].bottom) ? 'N/A' : wiApi.bestNumberFormat(statsArray[row].bottom, 4);
                 case 'Points':
                     return isNaN(statsArray[row].numPoints) ? 'N/A' : statsArray[row].numPoints;
@@ -1242,9 +1247,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     return isNaN(statsArray[row].min) ? 'N/A' : wiApi.bestNumberFormat(statsArray[row].min, 4);
                 case 'Max':
                     return isNaN(statsArray[row].max) ? 'N/A' : wiApi.bestNumberFormat(statsArray[row].max, 4);
-                case 'Avgdev': 
+                case 'Avgdev':
                     return isNaN(statsArray[row].avgdev) ? 'N/A' : wiApi.bestNumberFormat(statsArray[row].avgdev, 4);
-                case 'Stddev': 
+                case 'Stddev':
                     return isNaN(statsArray[row].stddev) ? 'N/A' : wiApi.bestNumberFormat(statsArray[row].stddev, 4);
                 case 'Var':
                     return isNaN(statsArray[row].var) ? 'N/A' : wiApi.bestNumberFormat(statsArray[row].var, 4);
@@ -1254,13 +1259,13 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     return isNaN(statsArray[row].kurtosis) ? 'N/A' : wiApi.bestNumberFormat(statsArray[row].kurtosis, 4);
                 case 'Median':
                     return isNaN(statsArray[row].median) ? 'N/A' : wiApi.bestNumberFormat(statsArray[row].median, 4);
-                case 'P10': 
+                case 'P10':
                     return isNaN(statsArray[row].p10) ? 'N/A' : wiApi.bestNumberFormat(statsArray[row].p10, 4);
-                case 'P50': 
+                case 'P50':
                     return isNaN(statsArray[row].p50) ? 'N/A' : wiApi.bestNumberFormat(statsArray[row].p50, 4);
-                case 'P90': 
+                case 'P90':
                     return isNaN(statsArray[row].p90) ? 'N/A' : wiApi.bestNumberFormat(statsArray[row].p90, 4);
-                default: 
+                default:
                     return "this default";
             }
         } catch {
@@ -1268,12 +1273,12 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         }
     }
     let _headers = [];
-    self.getHeaders = function (){
+    self.getHeaders = function () {
         _headers.length = 0;
         Object.assign(_headers, self.statisticHeaders.filter((item, idx) => self.statisticHeaderMasks[idx]));
         return _headers;
     }
-    this.hideSelectedGaussian = function() {
+    this.hideSelectedGaussian = function () {
         if (!self.selectedGaussian) return;
         self.selectedGaussian.forEach(gaussian => gaussian._useGssn = false);
         if (self.config.notUsedGaussian) {
@@ -1283,7 +1288,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         }
         self.setCumulativeData(self.histogramList);
     }
-    this.showSelectedGaussian = function() {
+    this.showSelectedGaussian = function () {
         if (!self.selectedGaussian) return;
         self.selectedGaussian.forEach(gaussian => gaussian._useGssn = true);
         if (self.config.notUsedGaussian) {
@@ -1293,7 +1298,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         }
         self.setCumulativeData(self.histogramList);
     }
-    this.hideAllGaussian = function() {
+    this.hideAllGaussian = function () {
         self.histogramList.forEach(gaussian => gaussian._useGssn = false);
         if (self.config.notUsedGaussian) {
             self.setLogNormalDFn(self.histogramList);
@@ -1302,7 +1307,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         }
         self.setCumulativeData(self.histogramList);
     }
-    this.showAllGaussian = function() {
+    this.showAllGaussian = function () {
         self.histogramList.forEach(gaussian => gaussian._useGssn = true);
         if (self.config.notUsedGaussian) {
             self.setLogNormalDFn(self.histogramList);
@@ -1311,48 +1316,48 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         }
         self.setCumulativeData(self.histogramList);
     }
-    this.hideSelectedLayer = function() {
-        if(!self.selectedLayers) return;
+    this.hideSelectedLayer = function () {
+        if (!self.selectedLayers) return;
         self.selectedLayers.forEach(layer => {
             layer._notUsed = true;
             toggleCtrlParams(layer, 'layer');
         });
     }
-    this.showSelectedLayer = function() {
-        if(!self.selectedLayers) return;
+    this.showSelectedLayer = function () {
+        if (!self.selectedLayers) return;
         self.selectedLayers.forEach(layer => {
             layer._notUsed = false;
             toggleCtrlParams(layer, 'layer');
         });
-        $timeout(() => {});
+        $timeout(() => { });
     }
-    this.hideAllLayer = function() {
+    this.hideAllLayer = function () {
         self.histogramList.forEach(bins => {
             bins._notUsed = true;
             toggleCtrlParams(bins, 'layer');
         });
-        $timeout(() => {});
+        $timeout(() => { });
     }
-    this.showAllLayer = function() {
+    this.showAllLayer = function () {
         self.histogramList.forEach(bins => {
             bins._notUsed = false;
             toggleCtrlParams(bins, 'layer');
         });
-        $timeout(() => {});
+        $timeout(() => { });
     }
-    this.hideAllCtrlParams = function() {
+    this.hideAllCtrlParams = function () {
         $timeout(() => {
             self.ctrlParamsMask = self.ctrlParamsMask.map(m => false);
         });
     }
-    this.showAllCtrlParams = function() {
+    this.showAllCtrlParams = function () {
         //self.ctrlParamsMask.forEach(m => m = true);
         $timeout(() => {
             self.ctrlParamsMask = self.ctrlParamsMask.map(m => true);
         });
     }
-    this.hideSelectedCtrlParams = function() {
-        if(!self.selectedCtrlParams) return;
+    this.hideSelectedCtrlParams = function () {
+        if (!self.selectedCtrlParams) return;
         self.selectedCtrlParams.forEach(cp => {
             cp = cp.data;
             let ctrlParamIdx = self.ctrlParams.findIndex(cpI => cp.$res.name === cpI.$res.name && cp.zoneInfo.idZone == cpI.zoneInfo.idZone);
@@ -1361,8 +1366,8 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             }
         });
     }
-    this.showSelectedCtrlParams = function() {
-        if(!self.selectedCtrlParams) return;
+    this.showSelectedCtrlParams = function () {
+        if (!self.selectedCtrlParams) return;
         self.selectedCtrlParams.forEach(cp => {
             cp = cp.data;
             let ctrlParamIdx = self.ctrlParams.findIndex(cpI => cp.$res.name === cpI.$res.name && cp.zoneInfo.idZone == cpI.zoneInfo.idZone);
@@ -1370,13 +1375,13 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 self.ctrlParamsMask[ctrlParamIdx] = true;
             }
         });
-        $timeout(() => {});
+        $timeout(() => { });
     }
 
     //--------------
 
-    this.hideSelectedZone = function() {
-        if(!self.selectedZones) return;
+    this.hideSelectedZone = function () {
+        if (!self.selectedZones) return;
         self.selectedZones.forEach(zone => {
             zone._notUsed = true;
             let zoneTree = self.zoneTree.filter(zoneI => zoneI.zone_template.name == zone.name);
@@ -1385,8 +1390,8 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             })
         });
     }
-    this.showSelectedZone = function() {
-        if(!self.selectedZones) return;
+    this.showSelectedZone = function () {
+        if (!self.selectedZones) return;
         self.selectedZones.forEach(zone => {
             zone._notUsed = false;
             let zoneTree = self.zoneTree.filter(zoneI => zoneI.zone_template.name == zone.name);
@@ -1394,22 +1399,22 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 zoneI._notUsed = false;
             })
         });
-        $timeout(() => {});
+        $timeout(() => { });
     }
-    this.hideAllZone = function() {
+    this.hideAllZone = function () {
         self.zoneTreeUniq.forEach(zone => {
             zone._notUsed = true;
         });
         self.zoneTree.forEach(zone => zone._notUsed = true);
-        $timeout(() => {});
+        $timeout(() => { });
     }
-    this.showAllZone = function() {
+    this.showAllZone = function () {
         self.isSettingChange = true;
         self.zoneTreeUniq.forEach(zone => {
             zone._notUsed = false;
         });
         self.zoneTree.forEach(zone => zone._notUsed = false);
-        $timeout(() => {});
+        $timeout(() => { });
     }
     this.onDrop = function (event, helper, myData) {
         let idWells = helper.data('idWells');
@@ -1423,9 +1428,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                             if (hasZonesetName) {
                                 let _idx = _.max(self.wellSpec.filter(ws => ws.idWell === idWell).map(ws => ws._idx));
                                 _idx = (_idx >= 0 ? _idx : -1) + 1;
-                                self.wellSpec.push({idWell, _idx});
+                                self.wellSpec.push({ idWell, _idx });
                                 let wellTree = getTree(self.wellSpec[self.wellSpec.length - 1]);
-                                let curve = getCurve({...well, _idx});
+                                let curve = getCurve({ ...well, _idx });
                                 if (!curve) {
                                     let msg = `Well ${well.name} does not meet requirement`;
                                     if (__toastr) __toastr.warning(msg);
@@ -1450,14 +1455,14 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             })
         }
     }
-    this.toggleWell = function(well) {
+    this.toggleWell = function (well) {
         self.isSettingChange = true;
         well._notUsed = !well._notUsed;
         toggleCtrlParams(well, 'well');
     }
-    this.removeWell = function(well) {
+    this.removeWell = function (well) {
         let index = self.wellSpec.findIndex(wsp => wsp.idWell === well.idWell && wsp._idx === well._idx);
-        if(index >= 0) {
+        if (index >= 0) {
             $timeout(() => {
                 self.wellSpec.splice(index, 1);
                 let wellTreeIdx = self.treeConfig.findIndex(wTI => wTI.idWell === well.idWell && wTI._idx === well._idx);
@@ -1472,13 +1477,13 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         let layers = self.histogramList.filter(layer => layer._useGssn);
         return layers.length;
     }
-    this.condition4CumulativeLine = function() {
+    this.condition4CumulativeLine = function () {
         return getLayerUseGssn() && self.cmltLineData.length && !self.config.notShowCumulative;
     }
-    this.setCumulativeData = function(layers) {
+    this.setCumulativeData = function (layers) {
         self.cmltLineData.length = 0;
         if (!layers.length) return;
-            layers = layers.filter(l => l._useGssn);
+        layers = layers.filter(l => l._useGssn);
         if (self.getStackMode() === 'well' ||
             self.getStackMode() === 'zone' ||
             self.getStackMode() === 'all') layers = layers.flat();
@@ -1504,10 +1509,10 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             self.cmltLineData.width = self.cmltLineData.width || 2;
         })
     }
-    this.condition4GaussianLine = function() {
+    this.condition4GaussianLine = function () {
         return getLayerUseGssn() && Object.keys(self.gaussianLine || {}).length && !self.config.notUsedGaussian;
     }
-    this.setGaussianData = function(layers) {
+    this.setGaussianData = function (layers) {
         self.gaussianLine = self.gaussianLine || {};
         if (!layers.length) {
             self.gaussianLine._notUsed = true;
@@ -1531,7 +1536,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             mean, sigma,
             width: 2,
         }
-        self.gaussianLine.fn = (function(x) {
+        self.gaussianLine.fn = (function (x) {
             let mean = this.mean;
             let sigma = this.sigma;
             let gaussianConstant = 1 / Math.sqrt(2 * Math.PI);
@@ -1540,14 +1545,14 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         }).bind(self.gaussianLine);
         self.gaussianLine.color = self.gaussianLine.color || colorGenerator();
         self.gaussianLine.sigmaLines = [
-            {color: self.gaussianLine.color, value: mean - sigma},
-            {color: self.gaussianLine.color, value: mean + sigma}
+            { color: self.gaussianLine.color, value: mean - sigma },
+            { color: self.gaussianLine.color, value: mean + sigma }
         ]
     }
-    this.condition4LogNormalD = function() {
+    this.condition4LogNormalD = function () {
         return getLayerUseGssn() && Object.keys(self.logNormalDLine || {}).length && self.config.notUsedGaussian;
     }
-    this.setLogNormalDFn = function(layers) {
+    this.setLogNormalDFn = function (layers) {
         self.logNormalDLine = self.logNormalDLine || {};
         if (!layers.length) {
             self.logNormalDLine._notUsed = true;
@@ -1571,7 +1576,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             mean, sigma,
             width: 2
         }
-        self.logNormalDLine.fn = (function(x) {
+        self.logNormalDLine.fn = (function (x) {
             if (x <= 0) return 0;
             let mean = this.mean,
                 sigma = this.sigma,
@@ -1597,21 +1602,21 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     }
 
     this.getMarkerGaussianVal = (marker, idx) => (marker.value)
-    this.setMarkerGaussianVal = (marker, idx, newVal) => {marker.value = newVal;}
-    this.markerGaussianStyle = (marker, idx) => ({stroke:marker.color,'stroke-width':'2', fill:'none'})
-/*
-    this.getMarkerVal = (marker, idx) => (marker.value)
-    this.setMarkerVal = (marker, idx, newVal) => {marker.value = newVal;}
-    this.markerStyle = (marker, idx) => ({stroke:marker.color,'stroke-width':'2', fill:'none'})
-    this.markerName = (marker, idx) => (marker.name)
-    */
+    this.setMarkerGaussianVal = (marker, idx, newVal) => { marker.value = newVal; }
+    this.markerGaussianStyle = (marker, idx) => ({ stroke: marker.color, 'stroke-width': '2', fill: 'none' })
+    /*
+        this.getMarkerVal = (marker, idx) => (marker.value)
+        this.setMarkerVal = (marker, idx, newVal) => {marker.value = newVal;}
+        this.markerStyle = (marker, idx) => ({stroke:marker.color,'stroke-width':'2', fill:'none'})
+        this.markerName = (marker, idx) => (marker.name)
+        */
     this.resetHistogramList = resetHistograms;
     function resetHistograms() {
         self.histogramList = [];
     }
     this.changeHistogramMode = changeHistogramMode;
     function changeHistogramMode(option) {
-        self.config.histogramMode=option;
+        self.config.histogramMode = option;
     }
     this.getHistogramMode = getHistogramMode;
     function getHistogramMode() {
