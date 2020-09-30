@@ -68,9 +68,9 @@
         <div style="border-bottom: 1px solid #e4e4e4;flex: 1;margin: 9px;"></div>
         <div class="ti ti-plus add-polygon" ng-click="self.addPolygon()"></div>
     </div>
-    
+
     <div style="overflow: auto; padding-top: 15px;">
-        <div class="list-polygon" ng-repeat="polygon in self.polygons">
+        <div class="list-polygon" ng-repeat="polygon in self.polygons track by $index">
             <div style="margin: 0 10px; border: none;">
                 <editable style="flex:1;display:flex;flex-direction:row;overflow:hidden;"
                     item-label="" item-value="polygon.label" params="$index"
@@ -90,7 +90,7 @@
                     class="button-list-polygon ti ti-check">
                 </div>
                 <div ng-class="{'red-color ': polygon._notShow, 'blue-color ': !polygon._notShow }"
-                    class="button-list-polygon ti ti-eye" 
+                    class="button-list-polygon ti ti-eye"
                     title="Show/hide"
                     ng-click="polygon._notShow = !polygon._notShow">
                 </div>

@@ -29,12 +29,12 @@
         </span>
         <span ng-class="{'active' : self.getSelectionValue('Z3').isUsed}" style="margin-right: 8px;"
             ng-click="self.getSelectionValue('Z3').isUsed = !self.getSelectionValue('Z3').isUsed" class="button-with-label">
-            Label Z3 
+            Label Z3
         </span>
     </div>
 </div>
 <div style="padding: 8px 15px;" class="label-option-sidebar"
-    ng-repeat="selectionValue in self.selectionValueList"
+    ng-repeat="selectionValue in self.selectionValueList track by $index"
     ng-show="selectionValue.isUsed">
     <div class="selection-sidebar">
         <span>{{selectionValue.label}}</span>
@@ -55,7 +55,7 @@
                             ng-click="well._notHidden = !well._notHidden"></i>
                         <div ng-bind="well.name" style="font-weight: bold; max-width: 120px; white-space: nowrap;text-overflow: ellipsis; overflow: hidden;"></div>
                     </div>
-                   
+
                     <div>
                         <span
                             ng-class="{'red-color fa fa-eye-slash': well._notUsed, 'blue-color fa fa-eye': !well._notUsed }"
@@ -75,7 +75,7 @@
             <div style="display: flex; flex-direction: row ; flex-wrap: wrap; max-width: 420px; background: #f4f4f4; align-items: center;justify-content: flex-start;text-align: center;">
                 <div class="axis-bar" ng-class='{"selected": well.isSettingAxis == selectionValue.name}'
                     ng-click="well.isSettingAxis = selectionValue.name"
-                    ng-repeat="selectionValue in self.selectionValueList" ng-show="selectionValue.isUsed">
+                    ng-repeat="selectionValue in self.selectionValueList track by $index" ng-show="selectionValue.isUsed">
                     <div ng-bind="selectionValue.name" style="font-weight: bold;"></div>
                     <div style="margin: 0 10px; max-width: 70px; flex: 1;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;"
                         ng-bind="self.getWellSpec(well)[self.getAxisKey(selectionValue.name)].datasetName"></div>

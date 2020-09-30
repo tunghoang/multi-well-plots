@@ -609,7 +609,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         }
     }
     this.getCtrlParamsIcons = function (node){ return ["rectangle"] }
-    this.getCtrlParamsIconStyle = function(node) { 
+    this.getCtrlParamsIconStyle = function(node) {
         return  {
             'background-color': self.cpMarkerStyle(node).color
         }
@@ -812,10 +812,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     Object.assign(bins.stats, stats);
                     if (self.getStackMode() === 'zone') {
                         let zoneExisted = zoneBinsList.find(zbl => zbl.name.includes(zone.zone_template.name));
-                        let zoneBinsElem;
                         if (!zoneExisted) {
-                            zoneBinsList.push([]);
-                            zoneExisted = zoneBinsList[zoneBinsList.length - 1];
+                            zoneExisted = [];
+                            zoneBinsList.push(zoneExisted);
                             zoneExisted.name = `${zone.zone_template.name}`;
                             if (self.getColorMode() === 'zone') {
                                 zoneExisted.color = self.getColor(zone, well);
@@ -823,8 +822,6 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                                 zoneExisted.color = utils.getWellColor(well);
                             }
                         }
-                        //if (!zoneExisted[i]) zoneExisted[i] = [];
-                        //zoneExisted[i] = bins;
                         zoneExisted.push(bins);
                     }
                     wellHistogramList.push(bins);
@@ -872,8 +869,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     {
                         for (let groupOfBins of zoneBinsList) {
                             let fullData = [];
-                            for (let i = 0; i < groupOfBins.flat().length; i++) {
-                                fullData = fullData.concat(groupOfBins.flat()[i]);
+                            const bins = groupOfBins.flat();
+                            for (let i = 0; i < bins.length; i++) {
+                                fullData = fullData.concat(bins[i]);
                             }
                             groupOfBins.stats = setStats(fullData);
                             groupOfBins.stats.top = _.min(groupOfBins.map(gob => gob.stats.top));
@@ -945,7 +943,13 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                             })
                             self.histogramList = arr;
                         } else if (self.getStackMode() == 'zone') {
-                            self.histogramList = allHistogramList.flat();
+                            self.histogramList = allHistogramList.map(gob => {
+                                const data = gob.flat();
+                                for (const key in gob) {
+                                    if (!isFinite(key)) data[key] = gob[key];
+                                }
+                                return data;
+                            });
                         }
                     }
                 }

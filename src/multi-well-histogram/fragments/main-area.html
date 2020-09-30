@@ -27,48 +27,48 @@
                 grid="false" axis-direction="'up'" placement="1"></axis-layer>
             <canvas-barchart-layer ng-show="!bins._notUsed" plot-type="self.getHistogramMode()"
                 ng-if="self.getDisplayMode() == 'bar' && self.getStackMode() == 'none'"
-                ng-repeat="bins in self.histogramList" min-val="self.getLeft()" max-val="self.getRight()"
+                ng-repeat="bins in self.histogramList track by $index" min-val="self.getLeft()" max-val="self.getRight()"
                 min-y='self.minY || 0' max-y='self.getMaxY() || 100' loga="self.getLoga()" autofit='false'
                 bins="bins" bin-gap="self.getBinGap()" color-func="self.colorFn">
             </canvas-barchart-layer>
-            <canvas-barchart-layer ng-show="!groupOfBins._notUsed" plot-type="self.getHistogramMode()" ng-if="self.getDisplayMode() == 'bar' && 
-                self.getStackMode() == 'well'" ng-repeat="groupOfBins in self.histogramList"
+            <canvas-barchart-layer ng-show="!groupOfBins._notUsed" plot-type="self.getHistogramMode()" ng-if="self.getDisplayMode() == 'bar' &&
+                self.getStackMode() == 'well'" ng-repeat="groupOfBins in self.histogramList track by $index"
                 min-val="self.getLeft()" max-val="self.getRight()" min-y='self.minY || 0'
                 max-y='self.getMaxY() || 100' loga="self.getLoga()" autofit='false' bins="groupOfBins"
                 bin-gap="self.getBinGap()" color-func="self.colorFn" multiple='true'>
             </canvas-barchart-layer>
-            <canvas-barchart-layer ng-show="!groupOfBins._notUsed" plot-type="self.getHistogramMode()" ng-if="self.getDisplayMode() == 'bar' && 
-                self.getStackMode() == 'zone'" ng-repeat="groupOfBins in self.histogramList"
+            <canvas-barchart-layer ng-show="!groupOfBins._notUsed" plot-type="self.getHistogramMode()" ng-if="self.getDisplayMode() == 'bar' &&
+                self.getStackMode() == 'zone'" ng-repeat="groupOfBins in self.histogramList track by $index"
                 min-val="self.getLeft()" max-val="self.getRight()" min-y='self.minY || 0'
                 max-y='self.getMaxY() || 100' loga="self.getLoga()" autofit='false' bins="groupOfBins"
                 bin-gap="self.getBinGap()" color-func="self.colorFn" multiple='true'>
             </canvas-barchart-layer>
-            <canvas-barchart-layer ng-show="!bins._notUsed" plot-type="self.getHistogramMode()" ng-if="self.getDisplayMode() == 'bar' && 
+            <canvas-barchart-layer ng-show="!bins._notUsed" plot-type="self.getHistogramMode()" ng-if="self.getDisplayMode() == 'bar' &&
                 self.getStackMode() == 'all'" min-val="self.getLeft()" max-val="self.getRight()"
                 min-y='self.minY || 0' max-y='self.getMaxY() || 100' loga="self.getLoga()" autofit='false'
                 bins="bins" bin-gap="self.getBinGap()" color-func="self.colorFn" multiple='true'
-                ng-repeat="bins in self.histogramList">
+                ng-repeat="bins in self.histogramList track by $index">
             </canvas-barchart-layer>
             <line-formula-layer ng-if="self.condition4GaussianLine()" min-val='self.getLeft()' max-val='self.getRight()'
                 min-y='self.minY || 0' max-y='self.maxY || 100' autofit='true' resolution='5000' loga="self.getLoga()"
                 formula="self.gaussianLine" line-color="self.gaussianLine.color" line-width="self.gaussianLine.width">
             </line-formula-layer>
-            <control-marker-layer ng-if="self.condition4GaussianLine()" 
+            <control-marker-layer ng-if="self.condition4GaussianLine()"
                 loga="self.getLoga()"
                 min-val="self.getLeft()" max-val="self.getRight()" min-y='self.minY || 0'
-                max-y='self.maxY || 100' 
-                markers="self.gaussianLine.sigmaLines" draggable="false" 
+                max-y='self.maxY || 100'
+                markers="self.gaussianLine.sigmaLines" draggable="false"
                 not-use-background='true'
                 axis-direction="'right'"
                 get-marker-value="self.getMarkerGaussianVal"
                 set-marker-value="self.setMarkerGaussianVal"
-                get-marker-style-fn="self.markerGaussianStyle" 
+                get-marker-style-fn="self.markerGaussianStyle"
                 get-marker-name="self.markerName"
                 marker-width="19">
             </control-marker-layer>
             <line-formula-layer ng-if="self.condition4LogNormalD()" min-val='self.getLeft()' max-val='self.getRight()'
-                loga="self.getLoga()" min-y='self.minY || 0' max-y='self.maxY || 100' autofit='true' resolution='5000' 
-                eqn-offsets="['65px', '0%']" formula="self.logNormalDLine" line-color="self.logNormalDLine.color" 
+                loga="self.getLoga()" min-y='self.minY || 0' max-y='self.maxY || 100' autofit='true' resolution='5000'
+                eqn-offsets="['65px', '0%']" formula="self.logNormalDLine" line-color="self.logNormalDLine.color"
                 line-width="self.logNormalDLine.width" show-equation='true'>
             </line-formula-layer>
             <line-point-layer ng-if="self.condition4CumulativeLine()" min-val="self.getLeft()"
@@ -78,22 +78,22 @@
                 line-color="self.cmltLineData.color" line-width='self.cmltLineData.width' line-dash="'2 0'">
             </line-point-layer>
             <line-point-layer ng-if="self.getDisplayMode() === 'line' && !bins._notUsed"
-                ng-repeat="bins in self.histogramList" min-val="self.getLeft()" max-val="self.getRight()"
+                ng-repeat="bins in self.histogramList track by $index" min-val="self.getLeft()" max-val="self.getRight()"
                 min-y='self.minY || 0' max-y='self.maxY || 100' loga="self.getLoga()" autofit='false'
                 get-x='self.getBinX' get-y='self.getBinY' line-data="bins" line-color="bins.color"
                 line-width='2' line-dash="'2 0'" color-func="self.colorFn">
             </line-point-layer>
-            <control-marker-layer ng-if="self.ctrlParams && self.ctrlParams.length && self.validPlotRegion()" 
+            <control-marker-layer ng-if="self.ctrlParams && self.ctrlParams.length && self.validPlotRegion()"
                 min-val="self.getLeft()" max-val="self.getRight()" min-y='self.minY || 0'
-                max-y='self.maxY || 100' 
-                markers="self.ctrlParams" draggable="true" 
+                max-y='self.maxY || 100'
+                markers="self.ctrlParams" draggable="true"
                 markers-mask = "self.ctrlParamsMask"
                 order-free='true' loga="self.getLoga()"
                 not-use-background='self.notCPBackground'
                 axis-direction="'right'"
                 get-marker-value="self.cpGetMarkerVal"
                 set-marker-value="self.cpSetMarkerVal"
-                get-marker-style-fn="self.cpMarkerStyle" 
+                get-marker-style-fn="self.cpMarkerStyle"
                 get-marker-name="self.cpMarkerName"
                 marker-width="19"
                 on-marker-drag-end="self.onMarkerDragEnd">
