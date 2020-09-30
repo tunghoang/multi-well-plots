@@ -943,12 +943,18 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                             })
                             self.histogramList = arr;
                         } else if (self.getStackMode() == 'zone') {
-                            self.histogramList = allHistogramList.map(gob => {
-                                const data = gob.flat();
-                                for (const key in gob) {
-                                    if (!isFinite(key)) data[key] = gob[key];
-                                }
-                                return data;
+                            self.histogramList = allHistogramList.map(zone => {
+                                const bins = [];
+                                zone.forEach(gob => {
+                                    gob.forEach((bin, i) => {
+                                        bins[i] = (bins[i] || []).concat(bin);
+                                        bins[i].x0 = bin.x0;
+                                        bins[i].x1 = bin.x1;
+                                    })
+                                })
+                                bins.color = zone.color;
+                                bins.name = zone.name;
+                                return bins;
                             });
                         }
                     }
