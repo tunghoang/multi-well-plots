@@ -1066,8 +1066,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         return curveData.filter(d => ((zone.startDepth - d.depth) * (zone.endDepth - d.depth) <= 0));
     }
     function getCorrectValue(val1, val2) {
-        return _.isFinite(val1) ? val1 : val2;
-
+        return _.isFinite(+val1) ? +val1 : val2;
     }
     this.getLeft = () => {
         if (self.config.flipHorizontal) {
