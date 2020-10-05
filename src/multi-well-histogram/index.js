@@ -49,6 +49,7 @@ app.component(componentName, component({
 }))
 multiWellHistogramController.$inject = ['$scope', '$timeout', '$element', '$compile', 'wiToken', 'wiApi', 'wiDialog', 'wiLoading'];
 function multiWellHistogramController($scope, $timeout, $element, $compile, wiToken, wiApi, wiDialog, wiLoading) {
+    window.hisCtrl = this;
     let self = this;
     PrintableController.call(this, $scope, $element, $timeout, $compile, wiApi);
     self.silent = true;
@@ -1081,7 +1082,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         return getCorrectValue(getCorrectValue(self.config.right, self.defaultConfig.right), 0);
     }
     this.getMaxY = () => {
-        return self.getHistogramMode() === 'percentage' ? self.maxPercentage : self.maxY;
+        return self.getHistogramMode() === 'percentage'
+            ? _.ceil(self.maxPercentage, -1)
+            : self.maxY > 1 ? _.ceil(self.maxY, -1 * self.maxY.toString().length + 1) : self.maxY;
     }
     this.getLoga = () => (self.config.loga === undefined ? self.defaultConfig.loga : self.config.loga)
     this.getMajor = () => (isNaN(self.config.major) ? (self.defaultConfig.major || 5) : self.config.major)
