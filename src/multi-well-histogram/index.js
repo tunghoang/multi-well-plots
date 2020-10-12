@@ -699,7 +699,8 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
             self.defaultConfig.xUnit = family.family_spec[0].unit;
             if (family.idFamily != self.config.idFamily) {
                 self.config.idFamily = family.idFamily;
-                delete self.config.xUnit;
+                // delete self.config.xUnit;
+                self.config.xUnit = curve.unit;
                 delete self.config.left;
                 delete self.config.right;
             }
