@@ -34,7 +34,7 @@
     </div>
 </div>
 <div style="padding: 8px 15px;" class="label-option-sidebar"
-    ng-repeat="selectionValue in self.selectionValueList track by $index"
+    ng-repeat="selectionValue in self.selectionValueList"
     ng-show="selectionValue.isUsed">
     <div class="selection-sidebar">
         <span>{{selectionValue.label}}</span>
@@ -47,7 +47,7 @@
 <div style="overflow: overlay; display:flex; flex-direction: column;">
     <wi-sortable item-list="self.treeConfig" related-list="[self.wellSpec]" update-fn="self.sortableUpdate">
         <div class="sort-item" style="border: 1px solid #e4e4e4;margin: 5px 15px;border-radius: 2px; cursor: pointer;"
-            ng-repeat='well in self.treeConfig track by $index'>
+            ng-repeat='well in self.treeConfig'>
             <div style="display: flex; flex-direction: row;padding: 10px;background: #f4f4f4; align-items: center;justify-content: space-between;text-align: center;">
                     <div style=" display: flex;align-items: center;">
                         <i class="header-icon"
@@ -75,7 +75,7 @@
             <div style="display: flex; flex-direction: row ; flex-wrap: wrap; max-width: 420px; background: #f4f4f4; align-items: center;justify-content: flex-start;text-align: center;">
                 <div class="axis-bar" ng-class='{"selected": well.isSettingAxis == selectionValue.name}'
                     ng-click="well.isSettingAxis = selectionValue.name"
-                    ng-repeat="selectionValue in self.selectionValueList track by $index" ng-show="selectionValue.isUsed">
+                    ng-repeat="selectionValue in self.selectionValueList" ng-show="selectionValue.isUsed">
                     <div ng-bind="selectionValue.name" style="font-weight: bold;"></div>
                     <div style="margin: 0 10px; max-width: 70px; flex: 1;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;"
                         ng-bind="self.getWellSpec(well)[self.getAxisKey(selectionValue.name)].datasetName"></div>

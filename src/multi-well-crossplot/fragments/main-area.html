@@ -22,7 +22,7 @@
                 my-data-x="layer.dataX" my-data-y="layer.dataY"
                 symbol="self.getSelectionValue('Z3').isUsed ? 'textSymbol' : 'circle'" symbol-size="5"
                 symbol-fill-style="layer.color" symbol-stroke-style="'transparent'" color-func="layer.color"
-                point-size-func="layer.size" symbol-func="layer.textSymbol" ng-repeat="layer in self.layers track by $index">
+                point-size-func="layer.size" symbol-func="layer.textSymbol" ng-repeat="layer in self.layers">
             </scatter-layer>
 			<heat-map
 				min-val="self.getLeft()" max-val="self.getRight()"
@@ -42,13 +42,13 @@
                 max-draw-y="self.getTop()" ortho-loga="self.getLogaY()" loga="self.getLogaX()" formula="udl"
                 eqn-offsets="['65px', self.eqnOffsetY(udlIdx)]" line-color="udl.lineStyle.lineColor"
                 line-dash="udl.lineStyle.lineStyle.join(' ')" line-width="udl.lineStyle.lineWidth"
-                ng-repeat="(udlIdx, udl) in self.udls track by $index" show-equation='udl.displayEquation' ng-show='!udl._notUsed'
+                ng-repeat="(udlIdx, udl) in self.udls " show-equation='udl.displayEquation' ng-show='!udl._notUsed'
                 resolution='500' ng-if="self.validPlotRegion()">
             </line-formula-layer>
             <line-formula-layer min-val='self.getLeft()' max-val="self.getRight()" min-draw='self.getLeft()'
                 max-draw="self.getRight()" min-y="self.getBottom()" max-y="self.getTop()" min-draw-y="self.getBottom()"
                 max-draw-y="self.getTop()" ortho-loga="self.getLogaY()" loga="self.getLogaX()" formula="pickett"
-                show-equation='false' ng-repeat="(pickettIdx, pickett) in self.allPickettLines track by $index"
+                show-equation='false' ng-repeat="(pickettIdx, pickett) in self.allPickettLines "
                 ng-if='self.validPlotRegion() && self.conditionForPickettPlot() && self.allPickettLines && !self.notShowPickett' resolution='5000'
                 line-label='pickett.label' line-label-style="pickett.style" ng-show='pickett._used'
                 line-color="self.pickettLineColor(pickett)">
@@ -57,7 +57,7 @@
                 max-draw="self.getRight()" min-y="self.getBottom()" max-y="self.getTop()" min-draw-y="self.getBottom()"
                 max-draw-y="self.getTop()" ortho-loga="self.getLogaY()" loga="self.getLogaX()"
                 ng-if='self.validPlotRegion() && self.conditionForPickettPlot() && self.allPickettLines && !self.notShowPickett'
-                ng-repeat="(pickettSetIdx, pickettSet) in self.pickettSets track by $index"
+                ng-repeat="(pickettSetIdx, pickettSet) in self.pickettSets "
                 show-equation='false'
                 points="self.pickettAdjusterArray[pickettSetIdx]"
                 ng-show='pickettSet._used' mode="pickettSet._used ? 'edit' : ''"
@@ -65,7 +65,7 @@
                 get-point-label="self.noLabel">
             </segment-layer>
             <polygon-layer ng-show="!polygon._notShow" min-val="self.getLeft()" max-val="self.getRight()"
-                min-y="self.getBottom()" max-y="self.getTop()" ng-repeat="polygon in self.polygons track by $index"
+                min-y="self.getBottom()" max-y="self.getTop()" ng-repeat="polygon in self.polygons "
                 points="polygon.points" mode="polygon.mode" ortho-loga="self.getLogaY()" loga="self.getLogaX()"
                 fill-style="self.polygonFillStyle(polygon)" stroke-style="self.polygonStrokeStyle(polygon)"
                 show-coordinates="self.showTooltip" stroke-width="self.polygonStrokeWidth(polygon)">
@@ -76,7 +76,7 @@
                 ortho-loga="self.getLogaY()" loga="self.getLogaX()" overlay-line-spec="self.overlayLineSpec">
             </overlay-line-layer>
             <polygon-layer ng-if="self.paramGroups && self.paramGroups.length" ng-show="!paramGroup._notShow"
-                ng-repeat="paramGroup in self.paramGroups track by $index"
+                ng-repeat="paramGroup in self.paramGroups "
                 min-val="self.getLeft()" max-val="self.getRight()"
                 min-y="self.getBottom()" max-y="self.getTop()"
                 points="self.paramGroupPointsFn(paramGroup, $index)" get-x-fn="self.getParamGroupX" get-y-fn="self.getParamGroupY"
@@ -114,7 +114,7 @@
                 </div>
                 <div style="display: flex; flex: 1;position: relative;">
                     <div style="display: flex; flex: 1; z-index: 1; ">
-                        <div class="axis axis-line" ng-repeat="segColor in self.zColors track by $index"
+                        <div class="axis axis-line" ng-repeat="segColor in self.zColors "
                             ng-style="{'background-color':segColor}">
                             <span></span>
                         </div>
@@ -142,7 +142,7 @@
                 </div>
                 <div style="display: flex; flex: 1;position: relative;">
                     <div style="display: flex; flex: 1; z-index: 1; ">
-                        <div class="axis axis-line" ng-repeat="segSize in self.zSizes track by $index">
+                        <div class="axis axis-line" ng-repeat="segSize in self.zSizes ">
                             <span>{{segSize}}</span>
                         </div>
                     </div>
@@ -169,7 +169,7 @@
                 </div>
                 <div style="display: flex; flex: 1;position: relative;">
                     <div style="display: flex; flex: 1; z-index: 1; ">
-                        <div class="axis axis-line" ng-repeat="segSymbol in self.zSymbols track by $index">
+                        <div class="axis axis-line" ng-repeat="segSymbol in self.zSymbols ">
                             <span>{{segSymbol}}</span>
                         </div>
                     </div>
