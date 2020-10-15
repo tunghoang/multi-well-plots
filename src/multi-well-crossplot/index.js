@@ -12,7 +12,7 @@ const _POLYGON_LIMIT = 5;
 
 var app = angular.module(componentName, [
     'sideBar', 'wiTreeView','wiTreeViewVirtual', 'wiTableView',
-    'wiApi', 'editable', 
+    'wiApi', 'editable',
     'wiDialog',
     'wiDroppable', 'wiDropdownList', 'angularResizable',
     'plot-toolkit', 'printSettings',
@@ -295,6 +295,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             }, true);
             $scope.$watch(() => (self.selectionType), (newVal, oldVal) => {
                 self.isSettingChange = true;
+                self.selectionValueList = self.initSelectionValueList();
                 getSelectionList(self.selectionType, self.treeConfig);
                 updateDefaultConfig();
             });
@@ -444,7 +445,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         }
     }
 
-    this.onSelectionValueListChange = function(axisName) {   
+    this.onSelectionValueListChange = function(axisName) {
         switch(axisName) {
             case 'X':
                 delete self.config.left;
@@ -515,7 +516,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     selectionHash[curve.name] = 1;
                 })
                 break;
-            case 'family': 
+            case 'family':
                 allCurves.forEach(curve => {
                     let family = wiApi.getFamily(curve.idFamily);
                     if(family)
@@ -530,9 +531,9 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 })
                 break;
         }
-        self.selectionList = Object.keys(selectionHash).map(item => ({ 
-            data:{label:item}, 
-            properties:{name:item} 
+        self.selectionList = Object.keys(selectionHash).map(item => ({
+            data:{label:item},
+            properties:{name:item}
         }));
         self.selectionList.sort((a, b) => {
             return a.data.label.localeCompare(b.data.label);
@@ -990,7 +991,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     $timeout(()=>{
                         self.listOverlayLine = data;
                         if (self.overlayLineSpec && (self.overlayLineSpec.idOverlayLine || self.overlayLineSpec.name)) {
-                            let showedOvl = self.listOverlayLine.find(ovl => ovl.idOverlayLine === self.overlayLineSpec.idOverlayLine || 
+                            let showedOvl = self.listOverlayLine.find(ovl => ovl.idOverlayLine === self.overlayLineSpec.idOverlayLine ||
                                 self.overlayLineSpec.name === ovl.name);
                             if (showedOvl) {
                                 clickOvlFunction(null, showedOvl);
@@ -1006,7 +1007,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         }
         //END overlay line---------------------------------------------------
 
-        async function updateUnitList(axis, idFamily, idCurve) { 
+        async function updateUnitList(axis, idFamily, idCurve) {
             let list = await wiApi.getListUnit({
                 idFamily: idFamily,
                 idCurve: idCurve
@@ -1375,7 +1376,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     }
     function getZoneset(well, zonesetName = "") {
         let zonesets = well.zone_sets;
-        if (zonesetName === "" || zonesetName === "ZonationAll") 
+        if (zonesetName === "" || zonesetName === "ZonationAll")
             return null;
         return zonesets.find(zs => zs.name === zonesetName);
     }
@@ -1558,12 +1559,12 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         let family;
         if (!criteria) return true;
         switch(self.selectionType) {
-            case 'family-group': 
+            case 'family-group':
                 family = wiApi.getFamily(node.idFamily);
                 if (!family) return null;
                 return family.familyGroup.trim().toLowerCase() === criteria.trim().toLowerCase();
 
-            case 'family': 
+            case 'family':
                 family = wiApi.getFamily(node.idFamily);
                 if (!family) return null;
                 return family.name.trim().toLowerCase() === criteria.trim().toLowerCase();
@@ -2057,7 +2058,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             let properties = paramGroup.properties;
             return zone.zone_template.name === properties.zone_template.name.replace('All', 'ZonationAll') && layerIdx === (properties.__depthIndex || 0);
         })
-        return toReturn; 
+        return toReturn;
     }
     function getPointSet(xData, yData, z1Data, z2Data, z3Data) {
         let pointset = [];
@@ -2065,26 +2066,26 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             let depth = eX.depth;
             if (!eX.x) return;
 
-            let ySample = wiApi.binarySearch(yData, function(oneYData) { 
+            let ySample = wiApi.binarySearch(yData, function(oneYData) {
                 return parseFloat(eX.depth.toFixed(4) - oneYData.depth.toFixed(4));
             }, 0, yData.length - 1);
 
             if (!ySample || !ySample.x) return;
             let z1Sample, z2Sample, z3Sample;
             if (z1Data) {
-                z1Sample = wiApi.binarySearch(z1Data, function(oneZ1Data) { 
+                z1Sample = wiApi.binarySearch(z1Data, function(oneZ1Data) {
                     return (eX.depth - oneZ1Data.depth).parseFloat(4);
                 }, 0, z1Data.length - 1);
                 if (!z1Sample || !z1Sample.x) return;
             }
             if (z2Data) {
-                z2Sample = wiApi.binarySearch(z2Data, function(oneZ2Data) { 
+                z2Sample = wiApi.binarySearch(z2Data, function(oneZ2Data) {
                     return (eX.depth - oneZ2Data.depth).parseFloat(4);
                 }, 0, z2Data.length - 1);
                 if (!z2Sample || !z2Sample.x) return;
             }
             if (z3Data) {
-                z3Sample = wiApi.binarySearch(z3Data, function(oneZ3Data) { 
+                z3Sample = wiApi.binarySearch(z3Data, function(oneZ3Data) {
                     return (eX.depth - oneZ3Data.depth).parseFloat(4);
                 }, 0, z3Data.length - 1);
                 if (!z3Sample || !z3Sample.x) return;
@@ -2173,9 +2174,9 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         return toRet;
     }
     function sort(array) {
-        return array.sort(function(a, b) {                                          
-            return a - b;                                                           
-        });                                                                         
+        return array.sort(function(a, b) {
+            return a - b;
+        });
     }
     function clone(obj) {
         return JSON.parse(JSON.stringify(obj));
@@ -2219,33 +2220,33 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         $timeout(() => {});
     }
     this.hideSelectedLayer = function() {
-        if(!self.selectedLayers) return;                                        
+        if(!self.selectedLayers) return;
         self.selectedLayers.forEach(layer => {
             layer._notUsed = true;
             toggleParamGroup(layer);
         });
-    }                                                                           
-    this.showSelectedLayer = function() {                                       
-        if(!self.selectedLayers) return;                                        
+    }
+    this.showSelectedLayer = function() {
+        if(!self.selectedLayers) return;
         self.selectedLayers.forEach(layer => {
             layer._notUsed = false;
             toggleParamGroup(layer);
-        });           
+        });
         $timeout(() => {});
-    }                                                                           
-    this.hideAllLayer = function() {                                            
+    }
+    this.hideAllLayer = function() {
         self.layers.forEach(layer => {
             layer._notUsed = true;
             toggleParamGroup(layer);
-        });               
+        });
         $timeout(() => {});
-    }                                                                           
-    this.showAllLayer = function() {                                            
+    }
+    this.showAllLayer = function() {
         self.layers.forEach(layer => {
             layer._notUsed = false;
             toggleParamGroup(layer);
         });
-        $timeout(() => {});                                                     
+        $timeout(() => {});
     }
     this.getFilterForLayer = () => {
         if (!self.zoneTree || !self.zoneTree.length) {
@@ -2347,8 +2348,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 result = regression.linear(data, {precision: 6, ...fitPoint});
                 self.regLine = {
                     ...self.regLine,
-                    family: self.regressionType.toLowerCase(), 
-                    slope: result.equation[0], 
+                    family: self.regressionType.toLowerCase(),
+                    slope: result.equation[0],
                     intercept: result.equation[1],
                     predict: result.predict,
                     r2: result.r2
@@ -2358,8 +2359,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 result = regression.exponential(data, {precision: 6, ...fitPoint});
                 self.regLine = {
                     ...self.regLine,
-                    family: self.regressionType.toLowerCase(), 
-                    ae: result.equation[0], 
+                    family: self.regressionType.toLowerCase(),
+                    ae: result.equation[0],
                     b: result.equation[1],
                     predict: result.predict,
                     r2: result.r2
@@ -2369,8 +2370,8 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 result = regression.power(data, {precision: 6, ...fitPoint});
                 self.regLine = {
                     ...self.regLine,
-                    family: self.regressionType.toLowerCase(), 
-                    coefficient: result.equation[0], 
+                    family: self.regressionType.toLowerCase(),
+                    coefficient: result.equation[0],
                     exponent: result.equation[1],
                     predict: result.predict,
                     r2: result.r2
@@ -2427,7 +2428,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             self.isSettingChange = true;
             wSpec.discriminator = discrmnt;
         });
-    }                                                                           
+    }
     this.hasDiscriminator = function(well) {
         let wSpec = getWellSpec(well);
         return wSpec.discriminator && Object.keys(wSpec.discriminator).length > 0 && wSpec.discriminator.active;
@@ -2637,11 +2638,11 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 }, 500)
             });
     }
-    this.loadUDL = function() { 
+    this.loadUDL = function() {
         wiApi.listAssetsPromise(self.idProject, 'FormulaArray')
             .then(listAssets => {
-                self.udlSelectionList = listAssets.map(item => ({ 
-                    data:{label:item.name}, 
+                self.udlSelectionList = listAssets.map(item => ({
+                    data:{label:item.name},
                     properties:item
                 }));
                 wiDialog.promptListDialog({
@@ -2930,7 +2931,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     }
     function isReverse(min, max) {
         return min - max > 0;
-    } 
+    }
     function totalBins(bins) {
         return _.sum(bins.map(bin => bin.length));
     }
@@ -2973,7 +2974,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             dataY = dataY.concat(layer.dataY);
         })
         self.binsX = getBinsXGen()(dataX);
-        self.binsY = getBinsYGen()(dataY); 
+        self.binsY = getBinsYGen()(dataY);
         updateColorScale();
     }
     this.cellValuePropMap = function(cellIndex, iRow, iCol) {
