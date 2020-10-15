@@ -221,7 +221,8 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 self.isSettingChange = true;
                 updateDefaultConfig();
             }, true);
-            $scope.$watch(() => (self.selectionType), () => {
+            $scope.$watch(() => (self.selectionType), (newVal, oldVal) => {
+                if (newVal === oldVal) return;
                 self.isSettingChange = true;
                 self.selectionValue = '';
                 getSelectionList(self.selectionType, self.treeConfig);

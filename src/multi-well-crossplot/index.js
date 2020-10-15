@@ -294,6 +294,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 self.isSettingChange = true;
             }, true);
             $scope.$watch(() => (self.selectionType), (newVal, oldVal) => {
+                if (newVal === oldVal) return;
                 self.isSettingChange = true;
                 self.selectionValueList = self.initSelectionValueList();
                 getSelectionList(self.selectionType, self.treeConfig);
