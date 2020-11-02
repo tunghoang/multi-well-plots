@@ -3059,6 +3059,6 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     }
 
     this.addLog = function(status, message) {
-        if(__toastr) __toastr[status](message)
+        // if(__toastr) __toastr[status](message)
     }
 }
