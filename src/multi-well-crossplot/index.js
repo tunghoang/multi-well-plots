@@ -83,6 +83,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     self.silent = true;
     self.selectedNode = null;
     self.datasets = {};
+    self.logsData = [];
     //--------------
     $scope.tab = 1;
     self.selectionTab = self.selectionTab || 'Wells';
@@ -1388,6 +1389,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             return zone.name;
         });
         self.zonesetName = (selectedItemProps || {}).name || 'ZonationAll';
+        self.addLog('success', `Change zoneset to ${self.zonesetName}`)
     }
     this.runZoneMatch = function (node, criteria) {
         let keySearch = criteria.toLowerCase();
@@ -1455,6 +1457,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                                     let _idx = _.max(self.wellSpec.filter(ws => ws.idWell === idWell).map(ws => ws._idx));
                                     _idx = (_idx >= 0 ? _idx : -1) + 1;
                                     self.wellSpec.push({idWell, _idx});
+                                    self.addLog('success', `Add well ${well.name}`)
                                     let wellTree = getTree(self.wellSpec[self.wellSpec.length - 1]);
                                     let curveX = getCurve({...well, _idx}, 'xAxis');
                                     let curveY = getCurve({...well, _idx}, 'yAxis');
@@ -1509,6 +1512,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             let idCurveY = self.wellSpec[0].yAxis.idCurve;
             wiApi.getOverlayLinePromise(node.idOverlayLine, idCurveX, idCurveY).then((ovlProps) => {
                 $timeout(() => {
+                    self.addLog('success', `Change Overlayline`)
                     let isSwap = ovlProps.data.isSwap;
                     self.overlayLineSpec = ovlProps.data;
                     self.overlayLineSpec.idOverlayLine = ovlProps.idOverlayLine;
@@ -1536,6 +1540,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         let index = self.wellSpec.findIndex(wsp => wsp.idWell === well.idWell && wsp._idx === well._idx);
         if(index >= 0) {
             self.wellSpec.splice(index, 1);
+            self.addLog('success', `Delete well ${well.name}`)
             let wellTreeIdx = self.treeConfig.findIndex(wTI => wTI.idWell === well.idWell && wTI._idx === well._idx);
             self.treeConfig.splice(wellTreeIdx, 1);
         }
@@ -1602,9 +1607,11 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             p.mode = null;
         })
         self.polygons.push(polygon);
+        self.addLog('success', `Change Polygon`)
     }
     this.removePolygon = ($index) => {
         self.polygons.splice($index, 1);
+        self.addLog('success', `Change Polygon`)
     }
     this.filterByPolygons = function(polygons, data, exclude) {
         let ppoints = polygons.map(function(p) {
@@ -2683,6 +2690,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             self.udls = fromFormulaArray2UDLs(selectedAsset.content);
             self.udls.name = selectedAsset.name;
             self.udls.note = selectedAsset.note;
+            self.addLog('success', 'Change Formula')
         }
     }
     this.saveUDL = function() {
@@ -3046,5 +3054,9 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     this.setColsNumPropMap = function(notUse, newVal) {
         self.config.colsNumPropMap = newVal;
         updatePropMap();
+    }
+
+    this.addLog = function(status, message) {
+        if(__toastr) __toastr[status](message)
     }
 }
