@@ -1,7 +1,7 @@
 <wi-droppable style="display: flex;width: 100%;background: #ffffff;z-index: 1;box-shadow: 0 4px 9px #00000014;flex-basis: 40px;border-radius: 2px;" on-drop="self.onDrop"
     container-style="{display:'flex',flex: 1, position: 'relative'}">
     <div class="tab">
-        <div class="tab-name" ng-repeat="sV in self.selectionValues track by $index" ng-class="{active: tabIndex === $index}"
+        <div class="tab-name" ng-repeat="sV in self.selectionValues" ng-class="{active: tabIndex === $index}"
             ng-click="self.activateTab($index)">
             <div ng-if="self.selectionTypes[$index] === 'curve'" class="curve-16x16" style="margin-right: 10px;"></div>
             <div ng-if="self.selectionTypes[$index] === 'family'" class="family-16x16" style="margin-right: 10px;">
@@ -19,7 +19,7 @@
         DROP CURVE, TRY AGIAN!
     </div>
 </wi-droppable>
-<div ng-show="tabIndex === $index" class="main" ng-repeat="sV in self.selectionValues track by $index">
+<div ng-show="tabIndex === $index" class="main" ng-repeat="sV in self.selectionValues">
     <multi-well-histogram well-spec="self.wellSpecs[$index]" zoneset-name="self.zonesetNames[$index]"
         selection-type="self.selectionTypes[$index]" selection-value="self.selectionValues[$index]"
         ctrl-params="self.getCtrlParams($index)" zone-set-ctrl-lines="self.zoneSetCtrlLines"

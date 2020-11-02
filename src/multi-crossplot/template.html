@@ -1,7 +1,7 @@
 <wi-droppable style="display: flex;width: 100%;background: #ffffff;z-index: 1;box-shadow: 0 4px 9px #00000014;flex-basis: 40px;border-radius: 2px;" on-drop="self.onDrop"
     container-style="{display:'flex',flex: 1, position: 'relative'}">
     <div class="tab">
-        <div class="tab-name" ng-repeat="(idx, xVal) in self.selectionXValues track by $index"
+        <div class="tab-name" ng-repeat="(idx, xVal) in self.selectionXValues"
             ng-class="{active: tabIndex === idx}"
             ng-click="self.activateTab(idx)">
             <div ng-if="self.selectionTypes[idx] === 'curve'" class="curve-16x16" style="margin-right: 10px;"></div>
@@ -19,7 +19,7 @@
         DROP CURVES, TRY AGAIN!
     </div>
 </wi-droppable>
-<div ng-show="tabIndex === idx" class="main" ng-repeat="(idx, xVal) in self.selectionXValues track by $index">
+<div ng-show="tabIndex === idx" class="main" ng-repeat="(idx, xVal) in self.selectionXValues">
     <multi-well-crossplot well-spec="self.wellSpecs[idx]" zoneset-name="self.zonesetNames[idx]"
         loga-x="self.logaX"
         loga-y="self.logaY"

@@ -7,7 +7,7 @@
         </div>
     </div>
     <div style="display: flex; flex-wrap: wrap;    position: absolute;">
-        <span ng-repeat="header in self.statisticHeaders track by $index" class="select-table-header"
+        <span ng-repeat="header in self.statisticHeaders" class="select-table-header"
             ng-class="{'active' : self.statisticHeaderMasks[$index]}"
             ng-click="self.statisticHeaderMasks[$index]= !self.statisticHeaderMasks[$index]">
             {{header}}</span>

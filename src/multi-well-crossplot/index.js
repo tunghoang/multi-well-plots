@@ -77,6 +77,7 @@ app.component(componentName, component({
 }));
 multiWellCrossplotController.$inject = ['$scope', '$timeout', '$element', '$compile', 'wiToken', 'wiApi', 'wiDialog', 'wiLoading'];
 function multiWellCrossplotController($scope, $timeout, $element, $compile, wiToken, wiApi, wiDialog, wiLoading) {
+    window.crossCtrl = this;
     let self = this;
     PrintableController.call(this, $scope, $element, $timeout, $compile, wiApi, wiLoading);
     self.treeConfig = [];
@@ -295,8 +296,9 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 self.isSettingChange = true;
             }, true);
             $scope.$watch(() => (self.selectionType), (newVal, oldVal) => {
+                if (newVal === oldVal) return;
                 self.isSettingChange = true;
-                self.selectionValueList = self.initSelectionValueList();
+                self.selectionValueList.forEach(s => s.value = '');
                 getSelectionList(self.selectionType, self.treeConfig);
                 updateDefaultConfig();
             });

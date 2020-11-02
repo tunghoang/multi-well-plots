@@ -368,7 +368,7 @@
             </div>
         </div>
         <div style="display: flex; flex-wrap: wrap;">
-            <span ng-repeat="(headerIdx, header) in self.statisticHeaders track by $index"
+            <span ng-repeat="(headerIdx, header) in self.statisticHeaders"
                 class="select-table-header" ng-class="{'active' : self.statisticHeaderMasks[headerIdx]}"
                 ng-click="self.statisticHeaderMasks[headerIdx]= !self.statisticHeaderMasks[headerIdx]">
                 {{header}}</span>
