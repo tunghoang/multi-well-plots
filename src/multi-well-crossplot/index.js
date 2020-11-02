@@ -685,7 +685,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         if (!selectedZonesetProps) {
             selectedZonesetProps = self.zonesetList[0].properties;
         }
-        self.onZonesetSelectionChanged(selectedZonesetProps);
+        self.onZonesetSelectionChanged(selectedZonesetProps, false);
         if (!$scope.$root.$$phase) $scope.$digest();
     }
     function intersectAndMerge(dstZoneList, srcZoneList) {
@@ -1383,7 +1383,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             return null;
         return zonesets.find(zs => zs.name === zonesetName);
     }
-    this.onZonesetSelectionChanged = function(selectedItemProps) {
+    this.onZonesetSelectionChanged = function(selectedItemProps, putLog = true) {
         self.isSettingChange = true;
         wiApi.indexZonesForCorrelation((selectedItemProps || {}).zones)
         self.zoneTree = (selectedItemProps || {}).zones;
@@ -1391,7 +1391,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             return zone.name;
         });
         self.zonesetName = (selectedItemProps || {}).name || 'ZonationAll';
-        self.addLog('success', `Change zoneset to ${self.zonesetName}`)
+        if (putLog) self.addLog('success', `Change zoneset`)
     }
     this.runZoneMatch = function (node, criteria) {
         let keySearch = criteria.toLowerCase();
