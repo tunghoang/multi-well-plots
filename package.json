@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "main": "./dist/multi-well-plots.js",
   "scripts": {
+    "build": "webpack --mode=production",
     "run-dev": "webpack -w --mode=development",
     "start": "webpack -w --mode=development"
   },
