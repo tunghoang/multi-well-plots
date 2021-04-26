@@ -1,13 +1,16 @@
-var componentName = 'multiWellHistogram';
-module.exports.name = componentName;
-require('./style.less');
-const utils = require('../utils');
-var PrintableController = Printable.klass;
-var component = Printable.component;
+import { WiTree } from '@revotechuet/misc-component-vue';
+import utils from '../utils';
+import './style.less';
+
+const componentName = 'multiWellHistogram';
+export const name = componentName;
+
+const PrintableController = Printable.klass;
+const component = Printable.component;
 
 const _DECIMAL_LEN = 4;
 
-var app = angular.module(componentName, [
+const app = angular.module(componentName, [
     'sideBar', 'wiTreeViewVirtual', 'wiTableView',
     'wiApi', 'editable', 'wiDialog',
     'wiDroppable', 'wiDropdownList', 'plot-toolkit',
@@ -49,8 +52,8 @@ app.component(componentName, component({
 }))
 multiWellHistogramController.$inject = ['$scope', '$timeout', '$element', '$compile', 'wiToken', 'wiApi', 'wiDialog', 'wiLoading'];
 function multiWellHistogramController($scope, $timeout, $element, $compile, wiToken, wiApi, wiDialog, wiLoading) {
-    window.hisCtrl = this;
     let self = this;
+    $scope.WiTree = WiTree;
     PrintableController.call(this, $scope, $element, $timeout, $compile, wiApi);
     self.silent = true;
     self.treeConfig = [];
@@ -508,11 +511,12 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     this.click2ToggleZone = function ($event, node, selectedObjs) {
         self.isSettingChange = true;
         node._notUsed = !node._notUsed;
+        node.$meta.render = !node.$meta.render;
         let zoneTree = self.zoneTree.filter(zone => zone.zone_template.name == node.name);
         zoneTree.forEach(zone => {
             zone._notUsed = !zone._notUsed;
         })
-        self.selectedZones = selectedObjs.map(obj => obj.data);
+        self.selectedZones = selectedObjs;
     }
     this.getZoneTreeMaxHeight = function () {
         return $element.height();
@@ -1399,6 +1403,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         if (!self.selectedZones) return;
         self.selectedZones.forEach(zone => {
             zone._notUsed = true;
+            zone.$meta.render = !zone.$meta.render;
             let zoneTree = self.zoneTree.filter(zoneI => zoneI.zone_template.name == zone.name);
             zoneTree.forEach(zoneI => {
                 zoneI._notUsed = true;
@@ -1409,16 +1414,17 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         if (!self.selectedZones) return;
         self.selectedZones.forEach(zone => {
             zone._notUsed = false;
+            zone.$meta.render = !zone.$meta.render;
             let zoneTree = self.zoneTree.filter(zoneI => zoneI.zone_template.name == zone.name);
             zoneTree.forEach(zoneI => {
                 zoneI._notUsed = false;
             })
         });
-        $timeout(() => { });
     }
     this.hideAllZone = function () {
         self.zoneTreeUniq.forEach(zone => {
             zone._notUsed = true;
+            zone.$meta.render = !zone.$meta.render;
         });
         self.zoneTree.forEach(zone => zone._notUsed = true);
         $timeout(() => { });
@@ -1427,6 +1433,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         self.isSettingChange = true;
         self.zoneTreeUniq.forEach(zone => {
             zone._notUsed = false;
+            zone.$meta.render = !zone.$meta.render;
         });
         self.zoneTree.forEach(zone => zone._notUsed = false);
         $timeout(() => { });

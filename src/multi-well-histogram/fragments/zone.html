@@ -19,13 +19,24 @@
     <span ng-click="self.showAllZone()" class="button-with-label-layer"
         style="margin-left: 15px;">Activate All</span>
 </div>
-<div ng-show="self.zoneTree" class="disable-node-caret"
-    style="border: 1px solid #e4e4e4;margin: 5px 15px;border-radius: 2px;flex: 1;overflow: auto; display: flex;">
-    <wi-tree-view-virtual style="flex: 1;" tree-root="self.zoneTreeUniq" get-label="self.getZoneLabel"
-        filter="self.zoneFilter" get-icon="self.getZoneIcon" get-children="self.noChildren"
-        keep-children='true' run-match="self.runZoneMatch" hide-unmatched="true"
-        hide-search='false' click-fn='self.click2ToggleZone'>
-    </wi-tree-view-virtual>
+<div ng-show="self.zoneTree"
+    style="border: 1px solid #e4e4e4;margin: 5px 15px;border-radius: 2px;flex: 1;overflow: auto;">
+    <div style="border-bottom: 1px solid #eee">
+        <i class="fa fa-search" style="position: relative; left: 0.5em; color: #aaa;"></i>
+        <input type="text" ng-model="filter" placeholder="Search" style="border: none; width: calc(100% - 1.5em); padding: 8px;">
+    </div>
+    <div style="height: calc(100% - 34px);">
+        <vue-component
+            root="WiTree"
+            props="{
+                treeRoot: self.zoneTreeUniq,
+                getLabel: self.getZoneLabel,
+                getIcon: self.getZoneIcon,
+                clickFn: self.click2ToggleZone,
+                filter: filter,
+            }"
+        ></vue-component>
+    </div>
 </div>
 <div ng-hide="self.zoneTree" style="border: 1px solid #e4e4e4; margin: 5px 15px;">
     zonationAll
