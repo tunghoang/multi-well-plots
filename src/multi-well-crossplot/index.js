@@ -251,7 +251,9 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         self.xUnitList = self.xUnitList || [];
         self.yUnitList = self.yUnitList || [];
     }
-    this.exportStatistic = function () {
+    this.exportStatistic = async function () {
+        const perm = await wiApi.checkObjectPermission('project.export').then(res => res && res.value)
+        if(!perm) return __toastr.warning("You don't have permission to export")
         if (!self.layers.length) {
             let msg = `No statistic data to export`;
             if (__toastr) __toastr.error(msg);
@@ -1228,6 +1230,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     })
                     .catch(e => {
                         wiLoading.hide();
+                        if (!e.message.includes('exist')) return
                         let msg = `Asset ${name} has been existed`;
                         if (__toastr) __toastr.error(msg);
                         self.saveToAsset();
@@ -1282,6 +1285,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     self.afterNewPlotCreated && self.afterNewPlotCreated(res);
                 })
                 .catch(e => {
+                    if (!e.message.includes('exist')) return
                     let msg = `Asset ${name} has been existed`;
                     if (__toastr) __toastr.error(msg);
                     self.saveAs();
@@ -2761,6 +2765,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                     self.udlsAssetId = res.idParameterSet;
                 })
                 .catch(e => {
+                    if (!e.message.includes('exist')) return
                     let msg = `Asset ${name} has been existed`;
                     if (__toastr) __toastr.error(msg);
                     self.saveAsUDL();

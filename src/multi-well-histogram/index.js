@@ -168,7 +168,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         self.getGaussianIconFn = self.config.notUsedGaussian ? self.getLogNormalDIcon : self.getGaussianIcon;
         self.dragHeader = self.dragHeader || false;
     }
-    this.exportStatistic = function () {
+    this.exportStatistic = async function () {
+        const perm = await wiApi.checkObjectPermission('project.export').then(res => res && res.value)
+        if(!perm) return __toastr.warning("You don't have permission to export")
         if (!self.histogramList.length) {
             let msg = `No statistic data to export`;
             if (__toastr) __toastr.error(msg);
@@ -1156,6 +1158,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     __toastr && __toastr.success('Successfully saved Histogram ' + name)
                     self.afterNewPlotCreated && self.afterNewPlotCreated(res);
                 }).catch(e => {
+                    if (!e.message.includes('exist')) return
                     let msg = `Asset ${name} has been existed`;
                     if (__toastr) __toastr.warning(msg);
                     self.save();
@@ -1177,6 +1180,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 __toastr && __toastr.success('Successfully saved Histogram ' + res.name)
                 self.afterNewPlotCreated && self.afterNewPlotCreated(res);
             }).catch(e => {
+                if (!e.message.includes('exist')) return
                 let msg = `Asset ${name} has been existed`;
                 if (__toastr) __toastr.warning(msg);
                 self.save();
@@ -1204,6 +1208,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 self.afterNewPlotCreated && self.afterNewPlotCreated(res);
             })
                 .catch(e => {
+                    if (!e.message.includes('exist')) return
                     let msg = `Asset ${name} has been existed`;
                     if (__toastr) __toastr.warning(msg);
                     self.saveAs();
