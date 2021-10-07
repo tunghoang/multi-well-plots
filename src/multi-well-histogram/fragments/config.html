@@ -34,6 +34,12 @@
             </wi-dropdown-list>
         </div>
         <div style="margin-bottom: 15px; "></div>
+        <div class="selection-sidebar" style="flex: 1;margin-bottom: 15px;">
+            <span>Depth Unit</span>
+            <wi-dropdown-list style="flex:1; margin-left: 10px;" items='self.depthUnitList'
+                current-select="self.config.depthUnit || self.defaultConfig.depthUnit" on-item-changed="self.onDepthUnitChange">
+            </wi-dropdown-list>
+        </div>
 
         <div style="display: flex;">
             <div class="selection-sidebar" style="padding: 9px 10px 5px 10px; flex: 1;">
@@ -70,7 +76,7 @@
                 </editable>
             </div>
         </div>
-        
+
         <div style="margin-bottom: 15px; "></div>
 
         <div class="selection-sidebar" style="padding: 9px 10px 5px 10px;">
@@ -80,7 +86,7 @@
                 content-style="{flex:1,float:'none','text-align':'right'}">
             </editable>
         </div>
-        
+
     </div>
     <div class="label-option-sidebar"
         style="padding: 10px 20px; display: flex; justify-content: space-between;   flex-direction: column;">

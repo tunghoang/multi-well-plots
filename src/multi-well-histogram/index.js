@@ -687,6 +687,12 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
     }
     function updateDefaultConfig() {
         clearDefaultConfig();
+        self.depthUnitList = ['m','ft']
+            .map(u => ({
+                data: { label: u },
+                properties: { name: u },
+            }));
+        self.defaultConfig.depthUnit = 'm';
         let curve = getCurve(self.treeConfig[0], self.wellSpec[0]);
         if (!curve) return;
         let family = wiApi.getFamily(curve.idFamily);
@@ -718,6 +724,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         self.config.xUnit = (selectedItemProps || {}).name;
         self.config.left = wiApi.convertUnit(self.getLeft(), oldUnit, self.config.xUnit).toFixed(4);
         self.config.right = wiApi.convertUnit(self.getRight(), oldUnit, self.config.xUnit).toFixed(4);
+    }
+    this.onDepthUnitChange = function (selectedItemProps) {
+        self.config.depthUnit = (selectedItemProps || {}).name;
     }
 
     this.histogramList = [];
@@ -847,7 +856,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                     wellHistogramList.name = well.name;
                     wellHistogramList.color = utils.getWellColor(well);
                     allHistogramList.push(wellHistogramList);
-                } else allHistogramList.push(...wellHistogramList);
+                } else {
+                    allHistogramList.push(...wellHistogramList);
+                }
             }
             allHistogramList.name = 'All';
             let max = 0;
@@ -1260,9 +1271,15 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 case 'Filter':
                     return statsArray[row].conditionExpr || 'N/A';
                 case 'Top':
-                    return isNaN(statsArray[row].top) ? 'N/A' : wiApi.bestNumberFormat(statsArray[row].top, 4);
+                    let top = statsArray[row].top;
+                    if (isNaN(top)) return 'N/A';
+                    top = wiApi.convertUnit(top, 'm', self.config.depthUnit)
+                    return wiApi.bestNumberFormat(top, 4);
                 case 'Bottom':
-                    return isNaN(statsArray[row].bottom) ? 'N/A' : wiApi.bestNumberFormat(statsArray[row].bottom, 4);
+                    let bottom = statsArray[row].bottom;
+                    if (isNaN(bottom)) return 'N/A';
+                    bottom = wiApi.convertUnit(bottom, 'm', self.config.depthUnit)
+                    return wiApi.bestNumberFormat(bottom, 4);
                 case 'Points':
                     return isNaN(statsArray[row].numPoints) ? 'N/A' : statsArray[row].numPoints;
                 case 'Avg':
