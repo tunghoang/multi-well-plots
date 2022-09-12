@@ -2084,32 +2084,31 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
     function getPointSet(xData, yData, z1Data, z2Data, z3Data) {
         let pointset = [];
         xData.forEach((eX) => {
-            let depth = eX.depth;
-            if (!eX.x) return;
+            if (!_.isFinite(eX.x)) return;
 
             let ySample = wiApi.binarySearch(yData, function(oneYData) {
                 return parseFloat(eX.depth.toFixed(4) - oneYData.depth.toFixed(4));
             }, 0, yData.length - 1);
 
-            if (!ySample || !ySample.x) return;
+            if (!ySample || !_.isFinite(ySample.x)) return;
             let z1Sample, z2Sample, z3Sample;
             if (z1Data) {
                 z1Sample = wiApi.binarySearch(z1Data, function(oneZ1Data) {
                     return (eX.depth - oneZ1Data.depth).parseFloat(4);
                 }, 0, z1Data.length - 1);
-                if (!z1Sample || !z1Sample.x) return;
+                if (!z1Sample || !_.isFinite(z1Sample.x)) return;
             }
             if (z2Data) {
                 z2Sample = wiApi.binarySearch(z2Data, function(oneZ2Data) {
                     return (eX.depth - oneZ2Data.depth).parseFloat(4);
                 }, 0, z2Data.length - 1);
-                if (!z2Sample || !z2Sample.x) return;
+                if (!z2Sample || !_.isFinite(z2Sample.x)) return;
             }
             if (z3Data) {
                 z3Sample = wiApi.binarySearch(z3Data, function(oneZ3Data) {
                     return (eX.depth - oneZ3Data.depth).parseFloat(4);
                 }, 0, z3Data.length - 1);
-                if (!z3Sample || !z3Sample.x) return;
+                if (!z3Sample || !_.isFinite(z3Sample.x)) return;
             }
             pointset.push({
                 x: eX.x,
