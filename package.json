@@ -1,10 +1,12 @@
 {
   "name": "@revotechuet/multi-well-plots",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "./dist/multi-well-plots.cjs",
   "module": "./dist/multi-well-plots.mjs",
+  "types": "./index.d.ts",
   "files": [
-    "dist"
+    "dist/*",
+    "index.d.ts"
   ],
   "scripts": {
     "build": "webpack --mode=production",
