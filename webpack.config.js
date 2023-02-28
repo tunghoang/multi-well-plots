@@ -1,14 +1,13 @@
-const webpack = require('webpack');
 
-module.exports = {
+/**
+ * @type {import('webpack').Configuration}
+ */
+const common = {
     context: __dirname + '/src',
     mode: "development",
-    entry: {
-        main: "./index.js",
-    },
     output: {
         path: __dirname + '/dist',
-        filename: 'multi-well-plots.js'
+        filename: '[name].js'
     },
     module: {
         rules: [{
@@ -29,4 +28,40 @@ module.exports = {
         }
         ],
     },
+    externals: {
+        angular: 'angular',
+    }
 }
+
+/**
+ * @type {import('webpack').Configuration[]}
+ */
+module.exports = [
+    {
+        ...common,
+        entry: {
+            'multi-well-plots': "./index.js",
+        },
+        output: {
+            ...common.output,
+            filename: '[name].cjs',
+            clean: true,
+        },
+    },
+    {
+        ...common,
+        entry: {
+            'multi-well-plots': "./esm.js",
+        },
+        output: {
+            ...common.output,
+            filename: '[name].mjs',
+            library: {
+                type: 'module',
+            },
+        },
+        experiments: {
+            outputModule: true,
+        },
+    },
+]
