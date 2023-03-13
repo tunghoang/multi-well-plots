@@ -5,10 +5,6 @@
 const common = {
     context: __dirname + '/src',
     mode: "development",
-    output: {
-        path: __dirname + '/dist',
-        filename: '[name].js'
-    },
     module: {
         rules: [{
             test: /\.html$/,
@@ -30,7 +26,9 @@ const common = {
     },
     externals: {
         angular: 'angular',
-    }
+        '@revotechuet/misc-component-vue': '@revotechuet/misc-component-vue',
+    },
+    devtool: 'source-map',
 }
 
 /**
@@ -44,8 +42,10 @@ module.exports = [
         },
         output: {
             ...common.output,
-            filename: '[name].cjs',
-            clean: true,
+            filename: '[name].js',
+            library: {
+                type: 'umd',
+            },
         },
     },
     {
