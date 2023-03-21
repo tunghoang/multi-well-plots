@@ -362,6 +362,7 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
         })
         return well;
     }
+    self.getTrees = getTrees;
     async function getTrees(callback) {
         wiLoading.show($element.find('.main')[0], self.silent);
         self.treeConfig = [];

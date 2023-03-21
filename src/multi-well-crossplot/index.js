@@ -14,7 +14,7 @@ const _PICKETT_LIMIT = 5;
 const _POLYGON_LIMIT = 5;
 
 const app = angular.module(componentName, [
-    'sideBar', 'wiTreeView','wiTreeViewVirtual', 'wiTableView',
+    'sideBar', 'wiTreeViewVirtual', 'wiTableView',
     'wiApi', 'editable',
     'wiDialog',
     'wiDroppable', 'wiDropdownList', 'angularResizable',
@@ -635,6 +635,7 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
         })
         return well;
     }
+    this.getTrees = getTrees;
     async function getTrees(callback) {
         wiLoading.show($element.find('.main')[0], self.silent);
         self.treeConfig.length = 0;
