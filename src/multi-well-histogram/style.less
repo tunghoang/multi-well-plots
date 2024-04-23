@@ -11,15 +11,15 @@ multi-well-histogram {
     ::-webkit-scrollbar-button:horizontal:increment { /* Right */
         background-image: none;
     }
-    
+
     ::-webkit-scrollbar-button:horizontal:decrement { /* Left */
         background-image: none;
     }
-    
+
     ::-webkit-scrollbar-button:vertical:increment { /* Down */
         background-image: none;
     }
-    
+
     ::-webkit-scrollbar-button:vertical:decrement { /* Up */
         background-image: none;
     }
@@ -49,13 +49,13 @@ multi-well-histogram {
           height: 16px;
           margin-left: 10px;
       }
-      
-      .switch input { 
+
+      .switch input {
         opacity: 0;
         width: 0;
         height: 0;
       }
-      
+
       .slider {
         position: absolute;
         cursor: pointer;
@@ -67,7 +67,7 @@ multi-well-histogram {
         -webkit-transition: .2s;
         transition: .2s;
       }
-      
+
       .slider:before {
         position: absolute;
         content: "";
@@ -79,31 +79,31 @@ multi-well-histogram {
         -webkit-transition: .2s;
         transition: .2s;
       }
-      
+
       input:checked + .slider {
         background-color: #2196F3;
       }
-      
+
       input:focus + .slider {
         box-shadow: 0 0 1px #2196F3;
       }
-      
+
       input:checked + .slider:before {
         -webkit-transform: translateX(18px);
         -ms-transform: translateX(18px);
         transform: translateX(18px);
       }
-      
+
       /* Rounded sliders */
       .slider.round {
         border-radius: 34px;
       }
-      
+
       .slider.round:before {
         border-radius: 50%;
       }
-      
-      
+
+
     /* change style special of wi-base-treeview for basemap */
     wi-tree-view, wi-tree-view-virtual {
         & div input {
@@ -133,7 +133,7 @@ multi-well-histogram {
             cursor: default;
             position: relative;
             border-top: none;
-            border-left: none; 
+            border-left: none;
         }
         & div.table {
             margin-top: 0;
@@ -153,7 +153,7 @@ multi-well-histogram {
             align-items: center;
             font-size: 12px;
         }
-        
+
         .btn-default:active:focus {
             background-color: #fff;
         }
@@ -201,7 +201,7 @@ multi-well-histogram {
         wi-tree-node .node-content.search-mode, wi-tree-node-virtual .node-content.search-mode {
             color: #000;
         }
-       
+
     }
 
     wi-droppable {
@@ -305,7 +305,7 @@ multi-well-histogram {
         .statistic-table {
             margin: 15px 15px;
             position: relative;
-            height: 20%;
+            height: 25%;
             max-height: 64%;
             // overflow: auto;
             // flex-basis: 200px;
@@ -425,8 +425,8 @@ multi-well-histogram {
             color     : #fff;
         }
         .header-icon {
-            margin-right: 10px; 
-            cursor: pointer; 
+            margin-right: 10px;
+            cursor: pointer;
             width: 10px;
         }
 
