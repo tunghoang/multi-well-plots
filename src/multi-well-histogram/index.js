@@ -46,7 +46,8 @@ app.component(componentName, component({
         cpIconStyle: "<",
         onMarkerDragEnd: "<",
         dragHeader: '<',
-        afterNewPlotCreated: '<'
+        afterNewPlotCreated: '<',
+        copyEmbeddedLink: '<',
     },
     transclude: true
 }))
@@ -243,7 +244,11 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 getZonesetsFromWells(self.treeConfig);
                 updateDefaultConfig();
             }, true);
-            getTrees();
+            getTrees(() => {
+                setTimeout(() => {
+                    self.genHistogramList();
+                });
+            });
         }, 500);
 
     }

@@ -7,6 +7,9 @@
     <span class="fn-button" ng-click="self.print()">PRINT</span>
     <span class="fn-button" ng-class="{'active' : self.showTooltip}" ng-click="self.showTooltip = !self.showTooltip">TOOLTIP</span>
     <span class="fn-button" ng-click="self.exportStatistic()">Export Statistic</span>
+    <span ng-if="self.copyEmbeddedLink" class="fn-button" ng-click="self.copyEmbeddedLink(self)" title="Copy embedded link">
+        <span class="fa fa-link"></span>
+    </span>
 </div>
 <div style="flex: 1; display: flex; flex-direction: column;">
     <div class="main-body-center border-style printable" style="position: relative;" id='layer-collection'>

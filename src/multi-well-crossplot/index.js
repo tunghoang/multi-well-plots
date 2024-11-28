@@ -74,7 +74,8 @@ app.component(componentName, component({
         showPickettSetAt: "<",
         showTooltip: "<",
         onReload: '<',
-        afterNewPlotCreated: '<'
+        afterNewPlotCreated: '<',
+        copyEmbeddedLink: '<',
     },
     transclude: true
 }));
@@ -354,7 +355,11 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
             }, () => {
                 updatePropMap();
             })
-            getTrees();
+            getTrees(() => {
+                setTimeout(() => {
+                    self.genLayers();
+                });
+            });
         }, 700);
 
     }
