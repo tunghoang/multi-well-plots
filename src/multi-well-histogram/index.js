@@ -48,6 +48,7 @@ app.component(componentName, component({
         dragHeader: '<',
         afterNewPlotCreated: '<',
         copyEmbeddedLink: '<',
+        sidebarCollapsed: '<'
     },
     transclude: true
 }))
@@ -245,9 +246,9 @@ function multiWellHistogramController($scope, $timeout, $element, $compile, wiTo
                 updateDefaultConfig();
             }, true);
             getTrees(() => {
-                setTimeout(() => {
+                $timeout(() => {
                     self.genHistogramList();
-                });
+                }, 500);
             });
         }, 500);
 

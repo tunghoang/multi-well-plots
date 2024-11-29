@@ -76,6 +76,7 @@ app.component(componentName, component({
         onReload: '<',
         afterNewPlotCreated: '<',
         copyEmbeddedLink: '<',
+        sidebarCollapsed: '<'
     },
     transclude: true
 }));
@@ -356,9 +357,9 @@ function multiWellCrossplotController($scope, $timeout, $element, $compile, wiTo
                 updatePropMap();
             })
             getTrees(() => {
-                setTimeout(() => {
+                $timeout(() => {
                     self.genLayers();
-                });
+                }, 500);
             });
         }, 700);
 

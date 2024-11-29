@@ -1,5 +1,5 @@
 <!-- <side-bar ng-if="self.familyTable && self.palTable" my-default-width="370" orientation="w" collapsed="false"> -->
-<side-bar my-default-width="370" orientation="w" collapsed="false">
+<side-bar my-default-width="370" orientation="w" collapsed="self.sidebarCollapsed || false">
     <div style="display: flex; flex-direction: column; width: 100%; height: 100%;">
         <!--Wells-->
         <div ng-show="isSet(1)" style="overflow: auto;flex: 1;display:flex;flex-direction:column;">
@@ -39,7 +39,7 @@
             </span>
         </div>
     </div>
-    <div class="label-list-view" style="   
+    <div class="label-list-view" style="
             display: flex;
             border-left: 1px solid #e4e4e4;
             flex-direction: column;
