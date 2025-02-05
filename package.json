@@ -3,6 +3,12 @@
   "version": "0.0.7",
   "main": "./dist/multi-well-plots.js",
   "module": "./dist/multi-well-plots.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/multi-well-plots.mjs",
+      "require": "./dist/multi-well-plots.js"
+    }
+  },
   "types": "./index.d.ts",
   "files": [
     "dist/*",
